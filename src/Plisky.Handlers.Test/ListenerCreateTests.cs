@@ -83,7 +83,7 @@
         }
 
         [Theory(DisplayName = nameof(RFSH_InitialisationString_Works))]
-        [InlineData("RFS:log_%dd%mm%yy_%hh%mi%ss_%nn.log", true, "log_%dd%mm%yy_%hh%mi%ss_%nn.log", "10mb")]
+        [InlineData("RFS:log_%dd%mm%yy_%hh%mi%ss_%nn.log,10mb", true, "log_%dd%mm%yy_%hh%mi%ss_%nn.log", "10mb")]
         [InlineData("RFS:log_%dd%mm%yy_%hh%mi%ss_%nn.log,50mb", true, "log_%dd%mm%yy_%hh%mi%ss_%nn.log", "50mb")]
         [InlineData("RFS:log_%dd%mm%yy_%hh%mi%ss_%nn.log,none", true, "log_%dd%mm%yy_%hh%mi%ss_%nn.log", "")]
         public void RFSH_InitialisationString_Works(string initString, bool isMask, string expectedMask, string expectedSize) {
@@ -121,17 +121,17 @@
 
         // Note invalid date combinations here (like 0 in the parameters) are an issue with the mock not the underlying code.
         [Theory(DisplayName = nameof(RollingFileHandler_NameGeneration_Works))]
-        [InlineData("log_%dd%mm%yy_%hh%mi%ss_%nn.log", "log_10112021_121212_01.log", 10, 11, 2021, 12, 12, 12, "")]
-        [InlineData("log_%dd%mm%yy_%hh%mi%ss_%nn.bog", "log_10112021_121212_01.bog", 10, 11, 2021, 12, 12, 12, "")]
-        [InlineData("log_%dd%mm%yy_%hh%mi%ss_%nn", "log_10112021_121212_01.log", 10, 11, 2021, 12, 12, 12, "")]
-        [InlineData("log_%dd%MM%yy.bog", "log_10112021.bog", 10, 11, 2021, 12, 12, 12, "")]
-        [InlineData("log_%DD%mm%yY.bog", "log_10112021.bog", 10, 11, 2021, 12, 12, 12, "")]
-        [InlineData("log_%dd.bog", "log_20.bog", 20, 1, 2000, 12, 12, 12, "")]
-        [InlineData("logfile_%nn.bog", "logfile_01.bog", 10, 11, 2021, 12, 12, 12, "")]
-        [InlineData("logfile", "logfile.log", 10, 11, 2021, 12, 12, 12, "")]
-        [InlineData("logfile_%AB", "logfile_A.log", 10, 11, 2021, 12, 12, 12, "")]
-        [InlineData("logfile_%PID", "logfile_5678.log", 10, 11, 2021, 12, 12, 12, "5678")]
-        [InlineData("log_%dd%mm%yy_%hh%mi%ss_%nn_%pid", "log_10112021_121212_01_5678.log", 10, 11, 2021, 12, 12, 12, "5678")]
+        [InlineData("log_%dd%mm%yy_%hh%mi%ss_%nn.log", "C:\\log_10112021_121212_01.log", 10, 11, 2021, 12, 12, 12, "")]
+        [InlineData("log_%dd%mm%yy_%hh%mi%ss_%nn.bog", "C:\\log_10112021_121212_01.bog", 10, 11, 2021, 12, 12, 12, "")]
+        [InlineData("log_%dd%mm%yy_%hh%mi%ss_%nn", "C:\\log_10112021_121212_01.log", 10, 11, 2021, 12, 12, 12, "")]
+        [InlineData("log_%dd%MM%yy.bog", "C:\\log_10112021.bog", 10, 11, 2021, 12, 12, 12, "")]
+        [InlineData("log_%DD%mm%yY.bog", "C:\\log_10112021.bog", 10, 11, 2021, 12, 12, 12, "")]
+        [InlineData("log_%dd.bog", "C:\\log_20.bog", 20, 1, 2000, 12, 12, 12, "")]
+        [InlineData("logfile_%nn.bog", "C:\\logfile_01.bog", 10, 11, 2021, 12, 12, 12, "")]
+        [InlineData("logfile", "C:\\logfile.log", 10, 11, 2021, 12, 12, 12, "")]
+        [InlineData("logfile_%AB", "C:\\logfile_A.log", 10, 11, 2021, 12, 12, 12, "")]
+        [InlineData("logfile_%PID", "C:\\logfile_5678.log", 10, 11, 2021, 12, 12, 12, "5678")]
+        [InlineData("log_%dd%mm%yy_%hh%mi%ss_%nn_%pid", "C:\\log_10112021_121212_01_5678.log", 10, 11, 2021, 12, 12, 12, "5678")]
         public void RollingFileHandler_NameGeneration_Works(string mask, string expected, int dd, int mm, int yy, int hh, int min, int sec, string pid) {
             var roro = new RollingFSHandlerOptions() {
                 FileName = mask
@@ -143,7 +143,7 @@
 
             RollingFileSystemHandler sut = mrfs;
 
-            var fn = sut.GetFilenameFromMask(string.Empty, roro.FileName);
+            var fn = sut.GetFilenameFromMask(@"C:\", roro.FileName);
 
             Assert.Equal(expected, fn);
         }

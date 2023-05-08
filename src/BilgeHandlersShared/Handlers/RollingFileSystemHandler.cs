@@ -1,16 +1,14 @@
-﻿namespace Plisky.Diagnostics.Listeners {
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
-    using System;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Text;
-    using System.Threading.Tasks;
-
+namespace Plisky.Diagnostics.Listeners {
     /// <summary>
     /// Handler to write the messages to the file system
     /// </summary>
     public class RollingFileSystemHandler : BaseHandler, IBilgeMessageListener {
-
         /// <summary>
         /// The currently active filename
         /// </summary>
@@ -21,9 +19,9 @@
         /// </summary>
         protected bool nextWriteDeletes = false;
 
+        private readonly RollingFSHandlerOptions opt;
         private long exceptions = 0;
         private Exception exOccured;
-        private RollingFSHandlerOptions opt;
         private StringBuilder previousFailedWrite;
 
         /// <summary>
@@ -35,7 +33,7 @@
             Formatter = DefaultFormatter(false);
             Name = nameof(RollingFileSystemHandler);
             activeFilename = GetFilenameFromMask(opt.Directory, opt.FileName);
-            RefreshActiveFilename();
+            _ = RefreshActiveFilename();
         }
 
         /// <summary>
@@ -45,12 +43,12 @@
         public int MaxLengthFailedMessageStore { get; set; } = 10240;
 
         /// <summary>
-        /// returns the name of this handler
+        /// Returns the friendly name of this handler.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// Returns the current date time
+        /// Returns the current date time.
         /// </summary>
         /// <returns>The current date time</returns>
         public virtual DateTime GetDateTime() {
@@ -64,6 +62,13 @@
         /// <param name="fileName">A filename mask</param>
         /// <returns>A filename extracting the mask elements</returns>
         public string GetFilenameFromMask(string directory, string fileName) {
+            if (string.IsNullOrEmpty(directory)) {
+                throw new ArgumentNullException(nameof(directory));
+            }
+            if (string.IsNullOrEmpty(fileName)) {
+                throw new ArgumentNullException(nameof(fileName));
+            }
+
             fileName = fileName.ToLower();
 
             if (fileName.Contains("%")) {
@@ -119,13 +124,9 @@
         public virtual async Task HandleMessageAsync(MessageMetadata[] msg) {
             string fname = activeFilename;
 
-            StringBuilder sb;
-            if (previousFailedWrite != null && previousFailedWrite.Length < MaxLengthFailedMessageStore) {
-                sb = previousFailedWrite;
-            } else {
-                sb = new StringBuilder();
-            }
-
+            var sb = previousFailedWrite != null && previousFailedWrite.Length < MaxLengthFailedMessageStore
+                ? previousFailedWrite
+                : new StringBuilder();
             for (int i = 0; i < msg.Length; i++) {
                 sb.Append(Formatter.Convert(msg[i]));
             }
@@ -164,12 +165,9 @@
         [HandlerInitialisation("RFS")]
         public RollingFileSystemHandler InitiliaseFrom(string initialisationString) {
             var opt = new RollingFSHandlerOptions(initialisationString);
-            opt.Parse();
+            _ = opt.Parse();
 
-            if (opt.CanCreate) {
-                return new RollingFileSystemHandler(opt);
-            }
-            return null;
+            return opt.CanCreate ? new RollingFileSystemHandler(opt) : null;
         }
 
         /// <summary>
@@ -184,11 +182,7 @@
             }
 
             var fi = new FileInfo(fileName);
-            if (fi.Exists && fi.Length > fileSizeLimit) {
-                return true;
-            }
-
-            return false;
+            return fi.Exists && fi.Length > fileSizeLimit;
         }
 
         /// <summary>
@@ -217,22 +211,15 @@
             bool aExists = CheckForFilePresence(potentialFilenameA, opt.FileSizeLimit);
             bool bExists = CheckForFilePresence(potentialFilenameB, opt.FileSizeLimit);
 
-            if (!aExists) {
-                return potentialFilenameA;
-            }
-
-            if (aExists && !bExists) {
-                return potentialFilenameB;
-            }
-
-            if (aExists && bExists) {
-                if (File.GetLastWriteTimeUtc(potentialFilenameA) <= File.GetLastWriteTimeUtc(potentialFilenameB)) {
-                    return potentialFilenameA;
-                } else {
-                    return potentialFilenameB;
-                }
-            }
-            throw new InvalidOperationException("Logic fault");
+            return !aExists
+                ? potentialFilenameA
+                : aExists && !bExists
+                ? potentialFilenameB
+                : aExists && bExists
+                ? File.GetLastWriteTimeUtc(potentialFilenameA) <= File.GetLastWriteTimeUtc(potentialFilenameB)
+                    ? potentialFilenameA
+                    : potentialFilenameB
+                : throw new InvalidOperationException("Logic fault");
         }
 
         private string RefreshActiveFilename() {

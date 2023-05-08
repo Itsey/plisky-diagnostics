@@ -1,14 +1,14 @@
-﻿namespace Plisky.Diagnostics.Test {
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Plisky.Diagnostics;
+using Plisky.Diagnostics.Listeners;
+using Xunit;
 
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Plisky.Diagnostics.Listeners;
-    using Xunit;
-
+namespace Plisky.Handlers.Test.Mocks {
     internal class MockMessageHandler : BaseHandler, IBilgeMessageListener {
         public int AssertionMessageCount = 0;
         public volatile int TotalMessagesRecieved;
-        private List<MessageMetadata> allMessagesRecieved = new List<MessageMetadata>();
+        private readonly List<MessageMetadata> allMessagesRecieved = new List<MessageMetadata>();
 
         private string ContextMustBe = null;
         private int flushRecieved = 0;
@@ -70,7 +70,6 @@
         }
 
         public void HandleMessage(MessageMetadata md) {
-            //Interlocked.Increment(ref TotalMessagesRecieved);
         }
 
         public Task HandleMessageAsync(MessageMetadata[] msg) {

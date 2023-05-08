@@ -14,7 +14,9 @@
         /// constructor.
         /// </summary>
         public ConsoleHandler() {
-            Formatter = new ConsoleFormatter();
+            Formatter = new ConsoleFormatter(new MessageFormatterOptions() {
+                AppendNewline = false
+            });
             Priority = 10;
         }
 

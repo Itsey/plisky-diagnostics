@@ -1,0 +1,28 @@
+# Plisky Handlers - PreRelease Build
+
+trigger: none
+
+pool:
+ name: 'FarawayLand'  
+
+
+parameters:
+- name: versioningPattern
+  displayName: version increment pattern
+  default : '..+.0'
+  type: string
+
+stages:
+- stage: 
+  jobs:
+  - job: PrepVersioning
+    steps:
+    - task: CmdLine@2
+      displayName: 'PR Versioning'
+      inputs:
+        targetType: 'inline'
+        script: |                                              
+          c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override -VS=c:\Files\BuildTools\VersionStore\plisky-diagnostics-handlers.vstore -Q=${{ parameters.versioningPattern }}
+          
+
+      

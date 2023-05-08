@@ -1,5 +1,4 @@
 ﻿namespace Plisky.Diagnostics.Listeners {
-
     using System;
     using System.IO;
     using System.Text;
@@ -9,7 +8,6 @@
     /// Handler to write the messages to the file system
     /// </summary>
     public class FileSystemHandler : BaseHandler, IBilgeMessageListener {
-
         /// <summary>
         /// the filestream
         /// </summary>

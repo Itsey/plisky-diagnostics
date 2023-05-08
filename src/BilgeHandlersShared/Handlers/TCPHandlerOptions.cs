@@ -1,5 +1,4 @@
 ﻿namespace Plisky.Diagnostics.Listeners {
-
     using System;
 
     /// <summary>

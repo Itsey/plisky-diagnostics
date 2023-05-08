@@ -1,5 +1,4 @@
 ﻿namespace Plisky.Diagnostics.Listeners {
-
     using System;
     using System.IO;
     using System.Net.Sockets;
@@ -10,7 +9,6 @@
     /// Socket communications using the async keyword
     /// </summary>
     internal class AsyncTCPClient : IDisposable {
-
         // If debugging then with stop on throw then this pops up all the time if its failing to connect, have therefore
         // dropped it right down such that it only retries once every 5 minutes.
         private const int SECONDS_NO_SOCKET_RETRY = 60;
@@ -65,7 +63,6 @@
 
             if (socketCommunicationsDown && (DateTime.Now - lastSocketException).TotalSeconds < SECONDS_NO_SOCKET_RETRY) {
                 status = $"Socket coms down since {lastSocketException}";
-                Emergency.Diags.Log(status);
                 return;
             }
             socketCommunicationsDown = false;
@@ -78,7 +75,6 @@
                     stream = tcpClient.GetStream();
                 } catch (SocketException sox) {
                     status = "EXX >> " + sox.Message;
-                    Emergency.Diags.Log(status);
                     lastSocketException = DateTime.Now;
                     socketCommunicationsDown = true;
                     return;
@@ -91,7 +87,6 @@
                 await stream.FlushAsync();
             } catch (IOException iox) {
                 status = "EXX >> " + iox.Message;
-                Emergency.Diags.Log(status);
                 lastSocketException = DateTime.Now;
                 socketCommunicationsDown = true;
                 return;

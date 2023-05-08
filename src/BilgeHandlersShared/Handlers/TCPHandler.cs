@@ -1,5 +1,4 @@
 ﻿namespace Plisky.Diagnostics.Listeners {
-
     using System;
     using System.Diagnostics;
     using System.Text;
@@ -9,7 +8,6 @@
     /// Default handler for sending messages over the network.
     /// </summary>
     public class TCPHandler : BaseHandler, IBilgeMessageListener {
-
         /// <summary>
         /// If this is true then a failed assert will terminate the app
         /// </summary>
@@ -155,7 +153,6 @@
                 }
 
                 whatToWrite = sb.ToString();
-                Emergency.Diags.Log("Writing to tcp client " + whatToWrite);
                 await TcpClient.WriteToExternalSocket(whatToWrite).ConfigureAwait(false);
                 Status = "ok";
                 if (assertFailFoud && FailsAreHarsh) {

@@ -1,0 +1,97 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+
+trigger: none
+
+pool:
+ name: 'FarawayLand'  
+
+variables:
+  solution: '$(build.sourcesDirectory)\src\plisky-handlers.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  buildVersionNumber: 'XXX-INVALID-XXX'
+
+stages:
+- stage: BuildCode
+  jobs:
+  - job: Build
+    steps:      
+      - task: PowerShell@2
+        enabled: true
+        displayName: 'Release Versioning'
+        inputs:
+          targetType: 'inline'        
+          script: |
+            # Versioning Powershell.   Use -Trace=verbose for diagnostics
+            c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe UpdateFiles -Root=$(build.sourcesDirectory)\src\ `-VS=c:\Files\BuildTools\VersionStore\plisky-diagnostics-handlers.vstore -Increment -MM=$(build.sourcesDirectory)\src\_Dependencies\automation\AutoVersion.txt
+            c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Passive `-VS=c:\Files\BuildTools\VersionStore\plisky-diagnostics-handlers.vstore -O=Azdo:buildVersionNumber                       
+
+      - task: PowerShell@2
+        enabled: true
+        displayName: 'Version Info'
+        inputs:
+          targetType: 'inline'
+          script: |
+            # Test That The Versioning Update Worked
+            Write-Host "Integration Build for $(buildVersionNumber)"
+
+      - task: NuGetToolInstaller@1
+
+      - task: NuGetCommand@2
+        inputs:
+          restoreSolution: '$(solution)'
+          restoreDirectory: '$(build.sourcesDirectory)\packages\'
+  
+      - task: VSBuild@1
+        inputs:
+          solution: '$(solution)'
+          msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+          platform: '$(buildPlatform)'
+          configuration: '$(buildConfiguration)'
+          
+      - task: DotNetCoreCLI@2
+        displayName: 'Runnig Tests Using Configuration - $(buildConfiguration)'
+        inputs:
+          command: 'test'
+          arguments: '--no-build --configuration $(buildConfiguration)'
+          projects: '**/*.Test.csproj'
+          publishTestResults: true
+
+      - task: NuGetCommand@2
+        inputs:
+          command: 'custom'
+          packagesToPack: '**/PliskyListeners.nuspec;'
+          versioningScheme: 'off'
+          arguments: pack $(build.sourcesDirectory)\src\_Dependencies\Packaging\PliskyListeners.nuspec -NonInteractive -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=Release -Symbols -Verbosity Detailed -SymbolPackageFormat snupkg
+          includeSymbols: true
+
+      - task: CmdLine@2
+        inputs:
+          script: |
+            echo Stashing the completed Packages
+            del c:\files\publishing\Plisky.Listeners* /q
+            copy $(Build.ArtifactStagingDirectory)\Plisky.Listeners* C:\files\publishing\ /y      
+            echo Packages Copied.
+    
+
+- stage: ReleaseToNuget
+  jobs:
+  - deployment: Release
+    pool:
+      name: 'FarawayLand'  
+    environment: 'Nuget-Release'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: CmdLine@2
+            inputs:
+              script: |
+                @echo off
+                echo Please Release me let me go -> Publishing package to nuget.
+                c:\files\buildtools\releasescripts\nugetpush.cmd C:\files\publishing\Plisky.Listeners*      
+                echo Done

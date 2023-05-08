@@ -82,12 +82,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="versions\CommonInfoListeners.cs" />
-    <Compile Include="versions\CommonInfoDiags.cs" />
-    <Compile Include="versions\CommonAssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="automation\GitReleaseSync.cmd" />
     <None Include="Packaging\PliskyListeners.nuspec" />
   </ItemGroup>
   <ItemGroup>

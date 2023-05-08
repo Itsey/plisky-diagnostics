@@ -1,6 +1,7 @@
 ﻿namespace Plisky.Diagnostics.Listeners {
 
     using System;
+    using System.IO;
 
     /// <summary>
     /// filestream handler options
@@ -21,6 +22,7 @@
         /// filestream handler options.
         /// </summary>
         public RollingFSHandlerOptions() : base(string.Empty) {
+            Directory = Path.GetTempPath();
             FileName = "log_%dd%mm%yy_%hh%mm%ss_%nn.log";
             FilenameIsMask = true;
             MaxRollingFileSize = "10mb";
@@ -32,6 +34,12 @@
         /// </summary>
         /// <param name="initString">the initialisation data</param>
         public RollingFSHandlerOptions(string initString) : base(initString) {
+            if (string.IsNullOrEmpty(Directory)) {
+                Directory = Path.GetTempPath();
+            }
+            if (string.IsNullOrEmpty(FileName)) {
+                FileName = "log_%dd%mm%yy_%hh%mm%ss_%nn.log";
+            }
         }
 
         /// <summary>
@@ -50,7 +58,7 @@
         public bool FilenameIsMask { get; set; }
 
         /// <summary>
-        /// Gets the filesize limit on the log files.
+        /// Gets the filesize limit on the log files.  If this is set to -1 then the filesize limit is not checked to roll the files.
         /// </summary>
         public long FileSizeLimit { get; private set; }
 
@@ -111,27 +119,31 @@
             return CanCreate;
         }
 
-        private void SetFileSizeLimit(string value) {
-            if (string.IsNullOrEmpty(value)) { throw new ArgumentOutOfRangeException(); }
+        private void SetFileSizeLimit(string fileSizeLimit) {
+            if (string.IsNullOrEmpty(fileSizeLimit)) {
+                FileSizeLimit = -1;
+                mrfs = string.Empty;
+            } else {
 
-            string working = value.ToLower();
+                string working = fileSizeLimit.ToLower();
 
-            mrfs = value;
+                mrfs = fileSizeLimit;
 
-            long multiplier = 1;
-            if (working.Contains("kb")) {
-                multiplier = 1024;
-                working = working.Replace("kb", string.Empty);
-            } else if (working.Contains("mb")) {
-                multiplier = 1024 * 1024;
-                working = working.Replace("mb", string.Empty);
-            } else if (working.Contains("gb")) {
-                multiplier = 1024 * 1024 * 1024;
-                working = working.Replace("gb", string.Empty);
+                long multiplier = 1;
+                if (working.Contains("kb")) {
+                    multiplier = 1024;
+                    working = working.Replace("kb", string.Empty);
+                } else if (working.Contains("mb")) {
+                    multiplier = 1024 * 1024;
+                    working = working.Replace("mb", string.Empty);
+                } else if (working.Contains("gb")) {
+                    multiplier = 1024 * 1024 * 1024;
+                    working = working.Replace("gb", string.Empty);
+                }
+
+                long result = long.Parse(working) * multiplier;
+                FileSizeLimit = result;
             }
-
-            long result = long.Parse(working) * multiplier;
-            FileSizeLimit = result;
         }
     }
 }
