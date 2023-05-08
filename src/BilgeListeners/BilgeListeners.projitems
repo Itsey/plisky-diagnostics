@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>7eebc5cc-1f72-4d49-a29d-3a29af4acb6b</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>BilgeListeners</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Formatters\JsonFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatters\ConsoleFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\AsyncTCPClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\ConsoleHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\RollingFileSystemHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\RollingFSHandlerOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\InMemoryHandlerOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\TCPHandlerOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\InMemoryHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\ODSHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\DebugTCPHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\FileSystemHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\FSHandlerOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\TCPHandler.cs" />
+  </ItemGroup>
+</Project>

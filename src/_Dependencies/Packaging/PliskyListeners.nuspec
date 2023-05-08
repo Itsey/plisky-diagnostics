@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata>
+		<id>Plisky.Listeners</id>
+		<version>XXX-INVALID-XXX</version>
+		<title>Plisky Trace Listeners</title>
+		<authors>https://github.com/Itsey</authors>
+		<owners>https://github.com/Itsey</owners>
+		<license type="expression">MIT</license>
+		<projectUrl>https://github.com/Itsey/Plisky.Diagnostics/wiki</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Listeners to support the Plisky Diagnostic Library.</description>
+		<releaseNotes>
+
+          3.1.9
+          - net5 support removed (standard still present)
+          
+          3.1.2
+          X Compatibility check with Diagnostics 3.1.2
+          + RollingFileSystemHandler added.
+
+          3.0.0
+          + Console Listener Now Available
+          * Formatter name changed,InMemoryHandler formatter can now be set.
+          * Formatter set added to all default handlers.
+
+          2.8.2 - Adding new FileSystemHandler
+          2.8.1 - Removing broken FileSystemHandler
+          2.8.0 - Compatibility with new feature release for Bilge, Added skeleton DebugTCPHandler.
+          2.7.2 - Missing method exception issues.
+          2.6.0 - Remove signing accross Plisky
+          2.4.0 - Harmonised versioning across all libraries.
+          2.3.1 - Bugfix for Net40 support in both Bilge and Listeners.
+          2.2.3 - Moving Legacy Formatter to Bilge not Handlers to ease handler development.
+          2.2.2 - Adding Github Project Url.
+        </releaseNotes>
+		<copyright>Copyright 2023</copyright>
+		<tags>trace logger logging logs application app bilge plisky piffle error diagnostics</tags>
+		<dependencies>
+          <group targetFramework=".NETFramework4.5.2" />
+          <group targetFramework=".NETFramework4.8" />
+
+          <group targetFramework=".NETStandard2.0" />
+
+          
+          <group targetFramework="net6.0" />
+          <group targetFramework="net7.0" />
+		</dependencies>
+	</metadata>
+
+	<files>
+
+
+      <!-- Framework 452 -->
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\net452\Plisky.Diagnostics.Listeners.Dll" target="lib\net452\" />
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\net452\Plisky.Diagnostics.Listeners.Pdb" target="lib\net452\" />
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\net452\Plisky.Diagnostics.Listeners.xml" target="lib\net452\" />
+
+      <!-- Framework 452 -->
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\net48\Plisky.Diagnostics.Listeners.Dll" target="lib\net48\" />
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\net48\Plisky.Diagnostics.Listeners.Pdb" target="lib\net48\" />
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\net48\Plisky.Diagnostics.Listeners.xml" target="lib\net48\" />
+
+      <!-- Net Standard 2.0-->
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\netstandard2.0\Plisky.Diagnostics.Listeners.Dll" target="lib\netstandard2.0\" />
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\netstandard2.0\Plisky.Diagnostics.Listeners.Pdb" target="lib\netstandard2.0\" />
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\netstandard2.0\Plisky.Diagnostics.Listeners.xml" target="lib\netstandard2.0\" />      
+
+      <!-- Net 6.0 -->
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\net6.0\Plisky.Diagnostics.Listeners.Dll" target="lib\net6.0\" />
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\net6.0\Plisky.Diagnostics.Listeners.Pdb" target="lib\net6.0\" />
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\net6.0\Plisky.Diagnostics.Listeners.xml" target="lib\net6.0\" />
+
+      <!-- Net 7.0 -->
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\net7.0\Plisky.Diagnostics.Listeners.Dll" target="lib\net7.0\" />
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\net7.0\Plisky.Diagnostics.Listeners.Pdb" target="lib\net7.0\" />
+      <file src="..\..\Plisky.Diagnostics.Listeners\Bin\$configuration$\net7.0\Plisky.Diagnostics.Listeners.xml" target="lib\net7.0\" />
+      
+	</files>
+</package>
