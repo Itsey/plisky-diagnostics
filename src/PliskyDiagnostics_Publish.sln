@@ -1,0 +1,71 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BilgeCore", "BilgeCore\BilgeCore.shproj", "{18C26C0C-4C5C-47D1-9872-CAE3F5B2ECA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_Dependencies", "_Dependencies\_Dependencies.csproj", "{6A505E98-EAE9-44A1-9B62-D30617367DC0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FrameworkVersions", "FrameworkVersions", "{AA57BA54-892A-4F5B-B4DF-397A51FE3133}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plisky.Diagnostics.Test", "Plisky.Diagnostics.Test\Plisky.Diagnostics.Test.csproj", "{E4C18381-E626-499C-8731-3233E78AE270}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plisky.Diagnostics", "Plisky.Diagnostics\Plisky.Diagnostics.csproj", "{C96FA974-5201-4994-901C-71511D3C275F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plisky.Diagnostics.Listeners", "Plisky.Diagnostics.Listeners\Plisky.Diagnostics.Listeners.csproj", "{42199B56-357A-43A2-A523-016D2E8EE518}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BilgeListeners", "BilgeListeners\BilgeListeners.shproj", "{7EEBC5CC-1F72-4D49-A29D-3A29AF4ACB6B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0595C05D-8727-4DCB-AA68-44F745F9923D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		..\build\plisky-diags-ci.yml = ..\build\plisky-diags-ci.yml
+		..\build\plisky-diags-release.yml = ..\build\plisky-diags-release.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Develop|Any CPU = Develop|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Develop|Any CPU.ActiveCfg = Develop|Any CPU
+		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Develop|Any CPU.Build.0 = Develop|Any CPU
+		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4C18381-E626-499C-8731-3233E78AE270}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4C18381-E626-499C-8731-3233E78AE270}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4C18381-E626-499C-8731-3233E78AE270}.Develop|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4C18381-E626-499C-8731-3233E78AE270}.Develop|Any CPU.Build.0 = Debug|Any CPU
+		{E4C18381-E626-499C-8731-3233E78AE270}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4C18381-E626-499C-8731-3233E78AE270}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C96FA974-5201-4994-901C-71511D3C275F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C96FA974-5201-4994-901C-71511D3C275F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C96FA974-5201-4994-901C-71511D3C275F}.Develop|Any CPU.ActiveCfg = Debug|Any CPU
+		{C96FA974-5201-4994-901C-71511D3C275F}.Develop|Any CPU.Build.0 = Debug|Any CPU
+		{C96FA974-5201-4994-901C-71511D3C275F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C96FA974-5201-4994-901C-71511D3C275F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42199B56-357A-43A2-A523-016D2E8EE518}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42199B56-357A-43A2-A523-016D2E8EE518}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42199B56-357A-43A2-A523-016D2E8EE518}.Develop|Any CPU.ActiveCfg = Debug|Any CPU
+		{42199B56-357A-43A2-A523-016D2E8EE518}.Develop|Any CPU.Build.0 = Debug|Any CPU
+		{42199B56-357A-43A2-A523-016D2E8EE518}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42199B56-357A-43A2-A523-016D2E8EE518}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B7C82109-A367-4A89-83FB-D4187677A573}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		BilgeCore\BilgeCore.projitems*{18c26c0c-4c5c-47d1-9872-cae3f5b2eca0}*SharedItemsImports = 13
+		BilgeListeners\BilgeListeners.projitems*{42199b56-357a-43a2-a523-016d2e8ee518}*SharedItemsImports = 5
+		BilgeListeners\BilgeListeners.projitems*{7eebc5cc-1f72-4d49-a29d-3a29af4acb6b}*SharedItemsImports = 13
+		BilgeCore\BilgeCore.projitems*{c96fa974-5201-4994-901c-71511d3c275f}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal

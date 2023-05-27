@@ -1,0 +1,4 @@
+[*]
+
+#SA1116: Parameters go down a line
+dotnet_diagnostic.SA1600.severity = silent

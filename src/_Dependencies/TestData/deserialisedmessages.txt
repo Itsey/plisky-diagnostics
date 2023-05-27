@@ -1,0 +1,2 @@
+﻿{ "v":"2","uq":"--uqr--","c":"","l":"70","mn":"IncrementCount","md":"C:\\Files\\Code\\nosccm\\Swincan\\Swincan\\Pages\\Index.razor","al":"::IncrementCount","nt":"1","p":"unknown","t":"1","man":"localhost","m":"(Client)Hi warn","s":"","mt":"#WRN#" }
+{ "v":"2","uq":"--uqr--","c":"","l":"69","mn":"IncrementCount","md":"C:\\Files\\Code\\nosccm\\Swincan\\Swincan\\Pages\\Index.razor","al":"::IncrementCount","nt":"1","p":"unknown","t":"1","man":"localhost","m":"(Client)Hello","s":"","mt":"#LOG#" }

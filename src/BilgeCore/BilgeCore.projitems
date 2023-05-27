@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>18c26c0c-4c5c-47d1-9872-cae3f5b2eca0</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Plisky.Plumbing</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeAssertException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\ErrorWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\InfoWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\TraceConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\VerboseWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\WarningWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dynamic\DynamicTrace.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeAssert.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeAlert.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeDirect.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeConditionalRoutedBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeRoutedBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeWriter_Internals.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\ConfigSettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BasicBilgeRouter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\SimpleActionEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\BilgeConfigure.cs" />
+    <Compile Include="..\BilgeCore\ErrorDescription.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HandlerSupport\BaseHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HandlerSupport\HandlerAddOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\BilgeConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HandlerSupport\HandlerInitialisationAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HandlerSupport\HandlerOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IBilgeActionEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IBilgeMessageListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IMessageFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageFormatters\BaseMessageFormatter.cs" />
+    <Compile Include="..\BilgeCore\MessageFormatters\FlimFlamV4Formatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageFormatters\MessageFormatterOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageFormatters\MessageMetaDataTransport.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageFormatters\FlimFlamV2Formatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageFormatters\CustomOutputFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageFormatters\PrettyReadableFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\QueuedBilgeRouter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HandlerSupport\SimpleTraceFileHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeRouter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\MessageMetadata.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\Bilge.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\Emergency.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageFormatters\LegacyFlimFlamFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageParts.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageStructure.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InternalUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TraceContextInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Dynamic\" />
+  </ItemGroup>
+</Project>
