@@ -401,10 +401,16 @@
             if (ShouldGetCurrentThreadId) {
                 try {
                     uint threadId = 0;
+#if NETCOREAPP
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
                         ShouldGetCurrentThreadId = false;
-                        threadId = GetCurrentThreadId();
-                    }
+#else
+                    threadId = GetCurrentThreadId();
+#endif
+#if NETCOREAPP
+                }
+#endif
+
                     return threadId.ToString();
                 } catch (DllNotFoundException) {
                     ShouldGetCurrentThreadId = false;

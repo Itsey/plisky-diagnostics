@@ -17,7 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevConsoleTest", "DevConsol
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02520FE2-2B73-40A9-9845-B642DF08259F}"
 	ProjectSection(SolutionItems) = preProject
-		..\build\plisky-listeners-release.yml = ..\build\plisky-listeners-release.yml
+		..\build\plisky-diags-ci.yml = ..\build\plisky-diags-ci.yml
+		..\build\plisky-diags-release.yml = ..\build\plisky-diags-release.yml
 	EndProjectSection
 EndProject
 Global
