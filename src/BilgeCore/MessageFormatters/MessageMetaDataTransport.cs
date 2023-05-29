@@ -85,6 +85,10 @@
         /// </summary>
         public string v { get; set; }
 
+        /// <summary>
+        /// Populates using the supplied source.
+        /// </summary>
+        /// <param name="source">The source information to use.</param>
         public void FromMessageMetaData(MessageMetadata source) {
             v = "2";
             uq = "--uq--";
@@ -100,6 +104,10 @@
             mt = TraceCommands.TraceCommandToString(source.CommandType);
         }
 
+        /// <summary>
+        /// Converts to a new MessageMetaData
+        /// </summary>
+        /// <returns>The message metadata.</returns>
         public MessageMetadata ToMessageMetaData() {
             var source = new MessageMetadata();
             source.FileName = md;
@@ -115,6 +123,10 @@
             return source;
         }
 
+        /// <summary>
+        /// REturns the command type.
+        /// </summary>
+        /// <returns>The command type.</returns>
         public TraceCommandTypes GetCommandType() {
             return TraceCommands.StringToTraceCommand(mt);
         }

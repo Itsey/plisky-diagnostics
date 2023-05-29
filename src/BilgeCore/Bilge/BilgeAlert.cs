@@ -62,10 +62,9 @@
             var mmd = new MessageMetadata(meth, pth, ln);
             mmd.CommandType = TraceCommandTypes.Alert;
             mmd.Body = message;
-            foreach (var l in values.Keys) {
+            foreach (string l in values.Keys) {
                 mmd.MessageTags.Add(l, values[l]);
             }
-            
 
             Router.PrepareMetaData(mmd, AlertingContext);
             Router.QueueMessage(mmd);
@@ -87,7 +86,7 @@
 
                 string postAppend = string.Empty;
 
-                foreach (var v in values.Keys) {
+                foreach (string v in values.Keys) {
                     sb.Append(postAppend);
                     sb.Append($" \"{v}\": \"{values[v]}\"");
                     postAppend = "," + Environment.NewLine;

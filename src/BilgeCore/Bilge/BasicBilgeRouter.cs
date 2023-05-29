@@ -12,6 +12,10 @@
 
         private volatile bool shutdownRequested = false;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BasicBilgeRouter"/> class.
+        /// </summary>
+        /// <param name="processId">The process identifier.</param>
         internal BasicBilgeRouter(string processId) : base(processId) {
         }
 
@@ -36,6 +40,10 @@
             shutdownRequested = true;
         }
 
+        /// <summary>
+        /// Adds a message.
+        /// </summary>
+        /// <param name="msgs">The messages to queue.</param>
         protected override async void ActualAddMessage(MessageMetadata[] msgs) {
             if (shutdownEnabled || System.Environment.HasShutdownStarted) {
                 return;

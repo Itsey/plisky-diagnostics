@@ -1,20 +1,18 @@
 ﻿namespace Plisky.Diagnostics {
-
     using System;
 
     /// <summary>
     /// Formats for the old flimflam
     /// </summary>
     public class LegacyFlimFlamFormatter : BaseMessageFormatter {
-
         /// <summary>
         /// Perform the actual conversion
         /// </summary>
-        /// <param name="msg"></param>
-        /// <returns></returns>
+        /// <param name="msg">The message to convert</param>
+        /// <returns>A string representing the message</returns>
         protected override string ActualConvert(MessageMetadata msg) {
             string result;
-            MessageParts nextMsg = new MessageParts();
+            var nextMsg = new MessageParts();
             msg.NullsToEmptyStrings();
 
             Emergency.Diags.Log("Formatting string");

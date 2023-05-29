@@ -1,12 +1,10 @@
 ﻿namespace Plisky.Diagnostics {
-
     using System.Diagnostics;
 
     /// <summary>
     /// Writes trace details out at the informational level.
     /// </summary>
     public class InfoWriter : BilgeWriter {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="InfoWriter"/> class.
         /// </summary>

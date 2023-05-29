@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using FluentAssertions;
 using Plisky.Diagnostics.Copy;
 using Xunit;
 
 namespace Plisky.Diagnostics.Test {
+
     public class DynamicConfigurationTests {
 
         [Fact]
@@ -45,6 +45,32 @@ namespace Plisky.Diagnostics.Test {
             mmh.TotalMessagesRecieved.Should().Be(expectedMessages);
         }
 
+        [Fact(DisplayName = nameof(DoesNotSetTraceOnExpiredInstances))]
+        public void DoesNotSetTraceOnExpiredInstances() {
+            var sut = new DynamicTrace();
+            SubMethod(sut);
+            SubMethod(sut);
+            GC.Collect();
+
+            int result = sut.SetTraceLevel(SourceLevels.Verbose);
+
+            result.Should().Be(0);
+        }
+
+        [Fact(DisplayName = nameof(SetConfigurationResolveOnExistingInstances))]
+        public void SetConfigurationResolveOnExistingInstances() {
+            var sut = new DynamicTrace();
+            Bilge.ClearConfigurationResolver();
+
+            var b1 = sut.CreateBilge("enabled");
+            var b2 = sut.CreateBilge("disabled");
+
+            sut.SetConfigurationResolver("v-enabled");
+
+            b1.ActiveTraceLevel.Should().Be(SourceLevels.Verbose);
+            b2.ActiveTraceLevel.Should().Be(SourceLevels.Off);
+        }
+
         [Fact(DisplayName = nameof(SetsTraceOnExistingInstance))]
         public void SetsTraceOnExistingInstance() {
             var sut = new DynamicTrace();
@@ -76,33 +102,5 @@ namespace Plisky.Diagnostics.Test {
             var b = sut.CreateBilge("test");
             b.Info.Log("x");
         }
-
-        [Fact(DisplayName = nameof(DoesNotSetTraceOnExpiredInstances))]
-        public void DoesNotSetTraceOnExpiredInstances() {
-            var sut = new DynamicTrace();
-            SubMethod(sut);
-            SubMethod(sut);
-            GC.Collect();
-
-            int result = sut.SetTraceLevel(SourceLevels.Verbose);
-
-            result.Should().Be(0);
-        }
-
-
-        [Fact(DisplayName = nameof(SetConfigurationResolveOnExistingInstances))]
-        public void SetConfigurationResolveOnExistingInstances() {
-            var sut = new DynamicTrace();
-            Bilge.ClearConfigurationResolver();
-
-            var b1 = sut.CreateBilge("enabled");
-            var b2 = sut.CreateBilge("disabled");
-
-            sut.SetConfigurationResolver("v-enabled");
-
-            b1.ActiveTraceLevel.Should().Be(SourceLevels.Verbose);
-            b2.ActiveTraceLevel.Should().Be(SourceLevels.Off);
-        }
-
     }
 }

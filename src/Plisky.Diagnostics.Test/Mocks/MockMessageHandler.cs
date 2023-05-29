@@ -1,6 +1,5 @@
 ﻿namespace Plisky.Diagnostics.Test {
 
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Plisky.Diagnostics.Listeners;
@@ -12,6 +11,7 @@
         private List<MessageMetadata> allMessagesRecieved = new List<MessageMetadata>();
 
         private string ContextMustBe = null;
+        private int flushRecieved = 0;
         private MessageMetadata lastMessageData;
         private string MethodNameMustBe = null;
 
@@ -30,16 +30,6 @@
         public string Name { get; set; }
 
         public string ProcessIdMustBe { get; private set; }
-
-        public bool AssertThisMessageMustExist(string message) {
-            Assert.True(TotalMessagesRecieved > 0, "No messages written to the listener");
-            foreach (var v in allMessagesRecieved) {
-                if (v.Body.Contains(message)) {
-                    return true;
-                }
-            }
-            return false;
-        }
 
         public void AssertAllConditionsMetForAllMessages(bool assertSomeMessagesRecieved = true, bool allowSingleMatch = false) {
             if (assertSomeMessagesRecieved) {
@@ -60,19 +50,27 @@
             }
         }
 
+        public bool AssertThisMessageMustExist(string message) {
+            Assert.True(TotalMessagesRecieved > 0, "No messages written to the listener");
+            foreach (var v in allMessagesRecieved) {
+                if (v.Body.Contains(message)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public override void Flush() {
+            base.Flush();
+            flushRecieved++;
+        }
+
         public string GetStatus() {
             return "hello";
         }
 
         public void HandleMessage(MessageMetadata md) {
-            //Interlocked.Increment(ref TotalMessagesRecieved);
-        }
-
-        private int flushRecieved = 0;
-
-        public override void Flush() {
-            base.Flush();
-            flushRecieved++;
+            // Interlocked.Increment(ref TotalMessagesRecieved);
         }
 
         public Task HandleMessageAsync(MessageMetadata[] msg) {

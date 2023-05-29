@@ -4,9 +4,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Plisky.Diagnostics;
-using Plisky.Diagnostics.Listeners;
 
 namespace DevConsoleTest {
 
@@ -14,7 +12,8 @@ namespace DevConsoleTest {
     /// Test Program for Bilge.
     /// </summary>
     internal class Program {
-        //private static MyRoller storedRfsh;
+
+        // private static MyRoller storedRfsh;
         private static int hitCount = 0;
 
         private static void DoBasicTimingTests() {
@@ -48,8 +47,9 @@ namespace DevConsoleTest {
                     b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
                     b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
                 }
-                bool dateChange = false;
+
                 /*
+                bool dateChange = false;
                 if (dateChange && storedRfsh != null) {
                     if (i % 100 == 0) {
                         storedRfsh.ActiveDate = storedRfsh.ActiveDate.AddDays(1);
@@ -117,17 +117,17 @@ namespace DevConsoleTest {
                 Bilge.SetConfigurationResolver("v-**");
                 Bilge.SetErrorSuppression(false);
                 var b = new Bilge(tl: System.Diagnostics.SourceLevels.Verbose);
-              /*  var thnd = new TCPHandler("127.0.0.1", 9060);
-                thnd.SetFormatter(new FlimFlamV4Formatter());
-                var fhnd = new RollingFileSystemHandler(new RollingFSHandlerOptions() {
-                    Directory = "d:\\temp\\",
-                    FileName = "pdev.txt",
-                    FilenameIsMask = false,
-                    MaxRollingFileSize = "1mb",
-                });
-                fhnd.SetFormatter(new FlimFlamV4Formatter());
-                Bilge.AddHandler(thnd);
-                Bilge.AddHandler(fhnd);*/
+                /*  var thnd = new TCPHandler("127.0.0.1", 9060);
+                  thnd.SetFormatter(new FlimFlamV4Formatter());
+                  var fhnd = new RollingFileSystemHandler(new RollingFSHandlerOptions() {
+                      Directory = "d:\\temp\\",
+                      FileName = "pdev.txt",
+                      FilenameIsMask = false,
+                      MaxRollingFileSize = "1mb",
+                  });
+                  fhnd.SetFormatter(new FlimFlamV4Formatter());
+                  Bilge.AddHandler(thnd);
+                  Bilge.AddHandler(fhnd);*/
                 Bilge.Alert.Online("testapp");
 
 #if NETCOREAPP
@@ -150,7 +150,7 @@ namespace DevConsoleTest {
                     DoPerformanceTests();
                 }
                 if (includeInMemoryTests) {
-                  //  SetUpInMemoryHandler();
+                    // SetUpInMemoryHandler();
                 }
 
                 if (includeCustomHandler) {
@@ -158,7 +158,7 @@ namespace DevConsoleTest {
                 }
 
                 if (includeRollingFileSytstemHandlerTests) {
-                    //storedRfsh = SetUpRollingFileSystemHandlerTests();
+                    // storedRfsh = SetUpRollingFileSystemHandlerTests();
                 }
                 if (standardLogs) {
                     for (int i = 0; i < 100; i++) {
@@ -250,7 +250,6 @@ namespace DevConsoleTest {
             Bilge.AddHandler(imh);
         }
 
-        
         private static MyRoller SetUpRollingFileSystemHandlerTests() {
             var mr = new MyRoller(new RollingFSHandlerOptions() {
                 Directory = @"C:\Temp\_Deleteme\Lg\",

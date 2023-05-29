@@ -6,7 +6,7 @@
     public class TestHelper {
 
         public static MessageMetadata[] GetMessageMetaData(int howMany = 1) {
-            List<MessageMetadata> result = new List<MessageMetadata>();
+            var result = new List<MessageMetadata>();
 
             for (int i = 0; i < howMany; i++) {
                 var r = new MessageMetadata() {

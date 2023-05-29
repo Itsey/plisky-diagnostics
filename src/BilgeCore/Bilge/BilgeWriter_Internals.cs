@@ -21,14 +21,28 @@
         /// </summary>
         protected TraceCommandTypes baseCommandLevel = TraceCommandTypes.LogMessage;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BilgeWriter"/> class.
+        /// </summary>
+        /// <param name="router">The router</param>
+        /// <param name="config">Configuration</param>
+        /// <param name="yourTraceLevel">The trace level for this writer</param>
         internal BilgeWriter(BilgeRouter router, ConfigSettings config, SourceLevels yourTraceLevel) : base(router, config, yourTraceLevel) {
         }
 
-        private enum StreamDumpUptions { Hex, Tex, Workitout };
+        private enum StreamDumpUptions {
+            Hex,
+            Tex,
+            Workitout
+        }
 
-        /// <summary><para>
+        /// <summary>
+        /// <para>
         /// Called within each trace method to determine whether or not the call should be included within the trace stream.
-        /// </para></summary>>
+        /// </para>
+        /// </summary>
+        /// <param name="methodsLevel">The method level to check against</param>
+        /// <returns>True if the method should be included</returns>
         internal bool IncludeThisMethodInOutput(TraceLevel methodsLevel) {
 #if DEBUG
             int ctl = (int)activeTraceLevel;
@@ -38,6 +52,15 @@
             return (int)methodsLevel <= (int)activeTraceLevel;
         }
 
+        /// <summary>
+        /// Performs a dump of the object passed in to the trace stream.
+        /// </summary>
+        /// <param name="o">The object.</param>
+        /// <param name="context">Supporting contextual information.</param>
+        /// <param name="secondaryMessage">Further details relating to the object dump.</param>
+        /// <param name="meth">The method name of the calling method.</param>
+        /// <param name="pth">The path to the file of source for the calling method.</param>
+        /// <param name="ln">The line number where the call was made.</param>
         internal void InternalDump(object o, string context, string secondaryMessage, string meth, string pth, int ln) {
             // Firstly we check to see whether or not its somethign that we have a special format for.
             context = context ?? string.Empty;
@@ -97,7 +120,7 @@
             string timeString = null;
 
             if (sets.TraceConfig.AddTimingsToEnterExit) {
-                DateTime dt = DateTime.Now;
+                var dt = DateTime.Now;
                 timeString = ">TRCTMR<|SRT|" + dt.Day + "|" + dt.Month + "|" + dt.Year + "|" + dt.Hour + "|" + dt.Minute + "|" + dt.Second + "|" + dt.Millisecond + "|";
             }
 
@@ -121,7 +144,7 @@
         internal void InternalTimeCheckpoint(MessageMetadata mmd, string timerTitle, string timerSinkCategory, bool timerStart) {
             // while this likes a duplicate it allows for other functions within Tex to call time skink
 
-            DateTime timeCheck = DateTime.Now;
+            var timeCheck = DateTime.Now;
 
             if (timerSinkCategory == null) { timerSinkCategory = string.Empty; }
 
@@ -153,7 +176,7 @@
             // threads, each of which can be in a different method.
             string timeString = null;
             if (sets.TraceConfig.AddTimingsToEnterExit) {
-                DateTime dt = DateTime.Now;
+                var dt = DateTime.Now;
                 timeString = ">TRCTMR<|END|" + dt.Day + "|" + dt.Month + "|" + dt.Year + "|" + dt.Hour + "|" + dt.Minute + "|" + dt.Second + "|" + dt.Millisecond + "|";
             }
 
@@ -188,9 +211,6 @@
         /// <param name="pth">The caller path.</param>
         /// <param name="ln">The Line Number.</param>
         private void InternalDumpArray(Array arr, string message, int limitSearchTo, string meth, string pth, int ln) {
-
-            #region entry code
-
             if ((message == null) || (message.Length == 0)) {
                 message = Constants.NFI;
             }
@@ -199,8 +219,6 @@
                 ActiveRouteMessage(TraceCommandTypes.LogMessage, "DumpArray, Array object was null", message, meth, pth, ln);
                 return;
             }
-
-            #endregion entry code
 
             DefaultRouteMessage("DumpArray of " + arr.Length.ToString() + " elements ", message, meth, pth, ln);
 
@@ -256,9 +274,6 @@
         /// <param name="pth">The caller path</param>
         /// <param name="ln">The Line Number</param>
         private void InternalDumpException(Exception ex, string message, string message2, string meth, string pth, int ln) {
-
-            #region entry code
-
             if ((message == null) || (message.Length == 0)) {
                 message = Constants.NFI;
             }
@@ -267,8 +282,6 @@
                 ActiveRouteMessage(TraceCommandTypes.InternalMsg, "DumpException, Exception object was null", message, meth, pth, ln);
                 return;
             }
-
-            #endregion entry code
 
             ActiveRouteMessage(TraceCommandTypes.ExceptionBlock, message, message2, meth, pth, ln);
 
@@ -310,8 +323,8 @@
         /// </summary>
         /// <param name="ht">The hashtable that is to be written to the trace stream</param>
         /// <param name="contextText">A context string describing the hash table</param>
-        /// <param name="internalCall">A boolean to flag if method is being called internall i.e. as part of another dump method</param>
         /// <param name="secondaryMessage">Further contextual information</param>
+        /// <param name="internalCall">A boolean to flag if method is being called internall i.e. as part of another dump method</param>
         /// <param name="meth">The Method Name</param>
         /// <param name="pth">The caller path</param>
         /// <param name="ln">The Line Number</param>
@@ -384,7 +397,7 @@
             }
             if ((message == null) || (message.Length == 0)) { message = Constants.NFI; }
 
-            IntPtr ptr = Marshal.SecureStringToBSTR(ss);
+            var ptr = Marshal.SecureStringToBSTR(ss);
             DefaultRouteMessage($"SecureString value: {Marshal.PtrToStringUni(ptr)}", message + Environment.NewLine + secondaryMessage);
         }
 
@@ -443,13 +456,8 @@
         /// <param name="context">Contextual information for the dump</param>
         /// <param name="supportingInformation">Further contextual information</param>
         private void InternalDumpStreamAsHex(Stream stm, long startingPosition, int charsToDump, string context, string supportingInformation) {
-
-            #region entry code
-
             context = context ?? string.Empty;
             supportingInformation = supportingInformation ?? string.Empty;
-
-            #endregion entry code
 
             // Special case for null or empty streams
             if ((stm == null) || (stm.Length == 0)) {
@@ -470,7 +478,7 @@
             long currentPos = stm.Position;
             stm.Position = startingPosition;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             for (; charsToDump > 0; charsToDump--) {
                 int next = stm.ReadByte();
                 if (next == -1) {
@@ -513,7 +521,7 @@
             long streamPositionBeforeDumpCalled = stm.Position;
             stm.Position = startingPosition;
 
-            StreamReader sr = new StreamReader(stm);
+            var sr = new StreamReader(stm);
             char[] theBuffer = new char[charsToDump];
             if (sr.Read(theBuffer, 0, charsToDump) != charsToDump) {
                 // There was a problem reading all of the data.
@@ -531,12 +539,12 @@
                 return "<dmp><t>" + obj.GetType().Name + "</t><v>" + obj.ToString() + "</v>";
             }
 
-            BindingFlags bflgs = BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-            FieldInfo[] fields = obj.GetType().GetFields(bflgs);
+            var bflgs = BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            var fields = obj.GetType().GetFields(bflgs);
 
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
             result.Append("<dmp><flds>");
-            foreach (FieldInfo field in fields) {
+            foreach (var field in fields) {
                 string prettyType = TranslateTypeNamesToCSharp(field.FieldType.ToString());
                 string prettyValue;
 
@@ -551,8 +559,8 @@
             }
 
             result.Append("</flds><prps>");
-            PropertyInfo[] props = obj.GetType().GetProperties();
-            foreach (PropertyInfo pi in props) {
+            var props = obj.GetType().GetProperties();
+            foreach (var pi in props) {
                 string prettyType = TranslateTypeNamesToCSharp(pi.PropertyType.ToString());
                 string prettyValue;
 
@@ -577,14 +585,9 @@
         /// <param name="typeName">The .net typename of the variable to convert.</param>
         /// <returns>The c# specific typename corresponding to the .net type</returns>
         private string TranslateTypeNamesToCSharp(string typeName) {
-
-            #region entry code
-
             if (string.IsNullOrEmpty(typeName)) {
                 return string.Empty;
             }
-
-            #endregion entry code
 
             switch (typeName) {
                 // Do not change these out to nameof - that removes the namespace prefix

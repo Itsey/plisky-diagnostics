@@ -16,8 +16,17 @@ namespace Plisky.Diagnostics.Test {
 
         private string MethodNameMustBe = null;
 
+        private List<Func<MessageMetadata, bool>> validators = new List<Func<MessageMetadata, bool>>();
+
+        public MockRouter() : base("mock") {
+        }
+
+        public MockRouter(string procId) : base(procId) {
+        }
+
         public string BodyMustContain { get; private set; }
 
+        public string ClassNameMustBe { get; private set; }
         public int LastMessageBatchSize { get; set; }
 
         public string ManagedThreadIdMustBe { get; private set; }
@@ -26,7 +35,14 @@ namespace Plisky.Diagnostics.Test {
 
         public string ProcessIdMustBe { get; private set; }
 
-        public string ClassNameMustBe { get; private set; }
+        public override void ActualClearEverything() {
+        }
+
+        public override void ActualReInitialise() {
+        }
+
+        public override void ActualShutdown() {
+        }
 
         public void AssertAllConditionsMetForAllMessages(bool assertSomeMessagesRecieved = true, bool allowSingleMatch = false) {
             if (assertSomeMessagesRecieved) {
@@ -57,23 +73,27 @@ namespace Plisky.Diagnostics.Test {
             return false;
         }
 
+        public void SetTimestampMustBe(DateTime? mustBeAfter, DateTime? mustBeBefore) {
+            validators.Add(new Func<MessageMetadata, bool>((mmd) => {
+                Assert.NotNull(mmd);
+                Assert.NotNull(mmd.TimeStamp);
+                if (mustBeAfter != null) {
+                    Assert.True(mmd.TimeStamp >= mustBeAfter);
+                }
 
-        public MockRouter() : base("mock") {
+                if (mustBeBefore != null) {
+                    Assert.True(mmd.TimeStamp <= mustBeBefore);
+                }
+                return true;
+            }));
         }
 
-        public MockRouter(string procId) : base(procId) {
-        }
-
-        public override void ActualClearEverything() {
-
-        }
-
-        public override void ActualReInitialise() {
-
-        }
-
-        public override void ActualShutdown() {
-
+        public void SetTimeStampMustBeNull() {
+            validators.Add(new Func<MessageMetadata, bool>((mmd) => {
+                Assert.NotNull(mmd);
+                Assert.Null(mmd.TimeStamp);
+                return true;
+            }));
         }
 
         internal void AssertContextIs(string v) {
@@ -92,12 +112,12 @@ namespace Plisky.Diagnostics.Test {
             return lastMessageData;
         }
 
-        internal void SetMethodNameMustContain(string v) {
-            MethodNameMustBe = v;
-        }
-
         internal void SetClassnameMustBe(string className) {
             ClassNameMustBe = className;
+        }
+
+        internal void SetMethodNameMustContain(string v) {
+            MethodNameMustBe = v;
         }
 
         internal void SetMustContainForBody(string v) {
@@ -193,34 +213,6 @@ namespace Plisky.Diagnostics.Test {
                 Assert.True(vl(md));
             }
             return true;
-        }
-
-        List<Func<MessageMetadata, bool>> validators = new List<Func<MessageMetadata, bool>>();
-
-        public void SetTimestampMustBe(DateTime? mustBeAfter, DateTime? mustBeBefore) {
-
-            validators.Add(new Func<MessageMetadata, bool>((mmd) => {
-
-                Assert.NotNull(mmd);
-                Assert.NotNull(mmd.TimeStamp);
-                if (mustBeAfter != null) {
-                    Assert.True(mmd.TimeStamp >= mustBeAfter);
-                }
-
-                if (mustBeBefore != null) {
-                    Assert.True(mmd.TimeStamp <= mustBeBefore);
-                }
-                return true;
-            }));
-
-        }
-
-        public void SetTimeStampMustBeNull() {
-            validators.Add(new Func<MessageMetadata, bool>((mmd) => {
-                Assert.NotNull(mmd);
-                Assert.Null(mmd.TimeStamp);
-                return true;
-            }));
         }
     }
 }

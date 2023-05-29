@@ -31,7 +31,7 @@
         [InlineData("[aaa][bbb][ccc[ddd]", 3)]
         [InlineData("aaa][][]", 2)]
         public void ChunkifyTest(string initString, int handlerStringCount) {
-            var res = BilgeConfigure.Chunkify(initString);
+            string[] res = BilgeConfigure.Chunkify(initString);
 
             Assert.Equal(handlerStringCount, res.Length);
         }
@@ -92,8 +92,8 @@
             bc.Configuration.ResolverInitString = "v-ph*";
             bc.Apply();
 
-            Bilge b = new Bilge("phalpha");
-            Bilge b2 = new Bilge("alpha");
+            var b = new Bilge("phalpha");
+            var b2 = new Bilge("alpha");
 
             Assert.Equal(SourceLevels.Verbose, b.ActiveTraceLevel);
             Assert.Equal(SourceLevels.Off, b2.ActiveTraceLevel);
@@ -270,5 +270,6 @@
 
 #endif
     }
+
 #pragma warning restore SA1600
 }

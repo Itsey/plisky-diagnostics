@@ -1,5 +1,4 @@
 ﻿namespace Plisky.Diagnostics.Test {
-
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -205,7 +204,7 @@
         }
 
         private void ReadAndApplyFromFile(string fn) {
-            var l = File.ReadAllText(fn);
+            string l = File.ReadAllText(fn);
             if (l != lastFileInitString) {
                 lastFileInitString = l;
                 ApplyConfiguration(lastFileInitString);

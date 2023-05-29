@@ -47,24 +47,20 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-#- task: VSTest@2
-#  inputs:
-#    platform: '$(buildPlatform)'
-#    configuration: '$(buildConfiguration)'
-
 - task: NuGetCommand@2
   inputs:
-    command: 'pack'
+    command: 'custom'
     packagesToPack: '**/PliskyDiagnostics.nuspec;'
     versioningScheme: 'off'
+    arguments: pack $(build.sourcesDirectory)\src\_Dependencies\Packaging\PliskyDiagnostics.nuspec -NonInteractive -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=Release -Symbols -Verbosity Detailed -SymbolPackageFormat snupkg
     includeSymbols: true
 
 - task: CmdLine@2
   inputs:
     script: |
       echo Stashing the completed Packages
-      del c:\files\publishing\Plisky.Diagnostics.*.nupkg /f
-      copy $(Build.ArtifactStagingDirectory)\Plisky.Diagnostics*.nupkg C:\files\publishing\ /Y      
+      del c:\files\publishing\Plisky.Diagnostics*.*nupkg /q
+      copy $(Build.ArtifactStagingDirectory)\Plisky.Diagnostics*.*nupkg C:\files\publishing\ /y
       
       echo Packages Copied.
 
@@ -73,6 +69,6 @@ steps:
     script: |
       @echo off
       echo Please Release me let me go
-      c:\files\buildtools\releasescripts\nugetpush.cmd C:\files\publishing\Plisky.Diagnostics*.nupkg      
+      c:\files\buildtools\releasescripts\nugetpush.cmd C:\files\publishing\Plisky.Diagnostics*.*nupkg      
 
       echo Done

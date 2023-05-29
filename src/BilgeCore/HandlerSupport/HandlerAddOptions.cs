@@ -1,10 +1,8 @@
 ﻿namespace Plisky.Diagnostics {
-
     /// <summary>
     /// Determines the behaviour on add handler
     /// </summary>
     public enum HandlerAddOptions {
-
         /// <summary>
         /// Allow duplicates
         /// </summary>

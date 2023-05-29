@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 
 namespace Plisky.Diagnostics {
-
     /// <summary>
     /// The dynamic trace class supports storing references to instances of Bilge so that trace can be changed dynamically.
     /// </summary>
@@ -22,6 +21,19 @@ namespace Plisky.Diagnostics {
             return newInstance;
         }
 
+        /// <summary>
+        /// Sets the resolver string to establish trace for new bilge instances
+        /// </summary>
+        /// <param name="newConfiguration">The configuration string to use</param>
+        public void SetConfigurationResolver(string newConfiguration) {
+            var cr = Bilge.SetConfigurationResolver(newConfiguration);
+            foreach (var l in bilgeInstances) {
+                if (l.TryGetTarget(out var nextInstance)) {
+                    string ctxt = nextInstance.GetContexts().First(x => x.Item1 == Bilge.BILGE_INSTANCE_CONTEXT_STR).Item2;
+                    nextInstance.ActiveTraceLevel = cr(ctxt, nextInstance.ActiveTraceLevel);
+                }
+            }
+        }
 
         /// <summary>
         /// Attempts to set the trace level on all instances that were created wtih the DynamicTrace CreateBilge method.
@@ -37,20 +49,6 @@ namespace Plisky.Diagnostics {
                 }
             }
             return instancesHit;
-        }
-
-        /// <summary>
-        /// Sets the resolver string to establish trace for new bilge instances
-        /// </summary>
-        /// <param name="newConfiguration">The configuration string to use</param>
-        public void SetConfigurationResolver(string newConfiguration) {
-            var cr = Bilge.SetConfigurationResolver(newConfiguration);
-            foreach (var l in bilgeInstances) {
-                if (l.TryGetTarget(out var nextInstance)) {
-                    var ctxt = nextInstance.GetContexts().First(x => x.Item1 == Bilge.BILGE_INSTANCE_CONTEXT_STR).Item2;
-                    nextInstance.ActiveTraceLevel = cr(ctxt, nextInstance.ActiveTraceLevel);
-                }
-            }
         }
     }
 }

@@ -1,14 +1,16 @@
 ﻿namespace Plisky.Diagnostics {
+
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
-    using System.Dynamic;
-    using System.Reflection;
     using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices.ComTypes;
 
+    /// <summary>
+    /// Partial BilgeWriter
+    /// </summary>
     public partial class BilgeWriter {
+
         /// <summary>
         /// Dumps an object into the trace stream, using a series of different approaches for displaying the object depending
         /// on the type of the object that is dumped.
@@ -23,123 +25,20 @@
         }
 
         /// <summary>
-        /// <para> TimeStart is used for rudementary timing of sections of code.  Time start will write a time start identifier to the
-        /// trace stream and start an internal timer.  When TimeStop is called for the same timer title then the value of the elapsed
-        /// time is written to the trace stream.</para><para>
-        /// The TimeStart method relies on a unique timerTitle to be passed to it.  There can only be one active timerTitle of the same
-        /// name at any one time.  Each TimeStart(timerTitle) method call must be matched with a TimeStop(timerTitle) method call to ensure
-        /// that the timing information is writtten to the trace stream.  timerTitles are case sensitive and must be specified exactly.
-        /// </para><para>
-        /// This is not a highly effective or accurate profilling mechanism but will suffice for quick timings.
-        /// </para>
+        /// The E override to provide a string will replace the automatically generated method name with the string that you
+        /// provide in the first parameter.
         /// </summary>
-        /// <remarks>
-        /// <para>This method is dependant on the DEBUG preprosessing identifier.</para>
-        /// <para>This method has a Trace level of Verbose.</para>
-        /// </remarks>
-        /// <exception cref="System.ArgumentNullException">Thrown when timerTitle is null or a zero length string.</exception>
-        /// <param name="timerTitle">The unique title for the timer that is being started.</param>
-        /// <param name="meth">The method name</param>
-        /// <param name="pth">The path to the file of source</param>
-        /// <param name="ln">The line number</param>
-
-        [Conditional("DEBUG")]
-        public void TimeStart(string timerTitle, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-            if (timerTitle == null || (timerTitle.Length == 0)) {
-                throw new ArgumentNullException(nameof(timerTitle), "timerTitle parameter cannot be null or empty for a call to TimeStart");
-            }
-
-            MessageMetadata mmd = new MessageMetadata(meth, pth, ln);
-            InternalTimeCheckpoint(mmd, timerTitle, Constants.TIMERNAME, true);
-        }
-
-        /// <summary>
-        /// <para> TimeStart is used for rudementary timing of sections of code.  Time start will write a time start identifier to the
-        /// trace stream and start an internal timer.  When TimeStop is called for the same timer title then the value of the elapsed
-        /// time is written to the trace stream.</para><para>
-        /// The TimeStart method relies on a unique timerTitle to be passed to it.  There can only be one active timerTitle of the same
-        /// name at any one time.  Each TimeStart(timerTitle) method call must be matched with a TimeStop(timerTitle) method call to ensure
-        /// that the timing information is writtten to the trace stream.  timerTitles are case sensitive and must be specified exactly.
-        /// </para><para>
-        /// This is not a highly effective or accurate profilling mechanism but will suffice for quick timings.
-        /// </para>
-        /// </summary>
-        /// <remarks>
-        /// <para>This method is dependant on the DEBUG preprosessing identifier.</para>
-        /// <para>This method has a Trace level of Verbose.</para>
-        /// </remarks>
-        /// <exception cref="System.ArgumentNullException">Thrown when timerTitle is null or a zero length string.</exception>
-        /// <param name="timerTitle">The unique title for the timer that is being started.</param>
-        /// <param name="timerCategoryName">A category describing a collection of related timings.</param>
-        /// <param name="meth">The method name</param>
-        /// <param name="pth">The path to the file of source</param>
-        /// <param name="ln">The line number</param>
-        [Conditional("DEBUG")]
-        public void TimeStart(string timerTitle, string timerCategoryName, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-
-            if (timerTitle == null || (timerTitle.Length == 0)) {
-                throw new ArgumentNullException(nameof(timerTitle), "timerTitle parameter cannot be null or empty for a call to TimeStart");
-            }
-
-            MessageMetadata mmd = new MessageMetadata(meth, pth, ln);
-            InternalTimeCheckpoint(mmd, timerTitle, timerCategoryName, true);
-        }
-
-        /// <summary>
-        /// <para> TimeStop will take a corresponding TimeStart entry and record the difference in milliseconds between the TimeStart and
-        /// TimeStop method calls.  The results of this along with the start and stop times will then be written to the debugging stream.</para>
-        /// <para> The TimeStop method requires that it is called with a timerTitle parameter that matches exactly a timerTitle that has
-        /// already been passed to a TimeStart method call. timerTitles are case sensitive and must be specified exactly.
-        /// </para><para>
-        /// This is not a highly effective or accurate profilling mechanism but will suffice for quick timings.
-        /// </para>
-        /// </summary>
-        /// <remarks>
-        /// <para>This method is dependant on the TRACE preprosessing identifier.</para>
-        /// <para>This method has a Trace level of Verbose.</para>
-        /// </remarks>
-        /// <exception cref="System.ArgumentNullException">Thrown when timerTitle is null or a zero length string.</exception>
-        /// <param name="timerTitle">The unique title for the timer that is being started.</param>
-        /// <param name="meth">The Method Name</param>
-        /// <param name="pth">The caller path</param>
-        /// <param name="ln">The Line Number</param>
+        /// <remarks><para>This method is dependant on the TRACE preprosessing identifier.</para></remarks>
+        /// <param name="entryContext">The name of the block being entered</param>
+        /// <param name="meth">The method name of the calling method.</param>
+        /// <param name="pth">The path to the file of source for the calling method.</param>
+        /// <param name="ln">The line number where the call was made.</param>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "E", Justification = "Maintained name for backward compatibility")]
         [Conditional("TRACE")]
-        public void TimeStop(string timerTitle, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-            if (timerTitle == null || (timerTitle.Length == 0)) {
-                throw new ArgumentNullException(nameof(timerTitle), "The timerTitle cannot be null or empty when calling TimeStop");
-            }
-
-            MessageMetadata mmd = new MessageMetadata(meth, pth, ln);
-            InternalTimeCheckpoint(mmd, timerTitle, Constants.TIMERNAME, false);
-        }
-
-        /// <summary>
-        /// <para> TimeStop will take a corresponding TimeStart entry and record the difference in milliseconds between the TimeStart and
-        /// TimeStop method calls.  The results of this along with the start and stop times will then be written to the debugging stream.</para>
-        /// <para> The TimeStop method requires that it is called with a timerTitle parameter that matches exactly a timerTitle that has
-        /// already been passed to a TimeStart method call. timerTitles are case sensitive and must be specified exactly.
-        /// </para><para>
-        /// This is not a highly effective or accurate profilling mechanism but will suffice for quick timings.
-        /// </para>
-        /// </summary>
-        /// <remarks>
-        /// <para>This method is dependant on the TRACE preprosessing identifier.</para>
-        /// <para>This method has a Trace level of Verbose.</para>
-        /// </remarks>
-        /// <exception cref="System.ArgumentNullException">Thrown when timerTitle is null or a zero length string.</exception>
-        /// <param name="timerTitle">The unique title for the timer that is being started.</param>
-        /// <param name="timerCategoryName">A category describing a collection of related timings.</param>
-        /// <param name="meth">The Method Name</param>
-        /// <param name="pth">The caller path</param>
-        /// <param name="ln">The Line Number</param>
-        public void TimeStop(string timerTitle, string timerCategoryName, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-
-            if (timerTitle == null || (timerTitle.Length == 0)) {
-                throw new ArgumentNullException("timerTitle", "The timerTitle cannot be null or empty when calling TimeStop");
-            }
-
-            MessageMetadata mmd = new MessageMetadata(meth, pth, ln);
-            InternalTimeCheckpoint(mmd, timerTitle, timerCategoryName, false);
+        public void E(string entryContext = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (entryContext == null) { entryContext = string.Empty; }
+            var mmd = new MessageMetadata(meth, pth, ln);
+            InternalE(mmd, entryContext);
         }
 
         /// <summary>
@@ -151,12 +50,24 @@
         /// <para>This method is dependant on the TRACE preprosessing identifier.</para>
         /// </remarks>
         /// <param name="sectionName">The friendly name of the secion</param>
-        /// <param name="meth">The Method Name</param>
-        /// <param name="pth">The caller path</param>
-        /// <param name="ln">The Line Number</param>
+        /// <param name="meth">The method name of the calling method.</param>
+        /// <param name="pth">The path to the file of source for the calling method.</param>
+        /// <param name="ln">The line number where the call was made.</param>
         [Conditional("TRACE")]
         public void EnterSection(string sectionName, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
             ActiveRouteMessage(TraceCommandTypes.SectionStart, sectionName, null, meth, pth, ln);
+        }
+
+        /// <summary>
+        /// Records the flow of program execution, by default tracing out the message name.
+        /// </summary>
+        /// <param name="moreInfo">Additional supporting trace information for the flow.</param>
+        /// <param name="meth">The method name calling the flow.</param>
+        /// <param name="pth">The path to the file of source.</param>
+        /// <param name="ln">The line number.</param>
+        public void Flow(string moreInfo = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            string msg = $"Flow [{meth}]";
+            DefaultRouteMessage(msg, moreInfo, meth, pth, ln);
         }
 
         /// <summary>
@@ -166,41 +77,12 @@
         /// <remarks>Disabling output per section not implemented yet
         /// <para>This method is dependant on the TRACE preprosessing identifier.</para>
         /// </remarks>
+        /// <param name="meth">The method name of the calling method.</param>
+        /// <param name="pth">The path to the file of source for the calling method.</param>
+        /// <param name="ln">The line number where the call was made.</param>
         [Conditional("TRACE")]
         public void LeaveSection([CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
             ActiveRouteMessage(TraceCommandTypes.SectionEnd, string.Empty, null, meth, pth, ln);
-        }
-
-        /// <summary>
-        /// The E override to provide a string will replace the automatically generated method name with the string that you
-        /// provide in the first parameter.
-        /// </summary>
-        /// <remarks><para>This method is dependant on the TRACE preprosessing identifier.</para></remarks>
-        /// <param name="entryContext">The name of the block being entered</param>
-        /// <param name="meth">The method name</param>
-        /// <param name="pth">The path to the file of source</param>
-        /// <param name="ln">The line number</param>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "E", Justification = "Maintained name for backward compatibility")]
-        [Conditional("TRACE")]
-        public void E(string entryContext = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-            if (entryContext == null) { entryContext = string.Empty; }
-            var mmd = new MessageMetadata(meth, pth, ln);
-            InternalE(mmd, entryContext);
-        }
-
-        /// <summary>
-        /// The X override is the indicator for leaving a block that has been entered with E.
-        /// </summary>
-        /// <remarks><para>This method is dependant on the TRACE preprosessing identifier.</para></remarks>
-        /// <param name="meth">The method name</param>
-        /// <param name="pth">The path to the file of source</param>
-        /// <param name="ln">The line number.</param>
-        /// <param name="exitContext">The context for the exit calling method.</param>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "X", Justification = "Maintained name for backward compatibility")]
-        public void X(string exitContext = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-            if (exitContext == null) { exitContext = string.Empty; }
-            var mmd = new MessageMetadata(meth, pth, ln);
-            InternalX(mmd, exitContext);
         }
 
         /// <summary>
@@ -228,7 +110,7 @@
             if (!IsWriting) { return; }
             var mmd = CreateMessageMetaData(baseCommandLevel, message, null, meth, pth, ln);
             if (context != null) {
-                foreach (var l in context.Keys) {
+                foreach (string l in context.Keys) {
                     mmd.MessageTags.Add(l, context[l]);
                 }
             }
@@ -289,15 +171,135 @@
         }
 
         /// <summary>
-        /// Records the flow of program execution, by default tracing out the message name.
+        /// <para> TimeStart is used for rudementary timing of sections of code.  Time start will write a time start identifier to the
+        /// trace stream and start an internal timer.  When TimeStop is called for the same timer title then the value of the elapsed
+        /// time is written to the trace stream.</para><para>
+        /// The TimeStart method relies on a unique timerTitle to be passed to it.  There can only be one active timerTitle of the same
+        /// name at any one time.  Each TimeStart(timerTitle) method call must be matched with a TimeStop(timerTitle) method call to ensure
+        /// that the timing information is writtten to the trace stream.  timerTitles are case sensitive and must be specified exactly.
+        /// </para><para>
+        /// This is not a highly effective or accurate profilling mechanism but will suffice for quick timings.
+        /// </para>
         /// </summary>
-        /// <param name="moreInfo">Additional supporting trace information for the flow.</param>
-        /// <param name="meth">The method name calling the flow.</param>
-        /// <param name="pth">The path to the file of source.</param>
-        /// <param name="ln">The line number.</param>
-        public void Flow(string moreInfo = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-            string msg = $"Flow [{meth}]";
-            DefaultRouteMessage(msg, moreInfo, meth, pth, ln);
+        /// <remarks>
+        /// <para>This method is dependant on the DEBUG preprosessing identifier.</para>
+        /// <para>This method has a Trace level of Verbose.</para>
+        /// </remarks>
+        /// <exception cref="System.ArgumentNullException">Thrown when timerTitle is null or a zero length string.</exception>
+        /// <param name="timerTitle">The unique title for the timer that is being started.</param>
+        /// <param name="meth">The method name</param>
+        /// <param name="pth">The path to the file of source</param>
+        /// <param name="ln">The line number</param>
+        [Conditional("DEBUG")]
+        public void TimeStart(string timerTitle, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (timerTitle == null || (timerTitle.Length == 0)) {
+                throw new ArgumentNullException(nameof(timerTitle), "timerTitle parameter cannot be null or empty for a call to TimeStart");
+            }
+
+            var mmd = new MessageMetadata(meth, pth, ln);
+            InternalTimeCheckpoint(mmd, timerTitle, Constants.TIMERNAME, true);
+        }
+
+        /// <summary>
+        /// <para> TimeStart is used for rudementary timing of sections of code.  Time start will write a time start identifier to the
+        /// trace stream and start an internal timer.  When TimeStop is called for the same timer title then the value of the elapsed
+        /// time is written to the trace stream.</para><para>
+        /// The TimeStart method relies on a unique timerTitle to be passed to it.  There can only be one active timerTitle of the same
+        /// name at any one time.  Each TimeStart(timerTitle) method call must be matched with a TimeStop(timerTitle) method call to ensure
+        /// that the timing information is writtten to the trace stream.  timerTitles are case sensitive and must be specified exactly.
+        /// </para><para>
+        /// This is not a highly effective or accurate profilling mechanism but will suffice for quick timings.
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// <para>This method is dependant on the DEBUG preprosessing identifier.</para>
+        /// <para>This method has a Trace level of Verbose.</para>
+        /// </remarks>
+        /// <exception cref="System.ArgumentNullException">Thrown when timerTitle is null or a zero length string.</exception>
+        /// <param name="timerTitle">The unique title for the timer that is being started.</param>
+        /// <param name="timerCategoryName">A category describing a collection of related timings.</param>
+        /// <param name="meth">The method name</param>
+        /// <param name="pth">The path to the file of source</param>
+        /// <param name="ln">The line number</param>
+        [Conditional("DEBUG")]
+        public void TimeStart(string timerTitle, string timerCategoryName, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (timerTitle == null || (timerTitle.Length == 0)) {
+                throw new ArgumentNullException(nameof(timerTitle), "timerTitle parameter cannot be null or empty for a call to TimeStart");
+            }
+
+            var mmd = new MessageMetadata(meth, pth, ln);
+            InternalTimeCheckpoint(mmd, timerTitle, timerCategoryName, true);
+        }
+
+        /// <summary>
+        /// <para> TimeStop will take a corresponding TimeStart entry and record the difference in milliseconds between the TimeStart and
+        /// TimeStop method calls.  The results of this along with the start and stop times will then be written to the debugging stream.</para>
+        /// <para> The TimeStop method requires that it is called with a timerTitle parameter that matches exactly a timerTitle that has
+        /// already been passed to a TimeStart method call. timerTitles are case sensitive and must be specified exactly.
+        /// </para><para>
+        /// This is not a highly effective or accurate profilling mechanism but will suffice for quick timings.
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// <para>This method is dependant on the TRACE preprosessing identifier.</para>
+        /// <para>This method has a Trace level of Verbose.</para>
+        /// </remarks>
+        /// <exception cref="System.ArgumentNullException">Thrown when timerTitle is null or a zero length string.</exception>
+        /// <param name="timerTitle">The unique title for the timer that is being started.</param>
+        /// <param name="meth">The Method Name</param>
+        /// <param name="pth">The caller path</param>
+        /// <param name="ln">The Line Number</param>
+        [Conditional("TRACE")]
+        public void TimeStop(string timerTitle, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (timerTitle == null || (timerTitle.Length == 0)) {
+                throw new ArgumentNullException(nameof(timerTitle), "The timerTitle cannot be null or empty when calling TimeStop");
+            }
+
+            var mmd = new MessageMetadata(meth, pth, ln);
+            InternalTimeCheckpoint(mmd, timerTitle, Constants.TIMERNAME, false);
+        }
+
+        /// <summary>
+        /// <para> TimeStop will take a corresponding TimeStart entry and record the difference in milliseconds between the TimeStart and
+        /// TimeStop method calls.  The results of this along with the start and stop times will then be written to the debugging stream.</para>
+        /// <para> The TimeStop method requires that it is called with a timerTitle parameter that matches exactly a timerTitle that has
+        /// already been passed to a TimeStart method call. timerTitles are case sensitive and must be specified exactly.
+        /// </para><para>
+        /// This is not a highly effective or accurate profilling mechanism but will suffice for quick timings.
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// <para>This method is dependant on the TRACE preprosessing identifier.</para>
+        /// <para>This method has a Trace level of Verbose.</para>
+        /// </remarks>
+        /// <exception cref="System.ArgumentNullException">Thrown when timerTitle is null or a zero length string.</exception>
+        /// <param name="timerTitle">The unique title for the timer that is being started.</param>
+        /// <param name="timerCategoryName">A category describing a collection of related timings.</param>
+        /// <param name="meth">The Method Name</param>
+        /// <param name="pth">The caller path</param>
+        /// <param name="ln">The Line Number</param>
+        public void TimeStop(string timerTitle, string timerCategoryName, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (timerTitle == null || (timerTitle.Length == 0)) {
+                throw new ArgumentNullException("timerTitle", "The timerTitle cannot be null or empty when calling TimeStop");
+            }
+
+            var mmd = new MessageMetadata(meth, pth, ln);
+            InternalTimeCheckpoint(mmd, timerTitle, timerCategoryName, false);
+        }
+
+        /// <summary>
+        /// The X override is the indicator for leaving a block that has been entered with E.
+        /// </summary>
+        /// <remarks><para>This method is dependant on the TRACE preprosessing identifier.</para></remarks>
+        /// <param name="exitContext">The context for the exit calling method.</param>
+        /// <param name="meth">The method name of the calling method.</param>
+        /// <param name="pth">The path to the file of source for the calling method.</param>
+        /// <param name="ln">The line number where the call was made.</param>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "X", Justification = "Maintained name for backward compatibility")]
+        public void X(string exitContext = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (exitContext == null) { exitContext = string.Empty; }
+            var mmd = new MessageMetadata(meth, pth, ln);
+            InternalX(mmd, exitContext);
         }
     }
 }

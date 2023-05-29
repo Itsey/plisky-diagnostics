@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plisky.Diagnostics.Test {
+﻿namespace Plisky.Diagnostics.Test {
 
     using System.Diagnostics;
     using FluentAssertions;
@@ -10,26 +8,6 @@ namespace Plisky.Diagnostics.Test {
 
     [Collection(nameof(QueueSensitiveTestCollectionDefinition))]
     public class ExploratoryAndUserStoryTests {
-
-        [Theory(DisplayName = nameof(ErrorReturnsErrorCode))]
-        [Trait(Traits.Age, Traits.Fresh)]
-        [Trait(Traits.Style, Traits.Unit)]
-        [InlineData(0x00010001)]
-        [InlineData(0x10011001)]
-        [InlineData(55)]
-        [InlineData(12345678)]
-        [InlineData(0)]
-        [InlineData(-1)]
-        [InlineData(int.MaxValue)]
-        [InlineData(int.MinValue)]
-        public void ErrorReturnsErrorCode(int hResult) {
-
-            var sut = TestHelper.GetBilgeAndClearDown();
-            var result = sut.Error.Record(new ErrorDescription(hResult, "this context"));
-
-            result.Should().Be(hResult);
-        }
-
 
         [Fact(DisplayName = nameof(Action_CallCount_IncrementsEachTime))]
         [Trait(Traits.Age, Traits.Fresh)]
@@ -58,6 +36,21 @@ namespace Plisky.Diagnostics.Test {
             }, "default");
 
             sut.Action.Occured("test", "dummy");
+        }
+
+        [Fact(DisplayName = nameof(Action_RegisterAnUnregisterHandler_LeavesNone))]
+        [Trait(Traits.Age, Traits.Fresh)]
+        [Trait(Traits.Style, Traits.Unit)]
+        public void Action_RegisterAnUnregisterHandler_LeavesNone() {
+            var sut = TestHelper.GetBilgeAndClearDown();
+            int actionCount = 0;
+            System.Action<IBilgeActionEvent> action = (x) => {
+                actionCount++;
+            };
+            bool res = sut.Action.RegisterHandler(action, "default");
+            sut.Action.UnregisterHandler(action, "default");
+            sut.Action.Occured("default", string.Empty);
+            actionCount.Should().Be(0);
         }
 
         [Fact(DisplayName = nameof(Action_RegisterHandler_Works))]
@@ -95,21 +88,6 @@ namespace Plisky.Diagnostics.Test {
             }, "default"); // Add some context to filter on
 
             Assert.True(res2);
-        }
-
-        [Fact(DisplayName = nameof(Action_RegisterAnUnregisterHandler_LeavesNone))]
-        [Trait(Traits.Age, Traits.Fresh)]
-        [Trait(Traits.Style, Traits.Unit)]
-        public void Action_RegisterAnUnregisterHandler_LeavesNone() {
-            var sut = TestHelper.GetBilgeAndClearDown();
-            int actionCount = 0;
-            System.Action<IBilgeActionEvent> action = (x) => {
-                actionCount++;
-            };
-            bool res = sut.Action.RegisterHandler(action, "default");
-            sut.Action.UnregisterHandler(action, "default");
-            sut.Action.Occured("default", string.Empty);
-            actionCount.Should().Be(0);
         }
 
         [Fact(DisplayName = nameof(Action_RightData_SentToHandler))]
@@ -155,6 +133,24 @@ namespace Plisky.Diagnostics.Test {
             sut.Flush();
 
             Assert.True(mmh.TotalMessagesRecieved > 0);
+        }
+
+        [Theory(DisplayName = nameof(ErrorReturnsErrorCode))]
+        [Trait(Traits.Age, Traits.Fresh)]
+        [Trait(Traits.Style, Traits.Unit)]
+        [InlineData(0x00010001)]
+        [InlineData(0x10011001)]
+        [InlineData(55)]
+        [InlineData(12345678)]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(int.MaxValue)]
+        [InlineData(int.MinValue)]
+        public void ErrorReturnsErrorCode(int hResult) {
+            var sut = TestHelper.GetBilgeAndClearDown();
+            var result = sut.Error.Record(new ErrorDescription(hResult, "this context"));
+
+            result.Should().Be(hResult);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿namespace Plisky.Diagnostics {
+
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
     using Plisky.Plumbing;
 
     /// <summary>
@@ -54,7 +53,6 @@
                 var csf = InternalUtil.GetCallingStackFrame();
                 mmd.ClassName = csf.Item1;
             }
-
 
             if (sets.TraceConfig.AddTimestamps) {
                 mmd.TimeStamp = DateTime.Now;

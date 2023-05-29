@@ -1,5 +1,6 @@
 ﻿namespace Plisky.Diagnostics.Test {
 #pragma warning disable SA1600
+
     using System.Diagnostics;
     using Plisky.Diagnostics;
     using Xunit;
@@ -11,7 +12,7 @@
         [Fact(DisplayName = nameof(Resolver_Exploratory1))]
         [Trait("age", "fresh")]
         public void Resolver_Exploratory1() {
-            Bilge b = TestHelper.GetBilgeAndClearDown();
+            var b = TestHelper.GetBilgeAndClearDown();
             Assert.True(b.ActiveTraceLevel == SourceLevels.Off);
         }
 
@@ -25,7 +26,7 @@
                     return SourceLevels.Off;
                 });
 
-                Bilge b = new Bilge(INAME, tl: SourceLevels.Critical);
+                var b = new Bilge(INAME, tl: SourceLevels.Critical);
             } finally {
                 Bilge.ClearConfigurationResolver();
             }
@@ -39,7 +40,7 @@
                     Assert.Equal(INAME, nm);
                     return SourceLevels.Off;
                 });
-                Bilge b = new Bilge(INAME);
+                var b = new Bilge(INAME);
             } finally {
                 Bilge.ClearConfigurationResolver();
             }
@@ -51,7 +52,7 @@
                 Bilge.SetConfigurationResolver((nm, def) => {
                     return SourceLevels.Verbose;
                 });
-                Bilge b = new Bilge();
+                var b = new Bilge();
 
                 Assert.Equal(SourceLevels.Verbose, b.ActiveTraceLevel);
             } finally {
@@ -61,7 +62,7 @@
 
         [Fact(DisplayName = nameof(SourceLevel_ContstrucorVerboseIncludesSubLevels1))]
         public void SourceLevel_ContstrucorVerboseIncludesSubLevels1() {
-            Bilge b = TestHelper.GetBilgeAndClearDown(sl: SourceLevels.Verbose);
+            var b = TestHelper.GetBilgeAndClearDown(sl: SourceLevels.Verbose);
 
             Assert.True((b.ActiveTraceLevel & SourceLevels.Verbose) == SourceLevels.Verbose);
             Assert.True((b.ActiveTraceLevel & SourceLevels.Information) == SourceLevels.Information);
@@ -70,7 +71,7 @@
 
         [Fact(DisplayName = nameof(SourceLevel_ContstrucorVerboseIncludesSubLevels2))]
         public void SourceLevel_ContstrucorVerboseIncludesSubLevels2() {
-            Bilge b = TestHelper.GetBilgeAndClearDown(sl: SourceLevels.Error);
+            var b = TestHelper.GetBilgeAndClearDown(sl: SourceLevels.Error);
 
             Assert.False((b.ActiveTraceLevel & SourceLevels.Verbose) == SourceLevels.Verbose);
             Assert.False((b.ActiveTraceLevel & SourceLevels.Information) == SourceLevels.Information);
@@ -79,7 +80,7 @@
 
         [Fact(DisplayName = nameof(SourceLevel_ContstrucorVerboseIncludesSubLevels3))]
         public void SourceLevel_ContstrucorVerboseIncludesSubLevels3() {
-            Bilge b = TestHelper.GetBilgeAndClearDown(sl: SourceLevels.Information);
+            var b = TestHelper.GetBilgeAndClearDown(sl: SourceLevels.Information);
 
             Assert.False((b.ActiveTraceLevel & SourceLevels.Verbose) == SourceLevels.Verbose);
             Assert.True((b.ActiveTraceLevel & SourceLevels.Information) == SourceLevels.Information);

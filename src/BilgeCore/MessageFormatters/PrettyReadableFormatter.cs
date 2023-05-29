@@ -5,7 +5,6 @@
     /// Holds the logic for a formatter designed to be read by people - e.g. for writing to files.
     /// </summary>
     public class PrettyReadableFormatter : BaseMessageFormatter {
-
         /// <summary>
         /// Converts a MessageMetadata into a string, making it readable for people.
         /// </summary>

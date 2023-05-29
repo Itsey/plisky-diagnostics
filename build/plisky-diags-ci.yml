@@ -10,7 +10,7 @@ pool:
  name: 'FarawayLand'  
 
 variables:
-  solution: '$(build.sourcesDirectory)\src\PliskyDiagnostics_Publish.sln'
+  solution: '$(build.sourcesDirectory)\src\PliskyDiagnostics_Dev.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   buildVersionNumber: 'XXX-INVALID-XXX'

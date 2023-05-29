@@ -8,7 +8,6 @@
     /// Determines the behaviour of the assertion failure in Bilge.
     /// </summary>
     public enum AssertionStyle {
-
         /// <summary>
         /// No action is taken, the assertion is ignored.
         /// </summary>
@@ -34,7 +33,6 @@
     /// Provides Assertion support into Bilge.
     /// </summary>
     public class BilgeAssert : BilgeRoutedBase {
-
         /// <summary>
         /// Holds the associated error instance of bilge which is where the error numbers are captured.
         /// </summary>
@@ -74,6 +72,7 @@
 #if NETCOREAPP
         [DoesNotReturn]
 #endif
+
         [Conditional("DEBUG")]
         public void Fail(string msg, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
             ActiveRouteMessage(TraceCommandTypes.AssertionFailed, msg, null, meth, pth, ln);
@@ -88,11 +87,7 @@
         /// <param name="pth">The path to the file of source for the calling method.</param>
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("DEBUG")]
-#if NETCOREAPP
-        public void False([DoesNotReturnIf(true)] bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-#else
         public void False(bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-#endif
             True(!what, msg, meth, pth, ln);
         }
 
@@ -132,11 +127,7 @@
         /// <param name="pth">The path to the file of source for the calling method.</param>
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("DEBUG")]
-#if NETCOREAPP
-        public void True([DoesNotReturnIf(false)] bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-#else
         public void True(bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-#endif
             if (!what) {
                 ActiveRouteMessage(TraceCommandTypes.AssertionFailed, msg, null, meth, pth, ln);
             }

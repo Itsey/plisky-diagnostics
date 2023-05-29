@@ -1,4 +1,5 @@
 ﻿namespace Plisky.Diagnostics {
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -11,8 +12,6 @@
     /// Primary message router
     /// </summary>
     public abstract class BilgeRouter {
-        [DllImport("kernel32.dll")]
-        private static extern uint GetCurrentThreadId();
 
         /// <summary>
         /// Provides access to all the call counts of action calls
@@ -56,7 +55,11 @@
 
         private volatile int messageQueueMaximum = -1;
 
+        [DllImport("kernel32.dll")]
+        private static extern uint GetCurrentThreadId();
+
         /// <summary>
+        /// Initializes a new instance of the <see cref="BilgeRouter"/> class.
         /// Constructor for the router
         /// </summary>
         /// <param name="processId">The process ID associated with this router</param>
@@ -146,6 +149,11 @@
         protected string ProcessIdCache { get; private set; }
 
         /// <summary>
+        /// Determines whether the code sould try and retrieve the current thread id, if an error occurs this is set to false to prevent retries.
+        /// </summary>
+        protected bool ShouldGetCurrentThreadId { get; set; } = true;
+
+        /// <summary>
         /// Flips the router to being a single threaded router that is suited for environments that can not
         /// support threads being created.
         /// </summary>
@@ -207,11 +215,6 @@
         /// Shut everything down.
         /// </summary>
         public abstract void ActualShutdown();
-
-        /// <summary>
-        /// Determines whether the code sould try and retrieve the current thread id, if an error occurs this is set to false to prevent retries.
-        /// </summary>
-        protected bool ShouldGetCurrentThreadId { get; set; } = true;
 
         /// <summary>
         /// Adds an action handler ( V3.x onwards)
@@ -361,6 +364,10 @@
             }
         }
 
+        /// <summary>
+        /// Returns all the handlers statuses.
+        /// </summary>
+        /// <returns>A string of handler statuses</returns>
         internal string GetHandlerStatuses() {
             var sb = new StringBuilder();
 
@@ -390,33 +397,6 @@
         /// <returns>True if currently clean</returns>
         internal bool IsClean() {
             return ActualIsClean();
-        }
-
-        /// <summary>
-        /// Returns the underlying operating system thread id as a string, or null if that functon is not avaialable on the current platform, if an exception occurs trying to
-        /// retrieve the id then the function will return null from then on.
-        /// </summary>
-        /// <returns>A string value of the OS thread ID or null if it can not be returned.</returns>
-        protected string GetCurrentOperatingSystemThreadId() {
-            if (ShouldGetCurrentThreadId) {
-                try {
-                    uint threadId = 0;
-#if NETCOREAPP
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                        ShouldGetCurrentThreadId = false;
-#else
-                    threadId = GetCurrentThreadId();
-#endif
-#if NETCOREAPP
-                }
-#endif
-
-                    return threadId.ToString();
-                } catch (DllNotFoundException) {
-                    ShouldGetCurrentThreadId = false;
-                }
-            }
-            return null;
         }
 
         /// <summary>
@@ -482,6 +462,33 @@
             }
 #endif
             handlers = replacement;
+        }
+
+        /// <summary>
+        /// Returns the underlying operating system thread id as a string, or null if that functon is not avaialable on the current platform, if an exception occurs trying to
+        /// retrieve the id then the function will return null from then on.
+        /// </summary>
+        /// <returns>A string value of the OS thread ID or null if it can not be returned.</returns>
+        protected string GetCurrentOperatingSystemThreadId() {
+            if (ShouldGetCurrentThreadId) {
+                try {
+                    uint threadId = 0;
+#if NETCOREAPP
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                        ShouldGetCurrentThreadId = false;
+#else
+                    threadId = GetCurrentThreadId();
+#endif
+#if NETCOREAPP
+                }
+#endif
+
+                    return threadId.ToString();
+                } catch (DllNotFoundException) {
+                    ShouldGetCurrentThreadId = false;
+                }
+            }
+            return null;
         }
 
         /// <summary>

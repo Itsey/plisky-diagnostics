@@ -178,8 +178,4 @@
             b.Warning.Log("Test message");
         }
     }
-
-    public class TestObject {
-        public string Stringvalue;
-    }
 }

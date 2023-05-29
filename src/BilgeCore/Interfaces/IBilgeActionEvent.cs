@@ -1,10 +1,8 @@
 ﻿namespace Plisky.Diagnostics {
-
     /// <summary>
     /// Interface for action support
     /// </summary>
     public interface IBilgeActionEvent {
-
         /// <summary>
         /// Number of times action occured
         /// </summary>
