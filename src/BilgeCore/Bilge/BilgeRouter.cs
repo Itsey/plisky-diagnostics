@@ -400,7 +400,11 @@
         protected string GetCurrentOperatingSystemThreadId() {
             if (ShouldGetCurrentThreadId) {
                 try {
-                    uint threadId = GetCurrentThreadId();
+                    uint threadId = 0;
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                        ShouldGetCurrentThreadId = false;
+                        threadId = GetCurrentThreadId();
+                    }
                     return threadId.ToString();
                 } catch (DllNotFoundException) {
                     ShouldGetCurrentThreadId = false;
