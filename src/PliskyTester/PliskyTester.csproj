@@ -17,8 +17,6 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\..\Packages\StyleCop.Analyzers.Unstable.1.2.0.354\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\..\Packages\StyleCop.Analyzers.Unstable.1.2.0.354\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  <ItemGroup>    
   </ItemGroup>
 </Project>
