@@ -10,9 +10,10 @@
     public class FlimFlamMsgFormat3Tests {
 #if NETCOREAPP
 
-        [Fact]
+        // Todo : Fix pathing.
+        [Fact(Skip ="Rediculous hard coded path!")]
         public void TestIncoming() {
-            string[] l = File.ReadAllLines(@"C:\Files\Code\git\PliskyDiagnostics\src\_Dependencies\TestData\deserialisedmessages.txt");
+            string[] l = File.ReadAllLines(@"XXX FIX ME XXX \_Dependencies\TestData\deserialisedmessages.txt");
             foreach (string x in l) {
                 var res = JsonSerializer.Deserialize<MessageMetaDataTransport>(x);
                 Assert.NotNull(res);
