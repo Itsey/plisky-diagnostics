@@ -10,10 +10,10 @@ pool:
  name: 'FarawayLand'  
 
 variables:
-  solution: '$(build.sourcesDirectory)\src\PliskyDiagnostics_Publish.sln'
+  solution: '$(build.sourcesDirectory)\src\PliskyDiagnostics_Dev.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  buildVersionNumber: '0.0.0.0'
+  buildVersionNumber: 'XXX-INVALID-XXX'
 
 steps:
 - task: NuGetToolInstaller@1
