@@ -59,8 +59,8 @@ steps:
   inputs:
     script: |
       echo Stashing the completed Packages
-      del c:\files\publishing\Plisky.Diagnostics*.*nupkg /q
-      copy $(Build.ArtifactStagingDirectory)\Plisky.Diagnostics*.*nupkg C:\files\publishing\ /y
+      del c:\files\publishing\Plisky.Diagnostics* /q
+      copy $(Build.ArtifactStagingDirectory)\Plisky.Diagnostics* C:\files\publishing\ /y
       
       echo Packages Copied.
 
