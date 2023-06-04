@@ -1,6 +1,6 @@
 ﻿namespace Plisky.Diagnostics.Test {
-    using Xunit;
 
+    using Xunit;
 
 #pragma warning disable SA1402 // File may only contain a single type
 
@@ -15,9 +15,7 @@
     /// Required to enable paralell test cases
     /// </summary>
     [CollectionDefinition(nameof(QueueSensitiveTestCollectionDefinition))]
-
     public class ParalellEnabledTestCollection {
-
     }
 
 #pragma warning restore SA1402 // File may only contain a single type

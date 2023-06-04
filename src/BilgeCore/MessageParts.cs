@@ -31,6 +31,11 @@
         public string MachineName;
 
         /// <summary>
+        /// Requires replacements
+        /// </summary>
+        public bool MessagePartsRequiresReplacements;
+
+        /// <summary>
         /// message type
         /// </summary>
         public string MessageType;
@@ -44,11 +49,6 @@
         /// module name
         /// </summary>
         public string ModuleName;
-
-        /// <summary>
-        /// Requires replacements
-        /// </summary>
-        public bool MessagePartsRequiresReplacements;
 
         /// <summary>
         /// net thread id
@@ -86,7 +86,7 @@
         public bool TriggerRefresh;
 
         /// <summary>
-        /// default constructor
+        /// Initializes a new instance of the <see cref="MessageParts"/> class.
         /// </summary>
         public MessageParts() {
             MachineName = ModuleName = ClassName = MethodName = LineNumber = OSThreadId = NetThreadId = MessageType = DebugMessage = SecondaryMessage = AdditionalLocationData = ProcessId = string.Empty;

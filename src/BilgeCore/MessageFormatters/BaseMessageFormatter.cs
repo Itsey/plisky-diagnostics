@@ -1,5 +1,4 @@
 ﻿namespace Plisky.Diagnostics {
-
     using System;
     using System.Threading;
 
@@ -7,7 +6,6 @@
     /// BaseMessageFormatter is a base class for formatting trace messages
     /// </summary>
     public abstract class BaseMessageFormatter : IMessageFormatter {
-
         /// <summary>
         /// Default value for uniqueness reference
         /// </summary>
@@ -18,7 +16,7 @@
         /// </summary>
         protected MessageFormatterOptions mfo;
 
-        private static readonly string truncationCache = Constants.MESSAGETRUNCATE + "[" + Environment.MachineName + "][{0}" + Constants.TRUNCATE_DATAENDMARKER;
+        private static readonly string TruncationCache = Constants.MESSAGETRUNCATE + "[" + Environment.MachineName + "][{0}" + Constants.TRUNCATE_DATAENDMARKER;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseMessageFormatter"/> class.
@@ -44,7 +42,7 @@
         /// </summary>
         /// <param name="theLongString">The string that is to be chopped up into smaller strings</param>
         /// <param name="theLength">The length at which the smaller strings are to be created</param>
-        /// <returns></returns>
+        /// <returns>The input string split into an array.</returns>
         public static string[] MakeManyStrings(string theLongString, int theLength) {
             if (theLongString == null) { return null; }
             if (theLength <= 0) { throw new ArgumentException("theLength parameter cannot be <=0 for MakeManyStrings method"); }
@@ -81,7 +79,7 @@
 #endif
 
             string truncJoinIdentifier = Thread.CurrentThread.GetHashCode().ToString();
-            string truncateStartIdentifier = string.Format(truncationCache, truncJoinIdentifier);
+            string truncateStartIdentifier = string.Format(TruncationCache, truncJoinIdentifier);
             result[0] = result[0] + Constants.MESSAGETRUNCATE + truncJoinIdentifier + Constants.MESSAGETRUNCATE;
             for (int i = 1; i < result.Length - 1; i++) {
                 result[i] = truncateStartIdentifier + result[i] + Constants.MESSAGETRUNCATE;
@@ -90,12 +88,11 @@
             return result;
         }
 
-
         /// <summary>
-        /// replaces line feeds with double quoted text
+        /// replaces line feeds with double quoted text.
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <param name="input">A string to escape.</param>
+        /// <returns>The escaped string</returns>
         protected string EscapeString(string input) {
             return input.Replace("\n", "\\n").Replace("\"", "\\\"").Replace("\\", "\\\\");
         }
@@ -112,9 +109,9 @@
         /// <summary>
         /// Converts the messsage using the supplied uniqueness reference
         /// </summary>
-        /// <param name="msg"></param>
-        /// <param name="uniquenessReference"></param>
-        /// <returns></returns>
+        /// <param name="msg">The message that is to be converted.</param>
+        /// <param name="uniquenessReference">A uniqueness reference for context.</param>
+        /// <returns>The string forming the converted message.</returns>
         public string ConvertWithReference(MessageMetadata msg, string uniquenessReference) {
             if (msg == null) {
                 throw new ArgumentNullException(nameof(msg), "Can not convert a null message data");
@@ -123,7 +120,7 @@
                 uniquenessReference = DEFAULT_UQR;
             }
             msg.NullsToEmptyStrings();
-            var result = DefaultConvertWithReference(msg, uniquenessReference);
+            string result = DefaultConvertWithReference(msg, uniquenessReference);
             if (mfo.AppendNewline && (!result.EndsWith(Environment.NewLine))) {
                 result = result + Environment.NewLine;
             }

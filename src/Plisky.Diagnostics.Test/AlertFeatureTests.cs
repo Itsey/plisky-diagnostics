@@ -1,4 +1,5 @@
 ﻿namespace Plisky.Diagnostics.Test {
+
     using Plisky.Diagnostics.Copy;
     using Xunit;
 
@@ -9,7 +10,7 @@
         [Trait(Traits.Age, Traits.Fresh)]
         [Trait(Traits.Style, Traits.Unit)]
         public void BasicAlert_GetsWritten_TraceOff() {
-            Bilge sut = TestHelper.GetBilgeAndClearDown();
+            var sut = TestHelper.GetBilgeAndClearDown();
 
             var mmh = new MockMessageHandler();
             sut.AddHandler(mmh);
@@ -19,6 +20,5 @@
 
             Assert.True(mmh.AssertThisMessageMustExist("test-appname"));
         }
-
     }
 }

@@ -1,5 +1,4 @@
 ﻿namespace Plisky.Diagnostics {
-
     using System.Collections.Generic;
     using System.Diagnostics;
 
@@ -10,6 +9,7 @@
         private List<string> handlers = new List<string>();
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="BilgeConfiguration"/> class.
         /// Default constructor
         /// </summary>
         public BilgeConfiguration() {
@@ -45,7 +45,7 @@
         /// <summary>
         /// Add a handler using a configuration string.
         /// </summary>
-        /// <param name="handlerString"></param>
+        /// <param name="handlerString">The handler string</param>
         public void AddHandler(string handlerString) {
             handlers.Add(handlerString);
         }

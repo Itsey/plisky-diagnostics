@@ -13,45 +13,11 @@
         [Trait(Traits.Age, Traits.Fresh)]
         [Trait(Traits.Style, Traits.Unit)]
         public void BasicConfiguration_StartsEmpty() {
-            BilgeConfiguration bc = new BilgeConfiguration();
+            var bc = new BilgeConfiguration();
 
             Assert.Empty(bc.HandlerStrings);
             Assert.Equal(SourceLevels.Off, bc.OverallSourceLevel);
         }
-
-        [Fact(DisplayName = nameof(TraceConfig_TimestampTrue_AddsTimestamp))]
-        [Trait("V", "2")]
-        [Trait(Traits.Age, Traits.Regression)]
-        public void TraceConfig_TimestampTrue_AddsTimestamp() {
-            var mkHandler = new MockRouter();
-            mkHandler.SetTimestampMustBe(DateAndTime.Now.Subtract(new TimeSpan(0, 2, 0)), DateAndTime.Now.Add(new TimeSpan(0, 2, 0)));
-            var sut = TestHelper.GetBilgeAndClearDown(mkHandler);
-            sut.ActiveTraceLevel = SourceLevels.Verbose;
-
-            sut.ConfigureTrace(new TraceConfiguraton() {
-                AddTimestamps = true
-            });
-
-            sut.Info.Log("Hi");
-
-            mkHandler.AssertAllConditionsMetForAllMessages(true);
-        }
-
-        [Fact(DisplayName = nameof(TraceConfig_Timestamp_StartsOff))]
-        [Trait("V", "2")]
-        [Trait(Traits.Age, Traits.Regression)]
-        public void TraceConfig_Timestamp_StartsOff() {
-            var mkHandler = new MockRouter();
-            mkHandler.SetTimeStampMustBeNull();
-            var sut = TestHelper.GetBilgeAndClearDown(mkHandler);
-            sut.ActiveTraceLevel = SourceLevels.Verbose;
-
-
-            sut.Info.Log("Hi");
-
-            mkHandler.AssertAllConditionsMetForAllMessages(true);
-        }
-
 
         [Theory(DisplayName = nameof(ConfigResolver_InitStringCreatesResolver))]
         [Trait(Traits.Age, Traits.Fresh)]
@@ -75,11 +41,43 @@
         [InlineData("e-*bob;;;v-mik*;", "applebob", SourceLevels.Error)]
         [InlineData("e-*bob;v-mik*", "monkey", SourceLevels.Off)]
         public void ConfigResolver_InitStringCreatesResolver(string init, string instance, SourceLevels result) {
-            Func<string, SourceLevels, SourceLevels> sut = Bilge.SetConfigurationResolver(init);
+            var sut = Bilge.SetConfigurationResolver(init);
 
             var res = sut(instance, SourceLevels.Off);
 
             Assert.Equal(result, res);
+        }
+
+        [Fact(DisplayName = nameof(TraceConfig_Timestamp_StartsOff))]
+        [Trait("V", "2")]
+        [Trait(Traits.Age, Traits.Regression)]
+        public void TraceConfig_Timestamp_StartsOff() {
+            var mkHandler = new MockRouter();
+            mkHandler.SetTimeStampMustBeNull();
+            var sut = TestHelper.GetBilgeAndClearDown(mkHandler);
+            sut.ActiveTraceLevel = SourceLevels.Verbose;
+
+            sut.Info.Log("Hi");
+
+            mkHandler.AssertAllConditionsMetForAllMessages(true);
+        }
+
+        [Fact(DisplayName = nameof(TraceConfig_TimestampTrue_AddsTimestamp))]
+        [Trait("V", "2")]
+        [Trait(Traits.Age, Traits.Regression)]
+        public void TraceConfig_TimestampTrue_AddsTimestamp() {
+            var mkHandler = new MockRouter();
+            mkHandler.SetTimestampMustBe(DateAndTime.Now.Subtract(new TimeSpan(0, 2, 0)), DateAndTime.Now.Add(new TimeSpan(0, 2, 0)));
+            var sut = TestHelper.GetBilgeAndClearDown(mkHandler);
+            sut.ActiveTraceLevel = SourceLevels.Verbose;
+
+            sut.ConfigureTrace(new TraceConfiguration() {
+                AddTimestamps = true
+            });
+
+            sut.Info.Log("Hi");
+
+            mkHandler.AssertAllConditionsMetForAllMessages(true);
         }
     }
 }

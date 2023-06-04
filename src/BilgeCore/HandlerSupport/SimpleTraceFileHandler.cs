@@ -12,6 +12,7 @@
         private WeakReference lastTask;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="SimpleTraceFileHandler"/> class.
         /// This will create a simple text file listener designed for reading by a person, not for importing into
         /// a trace reader.
         /// </summary>
@@ -69,6 +70,7 @@
         }
 
 #if !NET40ONLY
+
         /// <summary>
         /// modern async handle
         /// </summary>
@@ -87,6 +89,7 @@
                 await tsk;
             }
         }
+
 #endif
 
         /// <summary>
@@ -114,7 +117,7 @@
         /// <summary>
         /// get the status
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The status for the listener.</returns>
         public string GetStatus() {
             return $"Writing to {TraceFilename}";
         }

@@ -1,5 +1,4 @@
 ﻿namespace Plisky.Diagnostics {
-
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
@@ -8,7 +7,6 @@
     /// Performs basic logging at the error level but also adds features to support the reporting and recording of errors using hResult error codes.
     /// </summary>
     public class ErrorWriter : BilgeWriter {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ErrorWriter"/> class.
         /// </summary>

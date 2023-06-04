@@ -13,7 +13,7 @@
         /// Initializes a new instance of the <see cref="BilgeAction"/> class.
         /// Create an action with the current config
         /// </summary>
-        /// <param name="activeConfig"></param>
+        /// <param name="activeConfig">The currently active configuration.</param>
         public BilgeAction(ConfigSettings activeConfig) {
             cfg = activeConfig;
         }
@@ -21,8 +21,8 @@
         /// <summary>
         /// Called to indicate an action has failed to occur or failed to execute
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="data"></param>
+        /// <param name="name">The action name.</param>
+        /// <param name="data">The action supporing data.</param>
         public void Failed(string name, string data) {
             Failed(name, data, null);
         }
@@ -30,18 +30,18 @@
         /// <summary>
         /// Called to indicate an action has failed to occur or failed to execute
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="data"></param>
-        /// <param name="value"></param>
+        /// <param name="name">The action name.</param>
+        /// <param name="data">The action supporing data.</param>
+        /// <param name="value">An assoicated value for the event.</param>
         public void Failed(string name, string data, string value) {
-            SimpleActionEvent sae = new SimpleActionEvent(name, data, value, false);
+            var sae = new SimpleActionEvent(name, data, value, false);
             Failed(sae);
         }
 
         /// <summary>
         /// Called to indicate an action has failed to occur or failed to execute
         /// </summary>
-        /// <param name="evt"></param>
+        /// <param name="evt">The ActionEvent handler.</param>
         public void Failed(IBilgeActionEvent evt) {
             BilgeRouter.Router.ActionOccurs(evt, cfg);
         }
@@ -49,7 +49,7 @@
         /// <summary>
         /// Called to indicate an action has occured
         /// </summary>
-        /// <param name="evt"></param>
+        /// <param name="evt">The Action Event Object.</param>
         public void Occured(IBilgeActionEvent evt) {
             BilgeRouter.Router.ActionOccurs(evt, cfg);
         }
@@ -57,9 +57,9 @@
         /// <summary>
         /// Called to indicate an action has occured
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="data"></param>
-        /// <param name="value"></param>
+        /// <param name="name">The action name.</param>
+        /// <param name="data">The action supporing data.</param>
+        /// <param name="value">The value associated with the action.</param>
         public void Occured(string name, string data, string value) {
             var sae = new SimpleActionEvent(name, data, value);
             Occured(sae);
@@ -68,8 +68,8 @@
         /// <summary>
         /// Called to indicate an action has occured
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="data"></param>
+        /// <param name="name">The action name.</param>
+        /// <param name="data">The action supporing data.</param>
         public void Occured(string name, string data) {
             Occured(name, data, null);
         }
@@ -85,7 +85,7 @@
         }
 
         /// <summary>
-        /// Remove a callback handler for an action 
+        /// Remove a callback handler for an action.
         /// </summary>
         /// <param name="action">The action to unregister</param>
         /// <param name="actionHandlerName">The name to unregister</param>

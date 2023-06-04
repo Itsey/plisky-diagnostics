@@ -1,12 +1,10 @@
 ﻿namespace Plisky.Diagnostics {
-
     using System.Diagnostics;
 
     /// <summary>
     /// Writes at warning levels
     /// </summary>
     public class WarningWriter : BilgeWriter {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="WarningWriter"/> class.
         /// </summary>

@@ -1,10 +1,8 @@
 ﻿namespace Plisky.Diagnostics.Listeners {
-
     /// <summary>
     /// default handler options for all handlers
     /// </summary>
     public class HandlerOptions {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="HandlerOptions"/> class.
         /// This constructor initialises from a string, for the default instance it just stores the string but for specific

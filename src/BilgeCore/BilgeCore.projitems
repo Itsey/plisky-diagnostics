@@ -28,6 +28,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\BasicBilgeRouter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\SimpleActionEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\BilgeConfigure.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TraceCommands.cs" />
     <Compile Include="..\BilgeCore\ErrorDescription.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HandlerSupport\BaseHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HandlerSupport\HandlerAddOptions.cs" />
@@ -54,7 +55,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\Emergency.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessageFormatters\LegacyFlimFlamFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessageParts.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MessageStructure.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TraceMessageFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InternalUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TraceContextInfo.cs" />
   </ItemGroup>

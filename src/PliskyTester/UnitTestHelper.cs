@@ -2,6 +2,7 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Reflection;
     using System.Text;
@@ -14,21 +15,21 @@
         /// <summary>
         /// Generic string used in unit testing, when any old token string will do.
         /// </summary>
-        public const string GenericString1 = "arflebarflegloop";
+        public const string GENERICSTRING1 = "arflebarflegloop";
 
         /// <summary>
         /// Second Generic string used in unit testing, when any old token string will do.
         /// </summary>
-        public const string GenericString2 = "BilgeAndFlimflam";
+        public const string GENERICSTRING2 = "BilgeAndFlimflam";
 
         /// <summary>
         /// Third Generic string used in unit testing, when any old token string will do.
         /// </summary>
-        public const string GenericString3 = "spontralification of the spire";
+        public const string GENERICSTRING3 = "spontralification of the spire";
 
         private int limitStringsTo = 2000;
-        private List<string> storedFilenames = new List<string>();
         private Random rand;
+        private List<string> storedFilenames = new List<string>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnitTestHelper"/> class.
@@ -39,7 +40,7 @@
         }
 
         /// <summary>
-        /// Clears up allocated test files on destruct
+        /// Finalizes an instance of the <see cref="UnitTestHelper"/> class. This cleans up test files.
         /// </summary>
         ~UnitTestHelper() {
             ClearUpTestFiles();
@@ -94,7 +95,7 @@
         /// <param name="data">The string to have its case reversed</param>
         /// <returns>The string with its case reversed.</returns>
         public static string ReverseCase(string data) {
-            StringBuilder result = new StringBuilder(data.Length);
+            var result = new StringBuilder(data.Length);
 
             foreach (char c in data) {
                 result.Append(char.IsUpper(c) ? char.ToLower(c) : char.ToUpper(c));
@@ -137,11 +138,11 @@
         /// </summary>
         /// <param name="target">The object to alter.</param>
         public void AlterAllValuesOnType(object target) {
-            Type t = target.GetType();
+            var t = target.GetType();
             object val;
             object newOne;
 
-            foreach (PropertyInfo pi in t.GetProperties()) {
+            foreach (var pi in t.GetProperties()) {
                 if (pi.CanWrite) {
                     val = pi.GetValue(target, null);
                     newOne = AlterValue(val);
@@ -149,7 +150,7 @@
                 }
             }
 
-            foreach (FieldInfo fi in t.GetFields()) {
+            foreach (var fi in t.GetFields()) {
                 val = fi.GetValue(target);
                 newOne = AlterValue(val);
                 fi.SetValue(target, newOne);
@@ -166,7 +167,7 @@
         public object AlterValue(object target) {
             if (target == null) { return null; }
 
-            Type t = target.GetType();
+            var t = target.GetType();
             if (t == typeof(long)) {
                 return (long)target + 1;
             }
@@ -184,7 +185,7 @@
             }
 
             if (t == typeof(bool)) {
-                return (!(bool)target);  // Invert it for bools
+                return !(bool)target;  // Invert it for bools
             }
 
             if (t == typeof(string)) {
@@ -210,7 +211,7 @@
                     File.Delete(nextFile);
                 }
             } catch (IOException) {
-                //Bilge.Dump(iox, "Exception trying to clear up file:" + nextFile);
+                // Bilge.Dump(iox, "Exception trying to clear up file:" + nextFile);
             }
         }
 
@@ -318,6 +319,7 @@
         /// Returns a TemporaryFilename which can be used for storing data during unit tests.  This filename is stored within
         /// the UnitTestHelper class such that it can be cleaned up with a call to ClearUpTestFiles.
         /// </summary>
+        /// <param name="deleteOnCreate">Should the file immediately be deleted.</param>
         /// <returns>The new temporary filename</returns>
         public string NewTemporaryFileName(bool deleteOnCreate = false) {
             string result = Path.GetTempFileName();
@@ -335,14 +337,17 @@
         /// <param name="target1">First object for comparison</param>
         /// <param name="target2">Second object for comparison</param>
         /// <returns>True if they are the same</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "This confuses the interface considerably and its only a unit test helper therefore performance not important")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1", Justification = "they can be null")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "they can be null")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification ="low cognitave load")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "This confuses the interface considerably and its only a unit test helper therefore performance not important")]
         public bool ReflectionBasedCompare(object target1, object target2) {
             // Either they are both null or neither are
             if ((target1 == null) && (target2 == null)) { return true; }
             if ((target1 == null) && (target2 != null)) { return false; }
             if ((target2 == null) && (target1 != null)) { return false; }
             // Now they must be of the same type
-            Type t = target1.GetType();
+            var t = target1.GetType();
             if (t != target2.GetType()) { return false; }
 
             if (target1.GetType().IsArray) {
@@ -357,7 +362,7 @@
                 return target1.Equals(target2);
             }
 
-            foreach (PropertyInfo pi in t.GetProperties()) {
+            foreach (var pi in t.GetProperties()) {
                 if (pi.GetIndexParameters().Length == 0) {
                     // Non indexed properties
 
@@ -378,7 +383,7 @@
                 }
             }
 
-            foreach (FieldInfo fi in t.GetFields()) {
+            foreach (var fi in t.GetFields()) {
                 object v1 = fi.GetValue(target1);
                 object v2 = fi.GetValue(target2);
 
@@ -506,8 +511,8 @@
         private object CloneObjectImplementation(object source) {
             if (source == null) { return null; }
 
-            Type srcType = source.GetType();
-            BindingFlags flgs = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+            var srcType = source.GetType();
+            var flgs = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
             object result;
 
             if (srcType == typeof(string)) {
@@ -517,9 +522,9 @@
 
             if (srcType.IsArray) {
                 // Again must check before class.
-                Type arrayelementType = Type.GetTypeArray((object[])source)[0];
-                Array sauce = (Array)source;
-                Array newArray = Array.CreateInstance(arrayelementType, sauce.Length);
+                var arrayelementType = Type.GetTypeArray((object[])source)[0];
+                var sauce = (Array)source;
+                var newArray = Array.CreateInstance(arrayelementType, sauce.Length);
                 for (int idx = 0; idx < newArray.Length; idx++) {
                     newArray.SetValue(CloneObjectImplementation(sauce.GetValue(idx)), idx);
                 }
@@ -550,7 +555,7 @@
         private string GenerateRandomString(int minLength, int maxLength) {
             int characters = RandomStore.Next(minLength, maxLength);
 
-            StringBuilder result = new StringBuilder(characters);   // I seriously doubt this is faster.
+            var result = new StringBuilder(characters);   // I seriously doubt this is faster.
 
             for (; characters > 0; characters--) {
                 result.Append((char)RandomStore.Next(15, 125));
@@ -560,9 +565,6 @@
         }
 
         private string GenerateSpecificRandomString(int minLength, int maxLength, bool allowPunctuation, bool allowNumbers) {
-
-            #region entry code
-
             if (minLength < 0) {
                 throw new ArgumentOutOfRangeException("minLength", "minLength must be 0 or greater");
             }
@@ -574,8 +576,6 @@
             if (maxLength == 0) {
                 return string.Empty;
             }
-
-            #endregion entry code
 
             string sampleRange = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
             if (allowPunctuation) {

@@ -155,8 +155,6 @@
             }
         }
 
-
-
         /// <summary>
         /// Provies access to Bilge Utility functions and debugging and diagnostic helper methods.
         /// </summary>
@@ -362,6 +360,15 @@
         /// <param name="ibmh">The new handler</param>
         public void AddHandler(IBilgeMessageListener ibmh) {
             BilgeRouter.Router.AddHandler(ibmh);
+        }
+
+        /// <summary>
+        /// Alters the optional configuration for Bilge, to allow more detail to be added to the trace stream if that is useful, beware many of the
+        /// options to add further detail also reduce performance.
+        /// </summary>
+        /// <param name="newConfiguration">the new configuration settings to apply.</param>
+        public void ConfigureTrace(TraceConfiguration newConfiguration) {
+            activeConfig.TraceConfig = newConfiguration;
         }
 
         /// <summary>
@@ -575,15 +582,6 @@
 
         private void SetTraceLevel(TraceLevel value) {
             SetTraceLevel(Bilge.ConvertTraceLevel(value));
-        }
-
-        /// <summary>
-        /// Alters the optional configuration for Bilge, to allow more detail to be added to the trace stream if that is useful, beware many of the
-        /// options to add further detail also reduce performance.
-        /// </summary>
-        /// <param name="newConfiguration">the new configuration settings to apply.</param>
-        public void ConfigureTrace(TraceConfiguraton newConfiguration) {
-            activeConfig.TraceConfig = newConfiguration;
         }
     }
 }

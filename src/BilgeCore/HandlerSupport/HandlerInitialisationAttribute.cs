@@ -1,13 +1,12 @@
 ﻿namespace Plisky.Diagnostics {
-
     using System;
 
     /// <summary>
     /// Attribute used to initialise handlers
     /// </summary>
     public class HandlerInitialisationAttribute : Attribute {
-
         /// <summary>
+        /// Initializes a new instance of the <see cref="HandlerInitialisationAttribute"/> class.
         /// Initialises a handler with a specific prefix
         /// </summary>
         /// <param name="listenerPfx">the prefix</param>

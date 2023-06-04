@@ -1,19 +1,36 @@
 ﻿namespace Plisky.Diagnostics {
+
     using System.Runtime.CompilerServices;
-    using System.Security;
 
     /// <summary>
     /// Writes directly to the trace stream
     /// </summary>
     public class BilgeDirect {
+
+        /// <summary>
+        /// Provides access to configuration
+        /// </summary>
+        protected ConfigSettings config;
+
         private bool isWriting = true;
+
+        private BilgeRouter router;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BilgeDirect"/> class.
+        /// The direct router.
+        /// </summary>
+        /// <param name="r">The router.</param>
+        /// <param name="activeConfig">Current configuration.</param>
+        internal BilgeDirect(BilgeRouter r, ConfigSettings activeConfig) {
+            router = r;
+            config = activeConfig;
+        }
 
         /// <summary>
         /// Current context
         /// </summary>
         public string Context { get; set; }
-
-        private BilgeRouter router;
 
         /// <summary>
         /// Writes a message to the stream
@@ -30,7 +47,6 @@
             mmd.FurtherDetails = further;
 
             if (isWriting) {
-                
                 router.PrepareMetaData(mmd, config.MetaContexts);
                 router.QueueMessage(mmd);
             }
@@ -45,16 +61,6 @@
                 router.PrepareMetaData(mmd, config.MetaContexts);
                 router.QueueMessage(mmd);
             }
-        }
-
-        /// <summary>
-        /// Provides access to configuration
-        /// </summary>
-        protected ConfigSettings config;
-
-        internal BilgeDirect(BilgeRouter r, ConfigSettings activeConfig) {
-            router = r;
-            config = activeConfig;
         }
     }
 }

@@ -48,7 +48,6 @@ namespace DevConsoleTest {
 
 
     */
-
 }
 #pragma warning restore CS1591 // XML Comments
 #pragma warning restore SA1600 // XML Comments

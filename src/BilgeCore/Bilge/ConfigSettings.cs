@@ -15,21 +15,16 @@
         public ConfigSettings() {
             MetaContexts = new Dictionary<string, string>();
             InstanceContext = null;
-            TraceConfig = new TraceConfiguraton();
+            TraceConfig = new TraceConfiguration();
         }
 
         /// <summary>
-        /// Holds the detailed trace configuraiton which determines how messages are written.
-        /// </summary>
-        public TraceConfiguraton TraceConfig { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the currently Active Trace Level
+        /// Gets the currently Active Trace Level.
         /// </summary>
         public SourceLevels ActiveTraceLevel { get; internal set; }
 
         /// <summary>
-        /// Sets an instance context
+        /// Gets or Sets an instance context.
         /// </summary>
         public string InstanceContext {
             get {
@@ -70,5 +65,10 @@
         /// Sets a filter that can be used to filer session content
         /// </summary>
         public Func<Dictionary<string, string>, bool> SessionFilter { get; set; }
+
+        /// <summary>
+        /// Holds the detailed trace configuraiton which determines how messages are written.
+        /// </summary>
+        public TraceConfiguration TraceConfig { get; set; }
     }
 }
