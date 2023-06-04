@@ -1,4 +1,3 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
@@ -18,33 +17,23 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02520FE2-2B73-40A9-9845-B642DF08259F}"
 	ProjectSection(SolutionItems) = preProject
 		..\build\plisky-diags-ci.yml = ..\build\plisky-diags-ci.yml
+		..\build\plisky-diags-prerelease.yml = ..\build\plisky-diags-prerelease.yml
 		..\build\plisky-diags-release.yml = ..\build\plisky-diags-release.yml
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU		
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{53C50174-FB06-4127-8E23-E077EBD5BD91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53C50174-FB06-4127-8E23-E077EBD5BD91}.Debug|Any CPU.Build.0 = Debug|Any CPU		
 		{53C50174-FB06-4127-8E23-E077EBD5BD91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53C50174-FB06-4127-8E23-E077EBD5BD91}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU		
 		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{62CA003A-038B-487F-83B5-FA4FE9C6E075}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{62CA003A-038B-487F-83B5-FA4FE9C6E075}.Debug|Any CPU.Build.0 = Debug|Any CPU		
 		{62CA003A-038B-487F-83B5-FA4FE9C6E075}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62CA003A-038B-487F-83B5-FA4FE9C6E075}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4A476B6D-A64E-41D7-AE8B-ACEBA8005018}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A476B6D-A64E-41D7-AE8B-ACEBA8005018}.Debug|Any CPU.Build.0 = Debug|Any CPU		
 		{4A476B6D-A64E-41D7-AE8B-ACEBA8005018}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A476B6D-A64E-41D7-AE8B-ACEBA8005018}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD92368A-C293-4661-BE6B-3478367DA1A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD92368A-C293-4661-BE6B-3478367DA1A8}.Debug|Any CPU.Build.0 = Debug|Any CPU		
 		{DD92368A-C293-4661-BE6B-3478367DA1A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD92368A-C293-4661-BE6B-3478367DA1A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
