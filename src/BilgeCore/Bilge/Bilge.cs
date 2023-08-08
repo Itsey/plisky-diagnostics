@@ -2,8 +2,12 @@
 
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Diagnostics;
+    using System.Linq;
+    using System.Reflection;
     using System.Text;
+    using Plisky.Diagnostics.Listeners;
 
     /// <summary>
     /// Provides trace support for .net.
@@ -321,8 +325,28 @@
         /// <param name="crInitialisationString">The initialisation string</param>
         /// <returns>The func used to resolve the configuration</returns>
         public static Func<string, SourceLevels, SourceLevels> SetConfigurationResolver(string crInitialisationString) {
-            var newCR = GetConfigurationResolverFromString(crInitialisationString);
+            var newCR = GetConfigurationResolverFromString(crInitialisationString,null);
             levelResolver = newCR;
+            return newCR;
+        }
+
+        /// <summary>
+        /// Uses an internal string formatted configuration resolver. See documentation for usage.  Additionally configures one or more handlers, returning the handler
+        /// configuration to the caller.  If autoResolve is set also uses reflection to try and initialise the handlers.
+        /// </summary>
+        /// <param name="crInitialisationString">The initialisation string</param>
+        /// <param name="handlerRequests">The parts of the initialisation string that relate to handlers</param>
+        /// <param name="autoResolve">Whether the method should try and resolve each of the handler requests</param>
+        /// <returns>The func used to resolve the configuration</returns>
+        public static Func<string, SourceLevels, SourceLevels> SetConfigurationResolver(string crInitialisationString, string[] handlerRequests, bool autoResolve=true) {
+            var hrs = new List<string>();
+            var newCR = GetConfigurationResolverFromString(crInitialisationString,hrs);
+            levelResolver = newCR;
+
+            if (autoResolve&&hrs.Count>0) {
+                var allKnownTypes = Assembly.GetExecutingAssembly().GetTypes().Where(p => p.IsSubclassOf(typeof(BaseHandler)));
+            }
+            
             return newCR;
         }
 
@@ -482,7 +506,9 @@
             return beforeModification;
         }
 
-        private static Func<string, SourceLevels, SourceLevels> GetConfigurationResolverFromString(string initString2) {
+        private static Func<string, SourceLevels, SourceLevels> GetConfigurationResolverFromString(string initString2, List<string> handlerRequests) {
+            if (handlerRequests == null) { handlerRequests = new List<string>(); }
+
             var matches = new List<Func<string, SourceLevels>>();
             initString2 = initString2?.ToLower();
 
@@ -493,12 +519,22 @@
                 return result;
             }
 
-            if (initString2[1] != '-') {
-                throw new InvalidOperationException("The format string is in the wrong format");
+            switch (initString2[1]) {
+                case '-': break;
+                case '+': break;
+                default: throw new InvalidOperationException($"The format string is in the wrong format, got {initString2[1]} needed [+,-]");
             }
+
 
             string[] stringsToParse = initString2.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string initString in stringsToParse) {
+
+                if (initString2[0] == 'h' || initString2[0] == 'H') {
+                    // Handler Configuration request found, add it to the returned handler requests.
+                    handlerRequests.Add(initString);
+                    continue;
+                }
+
                 var sl = GetSourceLevelFromChar(initString[0]);
                 string initStringMatch = initString.Substring(2);
 
@@ -563,7 +599,7 @@
                 case 'o': return SourceLevels.Off;
                 case 'v': return SourceLevels.Verbose;
                 default:
-                    throw new NotImplementedException("Invalid Source Level");
+                    throw new NotImplementedException($"The source level set in the configuration string is not a valid soure level.  Recieved {c}, should be [e,w,o,v].");
             }
         }
 
