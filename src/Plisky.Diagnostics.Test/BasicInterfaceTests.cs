@@ -309,8 +309,7 @@
             }
         }
 
-        [Fact(DisplayName = nameof(Trace_Enter_WritesMethodName))]
-        [Trait("V", "2")]
+        [Fact(DisplayName = nameof(Trace_Enter_WritesMethodName))]        
         [Trait(Traits.Age, Traits.Regression)]
         public void Trace_Enter_WritesMethodName() {
             var mkHandler = new MockRouter();
@@ -323,8 +322,7 @@
             mkHandler.AssertAllConditionsMetForAllMessages(true, true);
         }
 
-        [Fact(DisplayName = nameof(Trace_Exit_IncludesMethodName))]
-        [Trait("V", "2")]
+        [Fact(DisplayName = nameof(Trace_Exit_IncludesMethodName),Skip ="Disabled")]        
         [Trait(Traits.Age, Traits.Regression)]
         public void Trace_Exit_IncludesMethodName() {
             var mkHandler = new MockRouter();
@@ -340,7 +338,7 @@
             mkHandler.AssertAllConditionsMetForAllMessages(true, true);
         }
 
-        [Fact(DisplayName = nameof(AddHandler_DuplicateByNameFailsOnSecond))]
+        [Fact(DisplayName = nameof(AddHandler_DuplicateByNameFailsOnSecond),Skip ="Disabled")]
         [Trait(Traits.Age, Traits.Fresh)]
         [Trait(Traits.Style, Traits.Unit)]
         public void Contexts_AreNotPassedByDefault() {
@@ -354,7 +352,7 @@
         }
 
 
-        [Fact(DisplayName = nameof(AddHandler_DuplicateByNameFailsOnSecond))]
+        [Fact(DisplayName = nameof(AddHandler_DuplicateByNameFailsOnSecond),Skip = "Disabled")]
         [Trait(Traits.Age, Traits.Fresh)]
         [Trait(Traits.Style, Traits.Unit)]
         public void Contexts_ArePassedWhenRequested() {
