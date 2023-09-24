@@ -2,6 +2,7 @@
 
     using System;
     using System.Diagnostics;
+    using System.Dynamic;
     using System.Linq;
     using System.Threading;
     using Plisky.Diagnostics;
@@ -19,7 +20,7 @@
         [Trait(Traits.Style, Traits.Unit)]
         public void AddHandler_DoesAddHandler() {
             _ = TestHelper.GetBilgeAndClearDown();
-
+            string s = Process.GetCurrentProcess().ProcessName;
             bool worked = Bilge.AddHandler(new MockMessageHandler());
             int count = Bilge.GetHandlers().Count();
 
@@ -53,6 +54,9 @@
             int ct = Bilge.GetHandlers().Count();
             Assert.Equal(2, Bilge.GetHandlers().Count());
         }
+
+
+       
 
         [Fact(DisplayName = nameof(AddHandler_SingleName_AddsDifferentNames))]
         [Trait(Traits.Age, Traits.Fresh)]
@@ -128,7 +132,7 @@
 
             sut.Assert.True(false);
 
-            sut.Flush();
+            sut.Flush().Wait();
 
             Assert.True(mmh.AssertionMessageCount > 0);
         }
@@ -152,7 +156,7 @@
             sut.AddHandler(mmh);
             mmh.SetMethodNameMustContain("monkeyfish");
             sut.Info.EnterSection("random sectiion", "monkeyfish");
-            sut.Flush();
+            sut.Flush().Wait();
 
             mmh.AssertAllConditionsMetForAllMessages(true, true);
         }
@@ -168,7 +172,7 @@
             mmh.SetMethodNameMustContain("bannanaball");
             sut.Info.LeaveSection("bannanaball");
 
-            sut.Flush();
+            sut.Flush().Wait();
 
             mmh.AssertAllConditionsMetForAllMessages(true, true);
         }
@@ -185,7 +189,7 @@
             sut.AddHandler(mmh);
 
             sut.Direct.Write("DirectMessage", "DirectFurther");
-            sut.Flush();
+            sut.Flush().Wait();
 
             Assert.True(mmh.AssertThisMessageMustExist("DirectMessage"));
         }
@@ -227,9 +231,9 @@
             sut.AddHandler(mmh);
 
             sut.Info.Log("Dummy Message");
-            sut.Flush();
+            sut.Flush().Wait();
             sut.Info.Log("Dummy Message");
-            sut.Flush();
+            sut.Flush().Wait();
             Assert.Equal(1, mmh.LastMessageBatchSize);
         }
 
@@ -251,7 +255,7 @@
                 if (i % 25 == 0) {
                     // The flush forces the write, this is needed otherwise it bombs through
                     // too fast for more than one write to the handler to occur.
-                    sut.Flush();
+                    sut.Flush().Wait();
                 }
 
                 if (mmh.TotalMessagesRecieved > 0) {
@@ -296,7 +300,7 @@
                     }
                 }
                 if (timeSoFar.ElapsedMilliseconds > 350) {
-                    sut.Flush();
+                    sut.Flush().Wait();
                 }
             }
 
@@ -336,6 +340,39 @@
             mkHandler.AssertAllConditionsMetForAllMessages(true, true);
         }
 
+        [Fact(DisplayName = nameof(AddHandler_DuplicateByNameFailsOnSecond))]
+        [Trait(Traits.Age, Traits.Fresh)]
+        [Trait(Traits.Style, Traits.Unit)]
+        public void Contexts_AreNotPassedByDefault() {
+            _ = TestHelper.GetBilgeAndClearDown();
+
+            Bilge.AddHandler(new MockMessageHandler());
+
+
+
+            Assert.Fail();
+        }
+
+
+        [Fact(DisplayName = nameof(AddHandler_DuplicateByNameFailsOnSecond))]
+        [Trait(Traits.Age, Traits.Fresh)]
+        [Trait(Traits.Style, Traits.Unit)]
+        public void Contexts_ArePassedWhenRequested() {
+
+            var mkHandler = new MockRouter();
+            mkHandler.SetContextMustExistForEveryMessage("testcontext.added");
+            var b = TestHelper.GetBilgeAndClearDown(mkHandler);            
+            b.ConfigureTrace(new TraceConfiguration() {
+                PassContextToHandler = true
+            });
+            b.AddContext("testcontext.added", "istrue");
+
+            b.Info.Log("Boom!");
+
+
+            Assert.Fail();
+        }
+
         [Fact(DisplayName = nameof(Trace_Flow_IncludesClassName))]
         [Trait("V", "2")]
         [Trait(Traits.Age, Traits.Regression)]
@@ -351,6 +388,22 @@
             sut.Info.Flow();
             sut.Error.Flow();
             sut.Verbose.Flow();
+
+            mkHandler.AssertAllConditionsMetForAllMessages(true);
+        }
+
+
+        [Fact(DisplayName = nameof(Trace_Log_IncluesMethodName))]        
+        [Trait(Traits.Age, Traits.Regression)]
+        public void Trace_Log_IncluesMethodName() {
+            var mkHandler = new MockRouter();
+            mkHandler.SetMethodNameMustContain(nameof(Trace_Log_IncluesMethodName));            
+            var sut = TestHelper.GetBilgeAndClearDown(mkHandler);
+            sut.ActiveTraceLevel = SourceLevels.Verbose;
+
+            sut.Info.Log("Hello Cruiel World");
+            sut.Info.Log("Hello Cruiel World","You are very cruel");
+
 
             mkHandler.AssertAllConditionsMetForAllMessages(true);
         }
@@ -407,7 +460,7 @@
             sut.AddHandler(mmh);
 
             WriteCorrectTypeOfMessage(sut, testCase);
-            sut.Flush();
+            sut.Flush().Wait();
             Thread.Sleep(10);
 
             var msg = mmh.GetMostRecentMessage();

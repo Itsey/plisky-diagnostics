@@ -7,12 +7,14 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Plisky.Diagnostics.Listeners;
 
     /// <summary>
     /// Provides trace support for .net.
     /// </summary>
-    public class Bilge {
+    public partial class Bilge {
 
         /// <summary>
         /// Default context for Bilge.
@@ -27,7 +29,7 @@
         private const string WILDCARD_MATCH_INITSTRING = "*";
         private static Bilge defaultInstance = null;
         private static Func<string, SourceLevels, SourceLevels> levelResolver = DefaultLevelResolver;
-        private ConfigSettings activeConfig;
+        private readonly ConfigSettings activeConfig;
         private BilgeAction actualAction;
 
         /// <summary>
@@ -224,6 +226,8 @@
             return true;
         }
 
+      
+
         /// <summary>
         /// Do Not Use
         /// </summary>
@@ -245,7 +249,7 @@
         /// Flush all trace stream handlers and then clear them down so no handlers remain
         /// </summary>
         public static void ClearMessageHandlers() {
-            BilgeRouter.Router.FlushMessages();
+            Task.Run(async () => { await BilgeRouter.Router.FlushMessages(); }).Wait();
             BilgeRouter.Router.ClearEverything();
         }
 
@@ -279,8 +283,8 @@
         /// <summary>
         /// Clear all trace stream caches.
         /// </summary>
-        public static void ForceFlush() {
-            BilgeRouter.Router.FlushMessages();
+        public static async Task ForceFlush() {
+            await BilgeRouter.Router.FlushMessages();
         }
 
         /// <summary>
@@ -325,7 +329,7 @@
         /// <param name="crInitialisationString">The initialisation string</param>
         /// <returns>The func used to resolve the configuration</returns>
         public static Func<string, SourceLevels, SourceLevels> SetConfigurationResolver(string crInitialisationString) {
-            var newCR = GetConfigurationResolverFromString(crInitialisationString,null);
+            var newCR = GetConfigurationResolverFromString(crInitialisationString, null);
             levelResolver = newCR;
             return newCR;
         }
@@ -338,15 +342,15 @@
         /// <param name="handlerRequests">The parts of the initialisation string that relate to handlers</param>
         /// <param name="autoResolve">Whether the method should try and resolve each of the handler requests</param>
         /// <returns>The func used to resolve the configuration</returns>
-        public static Func<string, SourceLevels, SourceLevels> SetConfigurationResolver(string crInitialisationString, string[] handlerRequests, bool autoResolve=true) {
+        public static Func<string, SourceLevels, SourceLevels> SetConfigurationResolver(string crInitialisationString, string[] handlerRequests, bool autoResolve = true) {
             var hrs = new List<string>();
-            var newCR = GetConfigurationResolverFromString(crInitialisationString,hrs);
+            var newCR = GetConfigurationResolverFromString(crInitialisationString, hrs);
             levelResolver = newCR;
 
-            if (autoResolve&&hrs.Count>0) {
+            if (autoResolve && hrs.Count > 0) {
                 var allKnownTypes = Assembly.GetExecutingAssembly().GetTypes().Where(p => p.IsSubclassOf(typeof(BaseHandler)));
             }
-            
+
             return newCR;
         }
 
@@ -406,8 +410,9 @@
         /// <summary>
         /// Clear the trace stream cache down
         /// </summary>
-        public void Flush() {
-            Bilge.ForceFlush();
+        public async Task Flush() {
+
+            await Bilge.ForceFlush();
         }
 
         /// <summary>
@@ -433,6 +438,18 @@
             foreach (string l in activeConfig.MetaContexts.Keys) {
                 yield return new Tuple<string, string>(l, activeConfig.MetaContexts[l]);
             }
+        }
+
+        public void AddContext(string contextName, string contextValue) {
+            if (string.IsNullOrWhiteSpace(contextName)) { throw new ArgumentNullException(nameof(contextName)); }
+            if (string.IsNullOrWhiteSpace(contextValue)) { throw new ArgumentNullException(nameof(contextValue)); }
+
+            if (!activeConfig.MetaContexts.ContainsKey(contextName)) {
+                activeConfig.MetaContexts.Add(contextName, contextValue);
+            } else {
+                activeConfig.MetaContexts[contextName] = contextValue;
+            }
+
         }
 
         /// <summary>

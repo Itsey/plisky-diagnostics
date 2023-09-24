@@ -31,6 +31,8 @@
         internal static Bilge GetBilgeAndClearDown(BilgeRouter rt = null, string context = null, SourceLevels sl = SourceLevels.All, bool simplify = true) {
             Bilge.ClearConfigurationResolver();
 
+           
+
             if (rt != null) {
                 Bilge.SimplifyRouter(rt);
             } else if (simplify) {
@@ -52,7 +54,7 @@
                     result = new Bilge(resetDefaults: true);
                 }
             }
-
+            
             return result;
         }
     }

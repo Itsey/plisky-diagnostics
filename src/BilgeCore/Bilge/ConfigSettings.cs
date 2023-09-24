@@ -66,6 +66,8 @@
         /// </summary>
         public Func<Dictionary<string, string>, bool> SessionFilter { get; set; }
 
+
+
         /// <summary>
         /// Holds the detailed trace configuraiton which determines how messages are written.
         /// </summary>

@@ -159,6 +159,19 @@
                     break;
 
                 case AssertionStyle.Default:
+                    AssertAction = (x) => {
+                        if (Debugger.IsAttached) {
+                            Debugger.Break();
+                        } else {
+                            var ex = new BilgeAssertException(x.Context, x.FurtherDetails, new StackTrace(0, true).ToString());
+                            string pn = Process.GetCurrentProcess().ProcessName.ToLower();
+                            if (pn.StartsWith("vstesthost") || pn.StartsWith("vstest")) {
+                                throw ex;
+                            }
+                            Environment.FailFast(ex.Message, ex);
+                        }
+                    };
+                    break;
                 case AssertionStyle.Fail:
 
                     AssertAction = (x) => {

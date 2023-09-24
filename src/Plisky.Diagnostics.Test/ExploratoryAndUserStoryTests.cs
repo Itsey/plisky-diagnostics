@@ -2,12 +2,33 @@
 
     using System.Diagnostics;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
     using Microsoft.VisualBasic;
     using Plisky.Diagnostics.Copy;
     using Xunit;
 
     [Collection(nameof(QueueSensitiveTestCollectionDefinition))]
     public class ExploratoryAndUserStoryTests {
+
+
+        [Theory(DisplayName = nameof(LogLevelMapper))]
+        [Trait(Traits.Age, Traits.Fresh)]
+        [Trait(Traits.Style, Traits.Unit)]
+        [InlineData(SourceLevels.Off, LogLevel.Trace, false)]
+        [InlineData(SourceLevels.Off, LogLevel.Critical, false)]
+        [InlineData(SourceLevels.Off, LogLevel.Debug, false)]
+        [InlineData(SourceLevels.Off, LogLevel.Error, false)]
+        [InlineData(SourceLevels.Verbose, LogLevel.Error, true)]
+        [InlineData(SourceLevels.Verbose, LogLevel.Trace, true)]
+        [InlineData(SourceLevels.Verbose, LogLevel.Critical, true)]
+        [InlineData(SourceLevels.Error, LogLevel.Information, false)]
+        [InlineData(SourceLevels.Critical, LogLevel.Information, false)]
+        [InlineData(SourceLevels.Error, LogLevel.Information, false)]
+        public void LogLevelMapper(SourceLevels sl, LogLevel ll, bool shouldBeEnabled) {
+            ILoggerWrapper.LogLevelSourceLevelMapper(sl, ll).Should().Be(shouldBeEnabled);
+        }
+
+
 
         [Fact(DisplayName = nameof(Action_CallCount_IncrementsEachTime))]
         [Trait(Traits.Age, Traits.Fresh)]

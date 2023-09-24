@@ -49,7 +49,7 @@
                 }
             }
 
-            if (string.IsNullOrEmpty(mmd.ClassName) && sets.TraceConfig.AddClassDetailToTrace) {
+            if (string.IsNullOrEmpty(mmd.ClassName) && sets.TraceConfig.AddClassDetailToTrace && mmd.CommandType != TraceCommandTypes.MoreInfo) {
                 var csf = InternalUtil.GetCallingStackFrame();
                 mmd.ClassName = csf.Item1;
             }
@@ -57,8 +57,9 @@
             if (sets.TraceConfig.AddTimestamps) {
                 mmd.TimeStamp = DateTime.Now;
             }
-
-            router.PrepareMetaData(mmd, sets.MetaContexts);
+            
+                
+            router.PrepareMetaData(mmd, sets.MetaContexts, sets.TraceConfig.PassContextToHandler, sets.TraceConfig.UseOSThreadId);
             router.QueueMessage(mmd);
         }
 

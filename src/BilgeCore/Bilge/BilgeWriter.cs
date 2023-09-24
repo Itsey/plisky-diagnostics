@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Dynamic;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -21,6 +22,7 @@
         /// <param name="pth">The path to the file of source</param>
         /// <param name="ln">The line number</param>
         public void Dump(object target, string context, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (!IsWriting) { return; }
             InternalDump(target, context, null, meth, pth, ln);
         }
 
@@ -36,6 +38,7 @@
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "E", Justification = "Maintained name for backward compatibility")]
         [Conditional("TRACE")]
         public void E(string entryContext = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (!IsWriting) { return; }
             if (entryContext == null) { entryContext = string.Empty; }
             var mmd = new MessageMetadata(meth, pth, ln);
             InternalE(mmd, entryContext);
@@ -55,6 +58,7 @@
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("TRACE")]
         public void EnterSection(string sectionName, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (!IsWriting) { return; }
             ActiveRouteMessage(TraceCommandTypes.SectionStart, sectionName, null, meth, pth, ln);
         }
 
@@ -66,6 +70,7 @@
         /// <param name="pth">The path to the file of source.</param>
         /// <param name="ln">The line number.</param>
         public void Flow(string moreInfo = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (!IsWriting) { return; }
             string msg = $"Flow [{meth}]";
             DefaultRouteMessage(msg, moreInfo, meth, pth, ln);
         }
@@ -82,6 +87,7 @@
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("TRACE")]
         public void LeaveSection([CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (!IsWriting) { return; }
             ActiveRouteMessage(TraceCommandTypes.SectionEnd, string.Empty, null, meth, pth, ln);
         }
 
@@ -94,6 +100,7 @@
         /// <param name="pth">The path to the file of source for the calling method.</param>
         /// <param name="ln">The line number where the call was made.</param>
         public void Log(string message, string moreInfo = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (!IsWriting) { return; }
             DefaultRouteMessage(message, moreInfo, meth, pth, ln);
         }
 
@@ -117,21 +124,22 @@
             ActiveRouteMessage(mmd);
         }
 
+
         /// <summary>
-        /// Log a message with supporting structured data, passed through the xo dynamic paramenter.  Typically this is an ExpandoObject which is passed in with supporting structured
-        /// contextual information.
+        /// Adds further information to the most recent log message, no location data is specified when a more message is sent, but additional data like
+        /// structured infromation can be provided.
         /// </summary>
-        /// <param name="message">The message body to send.</param>
-        /// <param name="context">A dynamic structure representing additonal context.</param>
-        /// <param name="meth">The method name of the calling method.</param>
-        /// <param name="pth">The path to the file of source for the calling method.</param>
-        /// <param name="ln">The line number where the call was made.</param>
-        public void Log(string message, dynamic context, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+        /// <param name="supplimentaryInfo">Supplimentary information</param>
+        /// <param name="supplimentary">structured supplimentary data</param>
+        public void More(string supplimentaryInfo, dynamic supplimentary = null) {
             if (!IsWriting) { return; }
-            var mmd = CreateMessageMetaData(baseCommandLevel, message, null, meth, pth, ln);
-            mmd.StructuredData = context;
+            var mmd = CreateMessageMetaData(baseCommandLevel, supplimentaryInfo, null, null, null, 0);
+            mmd.StructuredData = supplimentary;
             ActiveRouteMessage(mmd);
         }
+
+
+
 
         /// <summary>
         /// Log a message using a callback to fully populate the messagemetadata structure, this is used to ensure that the calls to calculate the trace content are only done
@@ -192,9 +200,12 @@
         /// <param name="ln">The line number</param>
         [Conditional("DEBUG")]
         public void TimeStart(string timerTitle, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            
             if (timerTitle == null || (timerTitle.Length == 0)) {
                 throw new ArgumentNullException(nameof(timerTitle), "timerTitle parameter cannot be null or empty for a call to TimeStart");
             }
+            
+            if (!IsWriting) { return; }
 
             var mmd = new MessageMetadata(meth, pth, ln);
             InternalTimeCheckpoint(mmd, timerTitle, Constants.TIMERNAME, true);
@@ -226,7 +237,7 @@
             if (timerTitle == null || (timerTitle.Length == 0)) {
                 throw new ArgumentNullException(nameof(timerTitle), "timerTitle parameter cannot be null or empty for a call to TimeStart");
             }
-
+            if (!IsWriting) { return; }
             var mmd = new MessageMetadata(meth, pth, ln);
             InternalTimeCheckpoint(mmd, timerTitle, timerCategoryName, true);
         }
@@ -254,7 +265,7 @@
             if (timerTitle == null || (timerTitle.Length == 0)) {
                 throw new ArgumentNullException(nameof(timerTitle), "The timerTitle cannot be null or empty when calling TimeStop");
             }
-
+            if (!IsWriting) { return; }
             var mmd = new MessageMetadata(meth, pth, ln);
             InternalTimeCheckpoint(mmd, timerTitle, Constants.TIMERNAME, false);
         }
@@ -282,7 +293,7 @@
             if (timerTitle == null || (timerTitle.Length == 0)) {
                 throw new ArgumentNullException("timerTitle", "The timerTitle cannot be null or empty when calling TimeStop");
             }
-
+            if (!IsWriting) { return; }
             var mmd = new MessageMetadata(meth, pth, ln);
             InternalTimeCheckpoint(mmd, timerTitle, timerCategoryName, false);
         }
@@ -297,6 +308,7 @@
         /// <param name="ln">The line number where the call was made.</param>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "X", Justification = "Maintained name for backward compatibility")]
         public void X(string exitContext = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            if (!IsWriting) { return; }
             if (exitContext == null) { exitContext = string.Empty; }
             var mmd = new MessageMetadata(meth, pth, ln);
             InternalX(mmd, exitContext);

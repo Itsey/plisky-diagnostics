@@ -8,6 +8,8 @@ namespace Plisky.Diagnostics.Test {
     internal class MockRouter : BilgeRouter {
         public int AssertionMessageCount = 0;
 
+        private List<Tuple<string,string>> ContextMustIncludeList = new List<Tuple<string, string>>();
+
         public volatile int TotalMessagesRecieved;
         private List<MessageMetadata> allMessagesRecieved = new List<MessageMetadata>();
         private string ContextMustBe = null;
@@ -209,10 +211,27 @@ namespace Plisky.Diagnostics.Test {
                 }
             }
 
+            if (ContextMustIncludeList.Count>0) {
+                foreach(var x in ContextMustIncludeList) {
+                    if (!md.MessageTags.ContainsKey(x.Item1)) {
+                        return false;
+                    }
+                    if (x.Item2 != null) {
+                        if (md.MessageTags[x.Item1] != x.Item2) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
             foreach (var vl in validators) {
                 Assert.True(vl(md));
             }
             return true;
+        }
+
+        internal void SetContextMustExistForEveryMessage(string contextName, string withValue=null) {
+            ContextMustIncludeList.Add(new Tuple<string, string>(contextName, withValue));
         }
     }
 }

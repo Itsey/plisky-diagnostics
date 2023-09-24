@@ -30,18 +30,13 @@
 
             string result;
 
-            try {
-                string ald = msg.ClassName + "::" + msg.MethodName;
-                string dt = DateTime.Now.ToString("hh:mm:ss dd-MM-yyyy");
-                string metaPart = $"\"v\":\"2\",\"uq\":\"{defaultUqr}\",\"dt\":\"{dt}\"";
-                string cnamePart = $"\"c\":\"{EscapeString(msg.ClassName)}\",\"l\":\"{msg.LineNumber}\",\"mn\":\"{EscapeString(msg.MethodName)}\",\"md\":\"{EscapeString(msg.FileName)}\",\"al\":\"{EscapeString(ald)}\"";
-                string procPart = $"\"nt\":\"{msg.NetThreadId}\",\"p\":\"{msg.ProcessId}\",\"t\":\"{msg.OsThreadId}\",\"man\":\"{EscapeString(msg.MachineName)}\"";
-                string msgPart = $"\"m\":\"{EscapeString(msg.Body)}\",\"s\":\"{EscapeString(msg.FurtherDetails)}\",\"mt\":\"{TraceCommands.TraceCommandToString(msg.CommandType)}\"";
-                result = $"{{ {metaPart},{cnamePart},{procPart},{msgPart} }}";
-            } catch (Exception ex) {
-                Emergency.Diags.Log("EXX >> " + ex.Message);
-                throw;
-            }
+            string ald = msg.ClassName + "::" + msg.MethodName;
+            string dt = DateTime.Now.ToString("hh:mm:ss dd-MM-yyyy");
+            string metaPart = $"\"v\":\"2\",\"uq\":\"{defaultUqr}\",\"dt\":\"{dt}\"";
+            string cnamePart = $"\"c\":\"{EscapeString(msg.ClassName)}\",\"l\":\"{msg.LineNumber}\",\"mn\":\"{EscapeString(msg.MethodName)}\",\"md\":\"{EscapeString(msg.FileName)}\",\"al\":\"{EscapeString(ald)}\"";
+            string procPart = $"\"nt\":\"{msg.NetThreadId}\",\"p\":\"{msg.ProcessId}\",\"t\":\"{msg.OsThreadId}\",\"man\":\"{EscapeString(msg.MachineName)}\"";
+            string msgPart = $"\"m\":\"{EscapeString(msg.Body)}\",\"s\":\"{EscapeString(msg.FurtherDetails)}\",\"mt\":\"{TraceCommands.TraceCommandToString(msg.CommandType)}\"";
+            result = $"{{ {metaPart},{cnamePart},{procPart},{msgPart} }}";
 
             return result;
         }

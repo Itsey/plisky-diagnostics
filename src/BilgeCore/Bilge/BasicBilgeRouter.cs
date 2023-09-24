@@ -9,9 +9,7 @@
     /// </summary>
     internal class BasicBilgeRouter : BilgeRouter {
         private volatile bool shutdownEnabled;
-
-        private volatile bool shutdownRequested = false;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="BasicBilgeRouter"/> class.
         /// </summary>
@@ -29,7 +27,6 @@
         /// Reset everything.
         /// </summary>
         public override void ActualReInitialise() {
-            shutdownRequested = false;
             shutdownEnabled = false;
         }
 
@@ -37,7 +34,6 @@
         /// Shut everything down.
         /// </summary>
         public override void ActualShutdown() {
-            shutdownRequested = true;
         }
 
         /// <summary>
@@ -72,7 +68,7 @@
         /// Forces a flush of all messages.
         /// </summary>
         protected override void ActualFlushMessages() {
-            Emergency.Diags.Log($"Flush, done ");
+
         }
 
         /// <summary>

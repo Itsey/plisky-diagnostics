@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34009.444
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BilgeCore", "BilgeCore\BilgeCore.shproj", "{18C26C0C-4C5C-47D1-9872-CAE3F5B2ECA0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plisky.Diagnostics", "Plisky.Diagnostics\Plisky.Diagnostics.csproj", "{C91709BD-91ED-430C-A001-DD7BDCF39C79}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plisky.Diagnostics.Test", "Plisky.Diagnostics.Test\Plisky.Diagnostics.Test.csproj", "{DB4F2B5E-516F-4C33-A24C-4314E893469D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevConsoleTest", "DevConsoleTest\DevConsoleTest.csproj", "{621B0E81-3398-4CF8-BFF0-CB856C70C185}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BilgeBenchmarks", "BilgeBenchmarks\BilgeBenchmarks.csproj", "{47E3F041-41E0-4D79-B8F4-095AFE28396E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_Dependencies", "_Dependencies\_Dependencies.csproj", "{51C7D9F6-46FD-4B2E-9A5A-4A38DC213EFE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C91709BD-91ED-430C-A001-DD7BDCF39C79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C91709BD-91ED-430C-A001-DD7BDCF39C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C91709BD-91ED-430C-A001-DD7BDCF39C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C91709BD-91ED-430C-A001-DD7BDCF39C79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB4F2B5E-516F-4C33-A24C-4314E893469D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB4F2B5E-516F-4C33-A24C-4314E893469D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB4F2B5E-516F-4C33-A24C-4314E893469D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB4F2B5E-516F-4C33-A24C-4314E893469D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{621B0E81-3398-4CF8-BFF0-CB856C70C185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{621B0E81-3398-4CF8-BFF0-CB856C70C185}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{621B0E81-3398-4CF8-BFF0-CB856C70C185}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{621B0E81-3398-4CF8-BFF0-CB856C70C185}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47E3F041-41E0-4D79-B8F4-095AFE28396E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47E3F041-41E0-4D79-B8F4-095AFE28396E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47E3F041-41E0-4D79-B8F4-095AFE28396E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47E3F041-41E0-4D79-B8F4-095AFE28396E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51C7D9F6-46FD-4B2E-9A5A-4A38DC213EFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51C7D9F6-46FD-4B2E-9A5A-4A38DC213EFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51C7D9F6-46FD-4B2E-9A5A-4A38DC213EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51C7D9F6-46FD-4B2E-9A5A-4A38DC213EFE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {602B7157-DB7F-4792-AB33-CAF0A8EB9275}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		BilgeCore\BilgeCore.projitems*{18c26c0c-4c5c-47d1-9872-cae3f5b2eca0}*SharedItemsImports = 13
+		BilgeCore\BilgeCore.projitems*{c91709bd-91ed-430c-a001-dd7bdcf39c79}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal

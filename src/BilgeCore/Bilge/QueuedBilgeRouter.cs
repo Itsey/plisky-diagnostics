@@ -4,6 +4,7 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -309,9 +310,15 @@
             int msgs = messageQueue.Count;
             if (msgs != 0) {
                 RouteAllQueuedMessages();
-                Emergency.Diags.Log($"Flush, messages {msgs}");
+                
+                for (int i = 0; i < 1000; i++) {
+                    Thread.Sleep(0);
 
-                Task.WaitAll(activeTasks.ToArray());
+                    if (activeTasks.All(t => t.IsCompleted)) {
+                        break;
+                    }
+                }
+                //Task.WaitAll(activeTasks.ToArray());
 
                 // This takes the current count of messages into msgs, and will run through processing
                 // messages - until either there are none left
@@ -321,8 +328,7 @@
                     queuedMessageResetEvent.Set();
                     Thread.Sleep(1);
                     looopProtect++;
-                    if (looopProtect > 100) {
-                        Emergency.Diags.Log($"Level Two Flush Occurs, Waiting Longer");
+                    if (looopProtect > 100) {                        
                         Thread.Sleep(10);
                         if (looopProtect > 110) {
                             break;
@@ -336,24 +342,28 @@
                 }
             }
 
-            Task.WaitAll(activeTasks.ToArray());
+            for (int i = 0; i < 1000; i++) {
+                Thread.Sleep(0);
+                // Moved from wait all as if the listener uses the main thread it will deadlock.
+                if (activeTasks.All(t => t.IsCompleted)) {
+                    break;
+                }
+            }
 
-            Emergency.Diags.Log($"Flush, done ");
         }
 
         private async Task RouteMessage(MessageMetadata[] messagesToRoute) {
             if ((handlers == null) || (handlers.Length == 0)) { return; }
             PrepareMessage(messagesToRoute);
 
-            Emergency.Diags.Log($"InternalRouteMessage >> " + messagesToRoute.Length.ToString());
 
             var hndlr = handlers;
             var tasks = new Task[hndlr.Length];
             try {
                 for (int i = 0; i < hndlr.Length; i++) {
-                    Emergency.Diags.Log($"Handler {i} routing message");
-                    tasks[i] = hndlr[i].HandleMessageAsync(messagesToRoute);
+                    tasks[i] = hndlr[i].HandleMessageAsync(messagesToRoute);                    
                 }
+                
                 await Task.WhenAll(tasks);
             } catch (Exception) {
                 ErrorCount++;

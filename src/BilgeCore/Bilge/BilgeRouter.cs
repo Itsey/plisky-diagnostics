@@ -7,6 +7,7 @@
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Primary message router
@@ -330,10 +331,12 @@
         /// <summary>
         /// Flushes all of the messages
         /// </summary>
-        internal void FlushMessages() {
+        internal async Task FlushMessages() {
             try {
-                WriteAllMessages();
-                ActualFlushMessages();
+                await Task.Run(() => {
+                    WriteAllMessages();
+                    ActualFlushMessages();
+                });                
             } catch (Exception ex) {
                 flushHiddenException = ex;
             }
@@ -404,10 +407,27 @@
         /// </summary>
         /// <param name="mmd">Metadata to prepare.</param>
         /// <param name="contextKeys">A dicutionary of additonal context key value pairs.</param>
-        internal void PrepareMetaData(MessageMetadata mmd, Dictionary<string, string> contextKeys) {
+        /// <param name="identifyOsThread">If true will attempt to identify the OS thread</param>
+        /// <param name="passContext">If true will pass context down to the reciever.</param>
+        internal void PrepareMetaData(MessageMetadata mmd, Dictionary<string, string> contextKeys, bool passContext = true, bool identifyOsThread = true) {
             mmd.NetThreadId = Thread.CurrentThread.ManagedThreadId.ToString();
-            mmd.OsThreadId = GetCurrentOperatingSystemThreadId() ?? mmd.NetThreadId;
+
+            if (identifyOsThread) {
+                mmd.OsThreadId = GetCurrentOperatingSystemThreadId() ?? mmd.NetThreadId;
+            } else {
+                mmd.OsThreadId = mmd.NetThreadId;
+            }
+
             mmd.Context = contextKeys[Bilge.BILGE_INSTANCE_CONTEXT_STR];
+
+            if (passContext) {
+                foreach (string f in contextKeys.Keys) {
+                    if (f != Bilge.BILGE_INSTANCE_CONTEXT_STR) {
+                        mmd.MessageTags.Add(f, contextKeys[f]);
+                    }
+                }
+            }
+            
         }
 
         /// <summary>

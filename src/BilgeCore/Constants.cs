@@ -237,8 +237,7 @@ namespace Plisky.Diagnostics {
 
         /// <summary>
         /// Indicates data in message
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Justification = "False positive on concatenated constants")]
+        /// </summary>        
         public const string DATAINDICATOR = "~~DATA::";
 
         /// <summary>
