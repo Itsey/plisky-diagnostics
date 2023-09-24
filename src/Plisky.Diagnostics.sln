@@ -15,6 +15,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BilgeBenchmarks", "BilgeBen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_Dependencies", "_Dependencies\_Dependencies.csproj", "{51C7D9F6-46FD-4B2E-9A5A-4A38DC213EFE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E8A04DFD-8688-4C00-B82B-9038483E2816}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\plisky-diags-ci.yml = ..\build\plisky-diags-ci.yml
+		..\build\plisky-diags-prerelease.yml = ..\build\plisky-diags-prerelease.yml
+		..\build\plisky-diags-release.yml = ..\build\plisky-diags-release.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
