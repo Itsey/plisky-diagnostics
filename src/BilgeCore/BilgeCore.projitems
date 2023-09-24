@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeAssertException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeContextItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeCoreOnly.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\ErrorWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\InfoWriter.cs" />
