@@ -84,6 +84,6 @@ stages:
             inputs:
               script: |
                 @echo off
-                echo Please Release me let me go
+                echo Please Release me let me go -> Publishing package to nuget.
                 c:\files\buildtools\releasescripts\nugetpush.cmd C:\files\publishing\Plisky.Diagnostics*.*nupkg      
                 echo Done
