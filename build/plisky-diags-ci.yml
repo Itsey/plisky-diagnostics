@@ -52,6 +52,7 @@ stages:
         configuration: '$(buildConfiguration)'
 
   - job: Test
+    dependsOn: BuildCode
     steps:
     - task: DotNetCoreCLI@2
       displayName: 'Runnig Tests Using Configuration - $(buildConfiguration)'
