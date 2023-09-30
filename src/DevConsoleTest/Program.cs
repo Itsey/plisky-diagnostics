@@ -112,16 +112,16 @@ namespace DevConsoleTest {
             try {
                 Bilge.SetConfigurationResolver("v-**");
                 Bilge.SetErrorSuppression(false);
-                var b = new Bilge(tl: System.Diagnostics.SourceLevels.Verbose);
+
+                var b = new Bilge("","",tl: System.Diagnostics.SourceLevels.Verbose);
                 var th = new TempHandler();
+
+                Bilge.Alert.Online("Bob");
 
                 Bilge.AddHandler(new ConsoleHandler());
                 Bilge.AddHandler(th);
 
                 try {
-
-
-
                     throw b.Error.ReportRecordException<FileNotFoundException>((short)SubSystems.Program,123, "Test", null);
 
                 } catch (Exception ax ) {
