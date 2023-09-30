@@ -72,10 +72,9 @@
 #if NETCOREAPP
         [DoesNotReturn]
 #endif
-
         [Conditional("DEBUG")]
         public void Fail(string msg, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-            ActiveRouteMessage(TraceCommandTypes.AssertionFailed, msg, null, meth, pth, ln);
+            AssertionFailureIfFalse(false, msg, meth, pth, ln);
         }
 
         /// <summary>
@@ -87,8 +86,8 @@
         /// <param name="pth">The path to the file of source for the calling method.</param>
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("DEBUG")]
-        public void False(bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-            True(!what, msg, meth, pth, ln);
+        public void False(bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {            
+            AssertionFailureIfFalse(!what, msg, meth, pth, ln);
         }
 
         /// <summary>
@@ -100,8 +99,8 @@
         /// <param name="pth">The path to the file of source for the calling method.</param>
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("DEBUG")]
-        public void NotNull(object what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-            True(what != null, msg, meth, pth, ln);
+        public void NotNull(object what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {            
+            AssertionFailureIfFalse(what != null, msg, meth, pth, ln);            
         }
 
         /// <summary>
@@ -128,6 +127,18 @@
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("DEBUG")]
         public void True(bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            AssertionFailureIfFalse(what,msg, meth, pth, ln);            
+        }
+
+        /// <summary>
+        /// Actually triggers the assertion failure if the what parameter is false, this is used so that the conditional compilation does not strip the internal calls to the routing method.
+        /// </summary>
+        /// <param name="what">A parameter that will cause an assertion failure if its false.</param>
+        /// <param name="msg">The message to display on assertion failure.</param>
+        /// <param name="meth">The method where the asserion failure occured.</param>
+        /// <param name="pth">The path to the file where the failure occured.</param>
+        /// <param name="ln">The line number within the file where the failure occured.</param>
+        protected void AssertionFailureIfFalse(bool what, string msg = null,string meth = null,string pth = null,int ln = 0) {
             if (!what) {
                 ActiveRouteMessage(TraceCommandTypes.AssertionFailed, msg, null, meth, pth, ln);
             }
