@@ -15,7 +15,7 @@ variables:
   buildVersionNumber: 'XXX-INVALID-XXX'
 
 stages:
-- stage: Prepare Code
+- stage: PrepareCode
   jobs:
   - job: Job Name
     steps:
@@ -68,7 +68,7 @@ stages:
       
           echo Packages Copied.
 
-- stage: Release
+- stage: ReleaseToNuget
   jobs:
   - deployment: Release
     pool:
