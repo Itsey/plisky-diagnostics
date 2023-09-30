@@ -15,7 +15,7 @@ variables:
   buildVersionNumber: 'XXX-INVALID-XXX'
 
 stages:
-- stage: Build Code
+- stage: BuildCode
   jobs:
   - job: Build
     steps:      
