@@ -17,7 +17,7 @@ variables:
 stages:
 - stage: PrepareCode
   jobs:
-  - job: Job Name
+  - job: VersioningJob
     steps:
     - task: PowerShell@2
       inputs:
