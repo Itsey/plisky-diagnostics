@@ -68,9 +68,11 @@ stages:
       
           echo Packages Copied.
 
-- deployment: Release
-  pool:
-    name: 'FarawayLand'  
+- stage: Release
+  jobs:
+  - deployment: Release
+    pool:
+      name: 'FarawayLand'  
     environment: 'Nuget-Release'
     strategy:
       runOnce:
