@@ -408,7 +408,7 @@
         }
 
         /// <summary>
-        /// Clear the trace stream cache down
+        /// Clear the trace stream cache down and ensure that all messages are written to the underlying listeners.
         /// </summary>
         public async Task Flush() {
 
@@ -421,7 +421,7 @@
         /// written, therefore it should only be used when a process is exiting and you still want to keep all off
         /// the trace messages - for example during a console program.
         /// </summary>
-        /// <remarks>It is possible to reinitialise with reinit=true, but this is not recommended.</remarks>
+        /// <remarks>It is possible to reinitialise with reinit=true, but this is not recommended outside of unit test scenarios.</remarks>
         /// <param name="reinit">The new handler</param>
         public void FlushAndShutdown(bool reinit = false) {
             BilgeRouter.Router.Shutdown();
@@ -431,18 +431,23 @@
         }
 
         /// <summary>
-        /// Returns all the loaded contexts
+        /// Returns an enumeration of all of the currently loaded name value pairs added as contexts.
         /// </summary>
-        /// <returns>Enumerable name value pairs as a tuple</returns>
+        /// <returns>Enumerable name value pairs as a tuple with each of the current contexts.</returns>
         public IEnumerable<Tuple<string, string>> GetContexts() {
             foreach (string l in activeConfig.MetaContexts.Keys) {
                 yield return new Tuple<string, string>(l, activeConfig.MetaContexts[l]);
             }
         }
 
+        /// <summary>
+        /// Adds name value pairing context to the current instance of Bilge.
+        /// </summary>
+        /// <param name="contextName">A Name for the contextual information.</param>
+        /// <param name="contextValue">A Value for the contextual information</param>
+        /// <exception cref="ArgumentNullException">Thrown if the name is null.</exception>
         public void AddContext(string contextName, string contextValue) {
-            if (string.IsNullOrWhiteSpace(contextName)) { throw new ArgumentNullException(nameof(contextName)); }
-            if (string.IsNullOrWhiteSpace(contextValue)) { throw new ArgumentNullException(nameof(contextValue)); }
+            if (string.IsNullOrWhiteSpace(contextName)) { throw new ArgumentNullException(nameof(contextName)); }            
 
             if (!activeConfig.MetaContexts.ContainsKey(contextName)) {
                 activeConfig.MetaContexts.Add(contextName, contextValue);
