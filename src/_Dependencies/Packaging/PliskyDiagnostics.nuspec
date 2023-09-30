@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Plisky.Diagnostics</id>
-    <version>XXX-VERSION3-XXX</version>
+    <version>XXX-VERSION-XXX</version>
     <title>Plisky Diagnostics And Trace Library, featuring Bilge.</title>
     <authors>https://github.com/Itsey</authors>
     <owners>https://github.com/Itsey</owners>
