@@ -10,44 +10,18 @@ pool:
  name: 'FarawayLand'  
 
 variables:
-  solution: '$(build.sourcesDirectory)\src\Plisky.Diagnostics.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-  buildVersionNumber: 'XXX-INVALID-XXX'
   versioningPattern: '..+.0'
 
-steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
-    restoreDirectory: '$(build.sourcesDirectory)\packages\'            
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Runnig Tests Using Configuration - $(buildConfiguration)'
-  inputs:
-    command: 'test'
-    arguments: '--no-build --configuration $(buildConfiguration)'
-    projects: '**/*.Test.csproj'
-    publishTestResults: true
-
-- task: PowerShell@2
-  displayName: 'PR Versioning'
-  inputs:
-      targetType: 'inline'
-      script: |
-            # Versioning Powershell - Queue Next Increment.
-            c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore `-Q=$(versioningPattern)
-            Write-Host "PreRelease VersionNuber Queued"
-
-
-
+stages:
+- stage: 
+  jobs:
+    steps:
+    - task: PowerShell@2
+      displayName: 'PR Versioning'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Versioning Powershell - Queue Next Increment.
+          c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore `-Q=$(versioningPattern)
+          Write-Host "PreRelease VersionNuber Queued"
 

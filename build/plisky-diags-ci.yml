@@ -15,46 +15,51 @@ variables:
   buildConfiguration: 'Release'
   buildVersionNumber: 'XXX-INVALID-XXX'
 
-steps:
-- task: NuGetToolInstaller@1
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
-    restoreDirectory: '$(build.sourcesDirectory)\packages\'
+stages:
+- stage: BuildCode
+  jobs:
+  - job: Build
+    steps:
+    - task: NuGetToolInstaller@1
 
-      
-- task: PowerShell@2
-  displayName: 'CI Versioning'
-  inputs:
-      targetType: 'inline'
-      script: |
-            # Versioning Powershell.
-            c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe UpdateFiles -NO -Root=$(build.sourcesDirectory)\src\ `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore -Increment `-MM=$(build.sourcesDirectory)\src\_Dependencies\automation\AutoVersion.txt
-            c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Passive `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore -O=Azdo:buildVersionNumber          
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(solution)'
+        restoreDirectory: '$(build.sourcesDirectory)\packages\'
+     
+    - task: PowerShell@2
+      displayName: 'CI Versioning'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Versioning Powershell.
+          c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe UpdateFiles -NO -Root=$(build.sourcesDirectory)\src\ `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore -Increment `-MM=$(build.sourcesDirectory)\src\_Dependencies\automation\AutoVersion.txt
+          c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Passive `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore -O=Azdo:buildVersionNumber          
             
-- task: PowerShell@2
-  inputs:
-      targetType: 'inline'
-      script: |
-            # Test That The Versioning Update Worked
-            Write-Host "Integration Build for $(buildVersionNumber)"
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Test That The Versioning Update Worked
+          Write-Host "Integration Build for $(buildVersionNumber)"
 
+    - task: VSBuild@1
+      inputs:
+        solution: '$(solution)'
+        msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Runnig Tests Using Configuration - $(buildConfiguration)'
-  inputs:
-    command: 'test'
-    arguments: '--no-build --configuration $(buildConfiguration)'
-    projects: '**/*.Test.csproj'
-    publishTestResults: true
+    - job: Test
+      steps:
+      - task: DotNetCoreCLI@2
+        displayName: 'Runnig Tests Using Configuration - $(buildConfiguration)'
+        inputs:
+          command: 'test'
+          arguments: '--no-build --configuration $(buildConfiguration)'
+          projects: '**/*.Test.csproj'
+          publishTestResults: true
 
 
 
