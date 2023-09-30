@@ -15,52 +15,50 @@ variables:
   buildVersionNumber: 'XXX-INVALID-XXX'
 
 stages:
-- stage: PrepareCode
+- stage: Build Code
   jobs:
-  - job: VersioningJob
-    steps:
-    - task: PowerShell@2
-      enabled: true
-      displayName: 'Release Versioning'
-      inputs:
-        targetType: 'inline'        
-        script: |
-          # Versioning Powershell.
-          c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe UpdateFiles `-Root=$(build.sourcesDirectory)\src\ `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore -Increment `-MM=$(build.sourcesDirectory)\src\_Dependencies\automation\AutoVersion.txt -Trace=verbose
-          c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Passive `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore -O=Azdo:buildVersionNumber -Trace=verbose              
-
-    - task: PowerShell@2
-      enabled: true
-      displayName: 'Version Info'
-      inputs:
-        targetType: 'inline'
-        script: |
-          # Test That The Versioning Update Worked
-          Write-Host "Integration Build for $(buildVersionNumber)"
-
   - job: Build
     steps:      
-    - task: NuGetToolInstaller@1
+      - task: PowerShell@2
+        enabled: true
+        displayName: 'Release Versioning'
+        inputs:
+          targetType: 'inline'        
+          script: |
+            # Versioning Powershell.
+            c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe UpdateFiles `-Root=$(build.sourcesDirectory)\src\ `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore -Increment `-MM=$(build.sourcesDirectory)\src\_Dependencies\automation\AutoVersion.txt -Trace=verbose
+            c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Passive `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore -O=Azdo:buildVersionNumber -Trace=verbose              
 
-    - task: NuGetCommand@2
-      inputs:
-        restoreSolution: '$(solution)'
-        restoreDirectory: '$(build.sourcesDirectory)\packages\'
+      - task: PowerShell@2
+        enabled: true
+        displayName: 'Version Info'
+        inputs:
+          targetType: 'inline'
+          script: |
+            # Test That The Versioning Update Worked
+            Write-Host "Integration Build for $(buildVersionNumber)"
+
+      - task: NuGetToolInstaller@1
+
+      - task: NuGetCommand@2
+        inputs:
+          restoreSolution: '$(solution)'
+          restoreDirectory: '$(build.sourcesDirectory)\packages\'
   
-    - task: VSBuild@1
-      inputs:
-        solution: '$(solution)'
-        msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-        platform: '$(buildPlatform)'
-        configuration: '$(buildConfiguration)'
+      - task: VSBuild@1
+        inputs:
+          solution: '$(solution)'
+          msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+          platform: '$(buildPlatform)'
+          configuration: '$(buildConfiguration)'
 
-    - task: NuGetCommand@2
-      inputs:
-        command: 'custom'
-        packagesToPack: '**/PliskyDiagnostics.nuspec;'
-        versioningScheme: 'off'
-        arguments: pack $(build.sourcesDirectory)\src\_Dependencies\Packaging\PliskyDiagnostics.nuspec -NonInteractive -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=Release -Symbols -Verbosity Detailed -SymbolPackageFormat snupkg
-        includeSymbols: true
+      - task: NuGetCommand@2
+        inputs:
+          command: 'custom'
+          packagesToPack: '**/PliskyDiagnostics.nuspec;'
+          versioningScheme: 'off'
+          arguments: pack $(build.sourcesDirectory)\src\_Dependencies\Packaging\PliskyDiagnostics.nuspec -NonInteractive -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=Release -Symbols -Verbosity Detailed -SymbolPackageFormat snupkg
+          includeSymbols: true
 
     
 

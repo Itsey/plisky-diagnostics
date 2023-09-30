@@ -3,4 +3,3 @@
 **/src/**/Plisky.Diagnostics.csproj|StdAssembly
 **/src/**/Plisky.Diagnostics.csproj|StdInformational
 **/src/**/Plisky.Diagnostics.csproj|StdFile
-**/src/**/GitReleaseSync.cmd|TextFile
