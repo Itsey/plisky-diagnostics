@@ -18,6 +18,7 @@ parameters:
 
 stages:
 - stage: 
+  jobs:
   - job: PrepVersioning
     steps:
     - task: PowerShell@2
@@ -25,7 +26,8 @@ stages:
       inputs:
         targetType: 'inline'
         script: |          
--         Write-Host "$(parameters.versioningPattern)"
--         Write-Host "$(versioningPattern)"
+          Write-Host "$(parameters.versioningPattern)"
+          Write-Host "$(versioningPattern)"
           Write-Host "c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore `-Q=$(parameters.versioningPattern)"
           
+
