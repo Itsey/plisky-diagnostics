@@ -27,7 +27,7 @@ stages:
           script: |
             # Versioning Powershell.   Use -Trace=verbose for diagnostics
             c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe UpdateFiles `-Root=$(build.sourcesDirectory)\src\ `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore -Increment `-MM=$(build.sourcesDirectory)\src\_Dependencies\automation\AutoVersion.txt
-            c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Passive `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore -O=Azdo:buildVersionNumber
+            c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Passive `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore -O=Azdo:buildversionnumber
 
       - task: PowerShell@2
         enabled: true
