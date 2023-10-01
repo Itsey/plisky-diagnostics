@@ -27,6 +27,6 @@ stages:
         targetType: 'inline'
         script: |
           # Versioning Powershell - Queue Next Increment.
-          c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore `-Q=$(versioningPattern)
+          c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore `-Q=$env:VERSIONINGPATTERN
           Write-Host "PreRelease VersionNuber Queued"
 
