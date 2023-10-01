@@ -19,6 +19,7 @@ parameters:
 stages:
 - stage: 
   jobs:
+  - job: PrepVersioning
     steps:
     - task: PowerShell@2
       displayName: 'PR Versioning'
