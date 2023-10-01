@@ -9,8 +9,12 @@ trigger: none
 pool:
  name: 'FarawayLand'  
 
-variables:
-  versioningPattern: '..+.0'
+
+parameters:
+- name: versioningPattern
+  displayName: version increment pattern
+  default : '..+.0'
+  type: string
 
 stages:
 - stage: 
