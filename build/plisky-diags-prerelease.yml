@@ -21,14 +21,12 @@ stages:
   jobs:
   - job: PrepVersioning
     steps:
-    - task: PowerShell@2
+    - task: CmdLine@2
       displayName: 'PR Versioning'
       inputs:
         targetType: 'inline'
-        script: |          
-          #Write-Host "$(parameters.versioningPattern)"
-          $vp = "$(versioningPattern)"
-          Write-Host "$vp"
-          Write-Host "c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore `-Q=$(parameters.versioningPattern)"
+        script: |                          
+          echo "$(versioningPattern)"
+          echo "c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore `-Q=$(parameters.versioningPattern)"
           
 
