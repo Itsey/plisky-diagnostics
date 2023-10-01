@@ -27,7 +27,8 @@ stages:
         targetType: 'inline'
         script: |          
           #Write-Host "$(parameters.versioningPattern)"
-          Write-Host "$(versioningPattern)"
+          $vp = "$(versioningPattern)"
+          Write-Host "$vp"
           Write-Host "c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore `-Q=$(parameters.versioningPattern)"
           
 
