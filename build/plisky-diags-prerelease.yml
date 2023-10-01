@@ -25,10 +25,8 @@ stages:
       displayName: 'PR Versioning'
       inputs:
         targetType: 'inline'
-        script: |
-          # Versioning Powershell - Queue Next Increment.
+        script: |          
 -         Write-Host "$(parameters.versioningPattern)"
 -         Write-Host "$(versioningPattern)"
-          # c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore `-Q=$(parameters.versioningPattern)
+          Write-Host "c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore `-Q=$(parameters.versioningPattern)"
           
-        # Dummy
