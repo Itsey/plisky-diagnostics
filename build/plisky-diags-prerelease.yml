@@ -26,7 +26,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |                          
-          echo $(versioningPattern)  $(parameters.versioningPattern) %versioningPattern% %parameters.versioningPattern%
+          echo $(versioningPattern) d $(parameters.versioningPattern) a %VERSIONINGPATTERN% k %versioningPattern%  p %parameters.versioningPattern% %parameters_versioningPattern% %PARAMETERS_VERSIONINGPATTERN%
           echo "c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override `-VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore `-Q=$(parameters.versioningPattern)"
           
 
