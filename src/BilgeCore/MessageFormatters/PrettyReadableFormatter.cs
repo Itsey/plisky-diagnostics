@@ -1,6 +1,6 @@
-﻿namespace Plisky.Diagnostics {
-    using System;
+﻿using System;
 
+namespace Plisky.Diagnostics {
     /// <summary>
     /// Holds the logic for a formatter designed to be read by people - e.g. for writing to files.
     /// </summary>
@@ -12,7 +12,8 @@
         /// <returns>A string that has been formatted to be readable by people.</returns>
         protected override string ActualConvert(MessageMetadata msg) {
             string appendage = mfo.AppendNewline ? Environment.NewLine : string.Empty;
-            return $"{DateTime.Now} >> {msg.Body} <<|>> {msg.ClassName}@{msg.LineNumber} in {msg.ProcessId}@{msg.MachineName} Thread[{msg.NetThreadId},{msg.OsThreadId}] ({msg.FurtherDetails}) [{msg.CommandType.ToString()}]{appendage}";
+            var dateTime = msg?.TimeStamp ?? DateTime.Now;
+            return $"{dateTime} >> {msg.Body} <<|>> {msg.ClassName}@{msg.LineNumber} in {msg.ProcessId}@{msg.MachineName} Thread[{msg.NetThreadId},{msg.OsThreadId}] ({msg.FurtherDetails}) [{msg.CommandType}]{appendage}";
         }
     }
 }

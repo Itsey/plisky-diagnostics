@@ -12,7 +12,7 @@
         public TraceConfiguration() {
             AddClassDetailToTrace = false;
             AddTimingsToEnterExit = false;
-            AddTimestamps = false;
+            AddTimestamps = true;
             PassContextToHandler = true;
             UseOSThreadId = true;
         }

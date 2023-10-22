@@ -1,6 +1,6 @@
-﻿namespace Plisky.Diagnostics {
-    using System;
+﻿using System;
 
+namespace Plisky.Diagnostics {
     /// <summary>
     /// pretty formatter
     /// </summary>
@@ -44,7 +44,8 @@
         protected override string ActualConvert(MessageMetadata msg) {
             string nl = mfo.AppendNewline ? Environment.NewLine : string.Empty;
             string mtc = MessageTypeConvert == null ? msg.CommandType.ToString() : MessageTypeConvert(msg.CommandType);
-            return string.Format(FormatString, DateTime.Now, msg.Body, msg.ClassName, msg.LineNumber, msg.ProcessId, msg.MachineName, msg.NetThreadId, msg.OsThreadId, msg.FurtherDetails, mtc, nl);
+            var dateTime = msg?.TimeStamp ?? DateTime.Now;
+            return string.Format(FormatString, dateTime, msg.Body, msg.ClassName, msg.LineNumber, msg.ProcessId, msg.MachineName, msg.NetThreadId, msg.OsThreadId, msg.FurtherDetails, mtc, nl);
         }
     }
 }
