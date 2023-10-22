@@ -1,4 +1,5 @@
 ﻿namespace Plisky.Diagnostics {
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -6,13 +7,12 @@
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Primary message router
     /// </summary>
     public abstract class BilgeRouter {
-        [DllImport("kernel32.dll")]
-        private static extern uint GetCurrentThreadId();
 
         /// <summary>
         /// Provides access to all the call counts of action calls
@@ -56,7 +56,11 @@
 
         private volatile int messageQueueMaximum = -1;
 
+        [DllImport("kernel32.dll")]
+        private static extern uint GetCurrentThreadId();
+
         /// <summary>
+        /// Initializes a new instance of the <see cref="BilgeRouter"/> class.
         /// Constructor for the router
         /// </summary>
         /// <param name="processId">The process ID associated with this router</param>
@@ -146,6 +150,11 @@
         protected string ProcessIdCache { get; private set; }
 
         /// <summary>
+        /// Determines whether the code sould try and retrieve the current thread id, if an error occurs this is set to false to prevent retries.
+        /// </summary>
+        protected bool ShouldGetCurrentThreadId { get; set; } = true;
+
+        /// <summary>
         /// Flips the router to being a single threaded router that is suited for environments that can not
         /// support threads being created.
         /// </summary>
@@ -207,11 +216,6 @@
         /// Shut everything down.
         /// </summary>
         public abstract void ActualShutdown();
-
-        /// <summary>
-        /// Determines whether the code sould try and retrieve the current thread id, if an error occurs this is set to false to prevent retries.
-        /// </summary>
-        protected bool ShouldGetCurrentThreadId { get; set; } = true;
 
         /// <summary>
         /// Adds an action handler ( V3.x onwards)
@@ -327,10 +331,12 @@
         /// <summary>
         /// Flushes all of the messages
         /// </summary>
-        internal void FlushMessages() {
+        internal async Task FlushMessages() {
             try {
-                WriteAllMessages();
-                ActualFlushMessages();
+                await Task.Run(() => {
+                    WriteAllMessages();
+                    ActualFlushMessages();
+                });                
             } catch (Exception ex) {
                 flushHiddenException = ex;
             }
@@ -361,6 +367,10 @@
             }
         }
 
+        /// <summary>
+        /// Returns all the handlers statuses.
+        /// </summary>
+        /// <returns>A string of handler statuses</returns>
         internal string GetHandlerStatuses() {
             var sb = new StringBuilder();
 
@@ -393,31 +403,31 @@
         }
 
         /// <summary>
-        /// Returns the underlying operating system thread id as a string, or null if that functon is not avaialable on the current platform, if an exception occurs trying to
-        /// retrieve the id then the function will return null from then on.
-        /// </summary>
-        /// <returns>A string value of the OS thread ID or null if it can not be returned.</returns>
-        protected string GetCurrentOperatingSystemThreadId() {
-            if (ShouldGetCurrentThreadId) {
-                try {
-                    uint threadId = GetCurrentThreadId();
-                    return threadId.ToString();
-                } catch (DllNotFoundException) {
-                    ShouldGetCurrentThreadId = false;
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
         /// Prepares the message metadata for processing.
         /// </summary>
         /// <param name="mmd">Metadata to prepare.</param>
         /// <param name="contextKeys">A dicutionary of additonal context key value pairs.</param>
-        internal void PrepareMetaData(MessageMetadata mmd, Dictionary<string, string> contextKeys) {
+        /// <param name="identifyOsThread">If true will attempt to identify the OS thread</param>
+        /// <param name="passContext">If true will pass context down to the reciever.</param>
+        internal void PrepareMetaData(MessageMetadata mmd, Dictionary<string, string> contextKeys, bool passContext = true, bool identifyOsThread = true) {
             mmd.NetThreadId = Thread.CurrentThread.ManagedThreadId.ToString();
-            mmd.OsThreadId = GetCurrentOperatingSystemThreadId() ?? mmd.NetThreadId;
+
+            if (identifyOsThread) {
+                mmd.OsThreadId = GetCurrentOperatingSystemThreadId() ?? mmd.NetThreadId;
+            } else {
+                mmd.OsThreadId = mmd.NetThreadId;
+            }
+
             mmd.Context = contextKeys[Bilge.BILGE_INSTANCE_CONTEXT_STR];
+
+            if (passContext) {
+                foreach (string f in contextKeys.Keys) {
+                    if (f != Bilge.BILGE_INSTANCE_CONTEXT_STR) {
+                        mmd.MessageTags.Add(f, contextKeys[f]);
+                    }
+                }
+            }
+            
         }
 
         /// <summary>
@@ -472,6 +482,33 @@
             }
 #endif
             handlers = replacement;
+        }
+
+        /// <summary>
+        /// Returns the underlying operating system thread id as a string, or null if that functon is not avaialable on the current platform, if an exception occurs trying to
+        /// retrieve the id then the function will return null from then on.
+        /// </summary>
+        /// <returns>A string value of the OS thread ID or null if it can not be returned.</returns>
+        protected string GetCurrentOperatingSystemThreadId() {
+            if (ShouldGetCurrentThreadId) {
+                try {
+                    uint threadId = 0;
+#if NETCOREAPP
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                        ShouldGetCurrentThreadId = false;
+#else
+                    threadId = GetCurrentThreadId();
+#endif
+#if NETCOREAPP
+                }
+#endif
+
+                    return threadId.ToString();
+                } catch (DllNotFoundException) {
+                    ShouldGetCurrentThreadId = false;
+                }
+            }
+            return null;
         }
 
         /// <summary>

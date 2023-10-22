@@ -6,12 +6,12 @@
     public class SimpleActionEvent : IBilgeActionEvent {
 
         /// <summary>
-        /// default constructor
+        /// Initializes a new instance of the <see cref="SimpleActionEvent"/> class.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="data"></param>
-        /// <param name="value"></param>
-        /// <param name="success"></param>
+        /// <param name="name">The name of the action.</param>
+        /// <param name="data">A Data field associated with the action.</param>
+        /// <param name="value">The value of the action.</param>
+        /// <param name="success">Indicates whether it was successfull, defaults to true.</param>
         public SimpleActionEvent(string name, string data, string value, bool success = true) {
             Name = name;
             CallCount = 0;
@@ -21,12 +21,12 @@
         }
 
         /// <summary>
-        /// repeated action count
+        /// repeated action count.
         /// </summary>
         public int CallCount { get; private set; }
 
         /// <summary>
-        /// associated data
+        /// associated data.
         /// </summary>
         public string Data { get; private set; }
 

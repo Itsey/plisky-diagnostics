@@ -1,0 +1,33 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+
+trigger: none
+
+pool:
+ name: 'FarawayLand'  
+
+
+parameters:
+- name: versioningPattern
+  displayName: version increment pattern
+  default : '..+.0'
+  type: string
+
+stages:
+- stage: 
+  jobs:
+  - job: PrepVersioning
+    steps:
+    - task: CmdLine@2
+      displayName: 'PR Versioning'
+      inputs:
+        targetType: 'inline'
+        script: |                          
+          echo $(versioningPattern) d $(parameters.versioningPattern) a %VERSIONINGPATTERN% k %versioningPattern%  p %parameters.versioningPattern% x f %PARAMETERS_VERSIONINGPATTERN%  x 
+          echo  ${{ parameters.versioningPattern }} 
+          c:\Files\BuildTools\PliskyVersioner\PliskyTool.exe Override -VS=c:\Files\BuildTools\VersionStore\pliskydiagnostics.vstore -Q=${{ parameters.versioningPattern }}
+          
+

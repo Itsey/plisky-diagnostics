@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Plisky.Diagnostics;
 using Plisky.Diagnostics.Listeners;
 
@@ -14,7 +14,8 @@ namespace DevConsoleTest {
     /// Test Program for Bilge.
     /// </summary>
     internal class Program {
-        //private static MyRoller storedRfsh;
+
+        // private static MyRoller storedRfsh;
         private static int hitCount = 0;
 
         private static void DoBasicTimingTests() {
@@ -42,19 +43,14 @@ namespace DevConsoleTest {
 
         private static void DoBulkMessageTests() {
             var b = new Bilge("BulkMessageTests");
+            
             for (int i = 0; i < 1000000; i++) {
                 for (int j = 0; j < 100; j++) {
                     b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
                     b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
                     b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
                 }
-                bool dateChange = false;
-                /*
-                if (dateChange && storedRfsh != null) {
-                    if (i % 100 == 0) {
-                        storedRfsh.ActiveDate = storedRfsh.ActiveDate.AddDays(1);
-                    }
-                }*/
+
                 Thread.Sleep(100);
             }
         }
@@ -111,28 +107,50 @@ namespace DevConsoleTest {
             var ass = new ActivitySource("Blob", "1");
         }
 
-        private static void Main(string[] args) {
+        private static async Task Main(string[] args) {
             Console.WriteLine("Hello World!");
             try {
                 Bilge.SetConfigurationResolver("v-**");
                 Bilge.SetErrorSuppression(false);
-                var b = new Bilge(tl: System.Diagnostics.SourceLevels.Verbose);
-              /*  var thnd = new TCPHandler("127.0.0.1", 9060);
-                thnd.SetFormatter(new FlimFlamV4Formatter());
-                var fhnd = new RollingFileSystemHandler(new RollingFSHandlerOptions() {
-                    Directory = "d:\\temp\\",
-                    FileName = "pdev.txt",
-                    FilenameIsMask = false,
-                    MaxRollingFileSize = "1mb",
-                });
-                fhnd.SetFormatter(new FlimFlamV4Formatter());
-                Bilge.AddHandler(thnd);
-                Bilge.AddHandler(fhnd);*/
+
+                var b = new Bilge("","",tl: System.Diagnostics.SourceLevels.Verbose);
+                var th = new TempHandler();
+
+                Bilge.Alert.Online("Bob");
+
+                Bilge.AddHandler(new ConsoleHandler());
+                Bilge.AddHandler(th);
+
+                try {
+                    throw b.Error.ReportRecordException<FileNotFoundException>((short)SubSystems.Program,123, "Test", null);
+
+                } catch (Exception ax ) {
+                    Console.WriteLine(ax.Message);
+                }
+
+                
+                /*  var thnd = new TCPHandler("127.0.0.1", 9060);
+                  thnd.SetFormatter(new FlimFlamV4Formatter());
+                  var fhnd = new RollingFileSystemHandler(new RollingFSHandlerOptions() {
+                      Directory = "d:\\temp\\",
+                      FileName = "pdev.txt",
+                      FilenameIsMask = false,
+                      MaxRollingFileSize = "1mb",
+                  });
+                  fhnd.SetFormatter(new FlimFlamV4Formatter());
+                  Bilge.AddHandler(thnd);
+                  Bilge.AddHandler(fhnd);*/
                 Bilge.Alert.Online("testapp");
 
 #if NETCOREAPP
-                b.Info.Log("NET CORE!");
+                for (int i = 0; i < 100; i++) {
+                    b.Info.Log($"NET CORE! {i}");
+                }
 #endif
+                
+                await b.Flush();
+
+                
 
                 bool includeInMemoryTests = false;
                 bool includeRollingFileSytstemHandlerTests = false;
@@ -141,16 +159,30 @@ namespace DevConsoleTest {
                 bool sourceTests = false;
                 bool perfTests = false;
                 bool reportAndRecord = true;
-                bool standardLogs = false;
+                bool standardLogs = true;
 
                 if (reportAndRecord) {
                     DoReportAndRecord();
                 }
+
+                th.AddSubsystemMapping((ss) => {
+                    switch (ss) {
+                        case (short)SubSystems.Unknown: return "Unknown";                            
+                        case (short)SubSystems.Program: return "Program";                            
+                        case (short)SubSystems.TestArea: return "TestArea";
+                            
+                        default:
+                            return string.Empty;
+                    }
+
+                });
+                th.WriteReport();
+
                 if (perfTests) {
                     DoPerformanceTests();
                 }
                 if (includeInMemoryTests) {
-                  //  SetUpInMemoryHandler();
+                    // SetUpInMemoryHandler();
                 }
 
                 if (includeCustomHandler) {
@@ -158,7 +190,7 @@ namespace DevConsoleTest {
                 }
 
                 if (includeRollingFileSytstemHandlerTests) {
-                    //storedRfsh = SetUpRollingFileSystemHandlerTests();
+                    // storedRfsh = SetUpRollingFileSystemHandlerTests();
                 }
                 if (standardLogs) {
                     for (int i = 0; i < 100; i++) {
@@ -168,7 +200,7 @@ namespace DevConsoleTest {
                         lg.Bob = 5;
                         lg.Structure = "none";
 
-                        b.Info.Log("context", lg);
+                        b.Info.More("context", lg);
 
                         var f = new Dictionary<string, string>();
                         f.Add("plisky.moreinfo", "This is more info");
@@ -179,7 +211,7 @@ namespace DevConsoleTest {
                     b.Info.Log("Hi");
                 }
 
-                b.Flush();
+                //await b.Flush();
                 for (int i = 0; i < 4; i++) {
                     Thread.Sleep(100);
                 }
@@ -193,7 +225,7 @@ namespace DevConsoleTest {
                 }
 
                 Thread.Sleep(100);
-                b.Flush();
+               // b.Flush();
 
                 Console.WriteLine(b.GetDiagnosticStatus());
             } catch (Exception ex) {
@@ -250,7 +282,6 @@ namespace DevConsoleTest {
             Bilge.AddHandler(imh);
         }
 
-        
         private static MyRoller SetUpRollingFileSystemHandlerTests() {
             var mr = new MyRoller(new RollingFSHandlerOptions() {
                 Directory = @"C:\Temp\_Deleteme\Lg\",

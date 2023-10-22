@@ -184,8 +184,6 @@ namespace Plisky.Diagnostics {
             return ((uint)tct & SECTIONCOMMANDS) == (uint)tct;
         }
 
-        // This file holds the definitions for both Tex and Mex about how the strings that are sent around look.  Mex is defined with MEXBUILD and tex
-        // is defined with TEXBUILD so that they can share the same file without interrupting each others build.
         /// <summary>
         /// This method will check the passed string to see if the string passed is not a tex string, it is optimised to fail as soon as possible therefore only guarantees
         /// that the string passed does not look like a tex string
@@ -209,7 +207,7 @@ namespace Plisky.Diagnostics {
         /// <param name="tct">the trace command type to test</param>
         /// <returns>true if this represents a trace command</returns>
         public static bool IsTraceCommand(TraceCommandTypes tct) {
-            return (((uint)tct & TRACECOMMANDS) == (uint)tct);
+            return ((uint)tct & TRACECOMMANDS) == (uint)tct;
         }
 
         /// <summary>
@@ -301,7 +299,15 @@ namespace Plisky.Diagnostics {
         /// where THREADID    = The numeric ID assigned to the OS Thread running the commands
         /// where MODULENAME  = The cs filename that was executing the commands
         /// where LINENUMBER  = the numeric line number that the debug string was written from.
-        /// </summary>        
+        /// </summary>
+        /// <param name="debugString">The string to log out.</param>
+        /// <param name="cmdType">The type of trace command.</param>
+        /// <param name="processID">The process identifier.</param>
+        /// <param name="machineName">The name of the machine doing the tracing.</param>
+        /// <param name="threadID">The thread identity.</param>
+        /// <param name="moduleName">The module name.</param>
+        /// <param name="lineNumber">The line number.</param>
+        /// <param name="debugOutput">the debugOutput</param>
         public static void ReturnPartsOfStringLegacy(string debugString, out string cmdType, out string processID, out string machineName, out string threadID,
           out string moduleName, out string lineNumber, out string debugOutput) {
             processID = string.Empty;
@@ -391,7 +397,7 @@ namespace Plisky.Diagnostics {
         /// <param name="timerInstanceTitle">The instance title</param>
         /// <param name="timerSinkTitle">The timer sink title</param>
         /// <param name="timeValue">The timer value</param>
-        /// <returns></returns>
+        /// <returns>True if the split worked</returns>
         public static bool SplitTimerStringByParts(string timerString, out string timerInstanceTitle, out string timerSinkTitle, out DateTime timeValue) {
             timerInstanceTitle = timerSinkTitle = string.Empty;
             timeValue = DateTime.MinValue;

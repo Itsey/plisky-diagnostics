@@ -8,7 +8,6 @@
     /// Determines the behaviour of the assertion failure in Bilge.
     /// </summary>
     public enum AssertionStyle {
-
         /// <summary>
         /// No action is taken, the assertion is ignored.
         /// </summary>
@@ -34,7 +33,6 @@
     /// Provides Assertion support into Bilge.
     /// </summary>
     public class BilgeAssert : BilgeRoutedBase {
-
         /// <summary>
         /// Holds the associated error instance of bilge which is where the error numbers are captured.
         /// </summary>
@@ -76,7 +74,7 @@
 #endif
         [Conditional("DEBUG")]
         public void Fail(string msg, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-            ActiveRouteMessage(TraceCommandTypes.AssertionFailed, msg, null, meth, pth, ln);
+            AssertionFailureIfFalse(false, msg, meth, pth, ln);
         }
 
         /// <summary>
@@ -88,12 +86,8 @@
         /// <param name="pth">The path to the file of source for the calling method.</param>
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("DEBUG")]
-#if NETCOREAPP
-        public void False([DoesNotReturnIf(true)] bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-#else
-        public void False(bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-#endif
-            True(!what, msg, meth, pth, ln);
+        public void False(bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {            
+            AssertionFailureIfFalse(!what, msg, meth, pth, ln);
         }
 
         /// <summary>
@@ -105,8 +99,8 @@
         /// <param name="pth">The path to the file of source for the calling method.</param>
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("DEBUG")]
-        public void NotNull(object what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-            True(what != null, msg, meth, pth, ln);
+        public void NotNull(object what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {            
+            AssertionFailureIfFalse(what != null, msg, meth, pth, ln);            
         }
 
         /// <summary>
@@ -132,11 +126,19 @@
         /// <param name="pth">The path to the file of source for the calling method.</param>
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("DEBUG")]
-#if NETCOREAPP
-        public void True([DoesNotReturnIf(false)] bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-#else
         public void True(bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-#endif
+            AssertionFailureIfFalse(what,msg, meth, pth, ln);            
+        }
+
+        /// <summary>
+        /// Actually triggers the assertion failure if the what parameter is false, this is used so that the conditional compilation does not strip the internal calls to the routing method.
+        /// </summary>
+        /// <param name="what">A parameter that will cause an assertion failure if its false.</param>
+        /// <param name="msg">The message to display on assertion failure.</param>
+        /// <param name="meth">The method where the asserion failure occured.</param>
+        /// <param name="pth">The path to the file where the failure occured.</param>
+        /// <param name="ln">The line number within the file where the failure occured.</param>
+        protected void AssertionFailureIfFalse(bool what, string msg = null,string meth = null,string pth = null,int ln = 0) {
             if (!what) {
                 ActiveRouteMessage(TraceCommandTypes.AssertionFailed, msg, null, meth, pth, ln);
             }
@@ -168,6 +170,19 @@
                     break;
 
                 case AssertionStyle.Default:
+                    AssertAction = (x) => {
+                        if (Debugger.IsAttached) {
+                            Debugger.Break();
+                        } else {
+                            var ex = new BilgeAssertException(x.Context, x.FurtherDetails, new StackTrace(0, true).ToString());
+                            string pn = Process.GetCurrentProcess().ProcessName.ToLower();
+                            if (pn.StartsWith("vstesthost") || pn.StartsWith("vstest")) {
+                                throw ex;
+                            }
+                            Environment.FailFast(ex.Message, ex);
+                        }
+                    };
+                    break;
                 case AssertionStyle.Fail:
 
                     AssertAction = (x) => {

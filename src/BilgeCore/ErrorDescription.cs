@@ -1,10 +1,8 @@
 ﻿namespace Plisky.Diagnostics {
-
     /// <summary>
     /// Holds the context of an error number including a description of what that error means.
     /// </summary>
     public class ErrorDescription {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ErrorDescription"/> class which holds the context of an error number including a description of what that error means.
         /// </summary>

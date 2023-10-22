@@ -6,7 +6,7 @@
     public class TestHelper {
 
         public static MessageMetadata[] GetMessageMetaData(int howMany = 1) {
-            List<MessageMetadata> result = new List<MessageMetadata>();
+            var result = new List<MessageMetadata>();
 
             for (int i = 0; i < howMany; i++) {
                 var r = new MessageMetadata() {
@@ -31,6 +31,8 @@
         internal static Bilge GetBilgeAndClearDown(BilgeRouter rt = null, string context = null, SourceLevels sl = SourceLevels.All, bool simplify = true) {
             Bilge.ClearConfigurationResolver();
 
+           
+
             if (rt != null) {
                 Bilge.SimplifyRouter(rt);
             } else if (simplify) {
@@ -52,7 +54,7 @@
                     result = new Bilge(resetDefaults: true);
                 }
             }
-
+            
             return result;
         }
     }

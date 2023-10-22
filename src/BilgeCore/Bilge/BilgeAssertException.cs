@@ -1,14 +1,10 @@
 ﻿namespace Plisky.Diagnostics {
     using System;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// USed by the assertion code when the assertion behaviour is set to throw exceptions.
     /// </summary>
     public sealed class BilgeAssertException : Exception {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="BilgeAssertException"/> class.
         /// </summary>

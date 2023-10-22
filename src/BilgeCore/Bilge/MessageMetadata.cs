@@ -1,7 +1,6 @@
 ﻿using System;
 
 namespace Plisky.Diagnostics {
-
     using System.Collections.Generic;
     using System.Threading;
 

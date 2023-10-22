@@ -1,10 +1,8 @@
 ﻿namespace Plisky.Diagnostics.Listeners {
-
     /// <summary>
     /// Base class to add handler support to take messages from the Bilge trace stream.
     /// </summary>
     public abstract class BaseHandler {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseHandler"/> class with a default priority of 5.
         /// </summary>

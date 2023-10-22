@@ -185,8 +185,12 @@ dotnet_diagnostic.SA1401.severity=silent
 dotnet_diagnostic.SA1403.severity=error
 dotnet_diagnostic.SA1306.severity=silent
 dotnet_diagnostic.SA1200.severity=silent
+# SA1124 do not use regions
+dotnet_diagnostic.SA1124.severity=silent
 # SA1503: Braces should not be omitted
 dotnet_diagnostic.SA1503.severity = error
+# SA1516: Elements must have blank lines
+dotnet_diagnostic.SA1516.severity=silent
 
 csharp_indent_labels = one_less_than_current
 csharp_using_directive_placement = outside_namespace:silent

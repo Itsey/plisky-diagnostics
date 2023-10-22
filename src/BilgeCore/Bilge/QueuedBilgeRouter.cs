@@ -1,8 +1,10 @@
 ﻿namespace Plisky.Diagnostics {
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -20,18 +22,33 @@
         private const int THREADWAITWHENNOEVENTS = 500;    // Normally half a second ok
 #endif
 
+        private Thread dispatcherThread;
+        private ConcurrentQueue<MessageMetadata> messageQueue;
+
+        private AutoResetEvent queuedMessageResetEvent;
+        private volatile int internalMessageMaxQueueLength = -1;  // Specific to this router because it has queues too
+        private volatile bool shutdownEnabled;
+        private List<Task> activeTasks = new List<Task>();
+        private volatile bool shutdownRequested = false;
+
+        /// <summary>
+        /// Tries to purge all data and the shut down.
+        /// </summary>
         protected override void Purge() {
             base.Purge();
 
             if (!shutdownRequested) { shutdownRequested = true; }
-            s_dispatcherThread = null;
+            dispatcherThread = null;
 
 #if DEBUG
             if (threadsActive == 1) { threadsActive = 0; }
 #endif
         }
 
-
+        /// <summary>
+        /// Returns a boolean indicating whether the current queue is clean.
+        /// </summary>
+        /// <returns>True if there is nothing in the queue.</returns>
         protected override bool ActualIsClean() {
             if ((messageQueue != null) && (messageQueue.Count > 0)) {
 #if ACTIVEDEBUG
@@ -49,21 +66,13 @@
             return true;
         }
 
-        
-        private Thread s_dispatcherThread;
-        private ConcurrentQueue<MessageMetadata> messageQueue;
-
-        private AutoResetEvent queuedMessageResetEvent;
-        private volatile int internalMessageMaxQueueLength = -1;  // Specific to this router because it has queues too
-        private volatile bool shutdownEnabled;
-
         private void EnableQueuedMessages() {
-            if ((s_dispatcherThread != null) && (queuedMessageResetEvent != null)) {
+            if ((dispatcherThread != null) && (queuedMessageResetEvent != null)) {
                 // Thread is running.
                 if (shutdownEnabled) {
-                    while (s_dispatcherThread != null) {
+                    while (dispatcherThread != null) {
                         queuedMessageResetEvent.Set();
-                        //not sure why this was here Thread.Sleep(0);
+                        // not sure why this was here Thread.Sleep(0);
                     }
                 } else {
                     // Its running and not shutting down just leave it.
@@ -83,23 +92,33 @@
                 throw new InvalidOperationException("Attempting to bring online a second background thread");
             }
 #endif
-            s_dispatcherThread = new Thread(new ThreadStart(DispatcherThreadMethod));
-            s_dispatcherThread.Start();
+            dispatcherThread = new Thread(new ThreadStart(DispatcherThreadMethod));
+            dispatcherThread.Start();
         }
 
+        /// <summary>
+        /// Forcibly clear down everything.
+        /// </summary>
         public override void ActualClearEverything() {
             WriteToHandlerOnlyOnFail = false;
             FailureOccuredForWrite = false;
             messageQueue = new ConcurrentQueue<MessageMetadata>();
         }
 
+        /// <summary>
+        /// Adds a message if the shutdown is not requested.
+        /// </summary>
+        /// <param name="mm">One or more messages.</param>
         protected override void ActualAddMessage(MessageMetadata[] mm) {
             if (!shutdownRequested) {
                 ActualQueueMessage(mm);
             }
         }
 
-
+        /// <summary>
+        /// Queues one or more messages
+        /// </summary>
+        /// <param name="mp">The messages</param>
         internal void ActualQueueMessage(MessageMetadata[] mp) {
 #if ACTIVEDEBUG
             Emergency.Diags?.Log($"Message queued " + mp.Body);
@@ -123,7 +142,8 @@
             if (internalMessageMaxQueueLength > 0) {
                 // Remove oldest messages until we come down below the limit again.
                 while (messageQueue.Count >= internalMessageMaxQueueLength) {
-                    while (!messageQueue.TryDequeue(out MessageMetadata mpx)) { };
+                    while (!messageQueue.TryDequeue(out var mpx)) {
+                    }
                 }
             }
             foreach (var x in mp) {
@@ -133,8 +153,9 @@
             queuedMessageResetEvent.Set();
         }
 
-        private volatile bool shutdownRequested = false;
-
+        /// <summary>
+        /// Shut down all of bilge.
+        /// </summary>
         public override void ActualShutdown() {
 #if ACTIVEDEBUG
             Emergency.Diags?.Log($"Shutdown requested");
@@ -145,14 +166,13 @@
             }
             shutdownRequested = true;
 
-            if (s_dispatcherThread != null) {
+            if (dispatcherThread != null) {
 #if ACTIVEDEBUG
                 Emergency.Diags?.Log($"Waiting on dispatcher thread");
 #endif
 
-                s_dispatcherThread.Join();
+                dispatcherThread.Join();
             }
-
 
             lock (handlerLock) {
                 if (handlers != null) {
@@ -168,15 +188,16 @@
                     }
                 }
             }
-
         }
 
+        /// <summary>
+        /// Get all of the handler statuses
+        /// </summary>
+        /// <param name="sb">Where to write the statuese</param>
+        /// <returns>The combined status output</returns>
         protected override StringBuilder ActualGetHandlerStatuses(StringBuilder sb) {
-
-
             sb.Append($"QueueDepth: {messageQueue.Count} Max: {internalMessageMaxQueueLength}\n");
             sb.Append("___________________________\n");
-
 
             return sb;
         }
@@ -188,13 +209,14 @@
             queuedMessageResetEvent.Set();
         }
 
+        /// <summary>
+        /// Try and restart bilge internals
+        /// </summary>
         public override void ActualReInitialise() {
             shutdownRequested = false;
             shutdownEnabled = false;
             EnableQueuedMessages();
         }
-
-        private List<Task> activeTasks = new List<Task>();
 
         private void DispatcherThreadMethod() {
 #if DEBUG
@@ -206,49 +228,49 @@
             }
             try {
 #endif
-                Thread.CurrentThread.Name = "Bilge>>RouterQueueDispatcher";
-                Thread.CurrentThread.IsBackground = true;
+            Thread.CurrentThread.Name = "Bilge>>RouterQueueDispatcher";
+            Thread.CurrentThread.IsBackground = true;
 
-                while ((!shutdownRequested) && (!System.Environment.HasShutdownStarted)) {
-                    ClearCompletedActiveTasks();
+            while ((!shutdownRequested) && (!System.Environment.HasShutdownStarted)) {
+                ClearCompletedActiveTasks();
 
-                    if (messageQueue.Count == 0) {
-                        // If the thread has nothing to do it waits for the next message or 5 seconds in case theres a message that
-                        // has come in since the zero was set or in case a shutdown request was made.
-                        if (!queuedMessageResetEvent.WaitOne(THREADWAITWHENNOEVENTS, false)) {
-                            // If we come out of our wait and there are still no events, or shutodwn is requested bomb out
-                            if ((messageQueue.Count == 0) || (System.Environment.HasShutdownStarted)) {
-                                continue;
-                            }
-                        }
-                    }
-
-                    // WriteOnFail support.
-                    if ((WriteToHandlerOnlyOnFail) && (!FailureOccuredForWrite)) {
-                        // Not quite the same this, there are events but we dont want to deal with them
-                        Thread.Sleep(THREADWAITWHENNOEVENTS);
-                        continue;
-                    }
-
-                    // WriteOnFail means only write when failure occured-  at this point we reset.
-                    if (FailureOccuredForWrite) { FailureOccuredForWrite = false; }
-                    lock (activeTasks) {
-                        // Message Batching support - group messages up together to send either by number or milliseconds or both
-                        if ((MessageBatchCapacity > 0) || (MessageBatchDelay > 0)) {
-                            if ((elapsedTimer?.ElapsedMilliseconds <= MessageBatchDelay) && (messageQueue.Count < MessageBatchCapacity)) {
-                                continue;
-                            }
-                        }
-
-                        while ((messageQueue.Count > 0) && (!System.Environment.HasShutdownStarted)) {
-                            RouteAllQueuedMessages();
+                if (messageQueue.Count == 0) {
+                    // If the thread has nothing to do it waits for the next message or 5 seconds in case theres a message that
+                    // has come in since the zero was set or in case a shutdown request was made.
+                    if (!queuedMessageResetEvent.WaitOne(THREADWAITWHENNOEVENTS, false)) {
+                        // If we come out of our wait and there are still no events, or shutodwn is requested bomb out
+                        if ((messageQueue.Count == 0) || System.Environment.HasShutdownStarted) {
+                            continue;
                         }
                     }
                 }
 
-                // Destroy resources associated with the high perf implementation
-                messageQueue = null;
-                queuedMessageResetEvent = null;
+                // WriteOnFail support.
+                if (WriteToHandlerOnlyOnFail && (!FailureOccuredForWrite)) {
+                    // Not quite the same this, there are events but we dont want to deal with them
+                    Thread.Sleep(THREADWAITWHENNOEVENTS);
+                    continue;
+                }
+
+                // WriteOnFail means only write when failure occured-  at this point we reset.
+                if (FailureOccuredForWrite) { FailureOccuredForWrite = false; }
+                lock (activeTasks) {
+                    // Message Batching support - group messages up together to send either by number or milliseconds or both
+                    if ((MessageBatchCapacity > 0) || (MessageBatchDelay > 0)) {
+                        if ((elapsedTimer?.ElapsedMilliseconds <= MessageBatchDelay) && (messageQueue.Count < MessageBatchCapacity)) {
+                            continue;
+                        }
+                    }
+
+                    while ((messageQueue.Count > 0) && (!System.Environment.HasShutdownStarted)) {
+                        RouteAllQueuedMessages();
+                    }
+                }
+            }
+
+            // Destroy resources associated with the high perf implementation
+            messageQueue = null;
+            queuedMessageResetEvent = null;
 
 #if DEBUG
             } finally {
@@ -256,7 +278,7 @@
             }
 #endif
             // Remove the reference as the last thing we do
-            s_dispatcherThread = null;
+            dispatcherThread = null;
         }
 
         private void RouteAllQueuedMessages() {
@@ -281,13 +303,22 @@
             }
         }
 
+        /// <summary>
+        /// Flush all messages
+        /// </summary>
         protected override void ActualFlushMessages() {
             int msgs = messageQueue.Count;
             if (msgs != 0) {
                 RouteAllQueuedMessages();
-                Emergency.Diags.Log($"Flush, messages {msgs}");
+                
+                for (int i = 0; i < 1000; i++) {
+                    Thread.Sleep(0);
 
-                Task.WaitAll(activeTasks.ToArray());
+                    if (activeTasks.All(t => t.IsCompleted)) {
+                        break;
+                    }
+                }
+                //Task.WaitAll(activeTasks.ToArray());
 
                 // This takes the current count of messages into msgs, and will run through processing
                 // messages - until either there are none left
@@ -297,8 +328,7 @@
                     queuedMessageResetEvent.Set();
                     Thread.Sleep(1);
                     looopProtect++;
-                    if (looopProtect > 100) {
-                        Emergency.Diags.Log($"Level Two Flush Occurs, Waiting Longer");
+                    if (looopProtect > 100) {                        
                         Thread.Sleep(10);
                         if (looopProtect > 110) {
                             break;
@@ -312,24 +342,28 @@
                 }
             }
 
-            Task.WaitAll(activeTasks.ToArray());
+            for (int i = 0; i < 1000; i++) {
+                Thread.Sleep(0);
+                // Moved from wait all as if the listener uses the main thread it will deadlock.
+                if (activeTasks.All(t => t.IsCompleted)) {
+                    break;
+                }
+            }
 
-            Emergency.Diags.Log($"Flush, done ");
         }
 
         private async Task RouteMessage(MessageMetadata[] messagesToRoute) {
             if ((handlers == null) || (handlers.Length == 0)) { return; }
             PrepareMessage(messagesToRoute);
 
-            Emergency.Diags.Log($"InternalRouteMessage >> " + messagesToRoute.Length.ToString());
 
             var hndlr = handlers;
-            Task[] tasks = new Task[hndlr.Length];
+            var tasks = new Task[hndlr.Length];
             try {
                 for (int i = 0; i < hndlr.Length; i++) {
-                    Emergency.Diags.Log($"Handler {i} routing message");
-                    tasks[i] = hndlr[i].HandleMessageAsync(messagesToRoute);
+                    tasks[i] = hndlr[i].HandleMessageAsync(messagesToRoute);                    
                 }
+                
                 await Task.WhenAll(tasks);
             } catch (Exception) {
                 ErrorCount++;
@@ -339,9 +373,11 @@
             }
         }
 
-
-        
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QueuedBilgeRouter"/> class.
+        /// The bilge router
+        /// </summary>
+        /// <param name="processId">The process id cache</param>
         internal QueuedBilgeRouter(string processId) : base(processId) {
             EnableQueuedMessages();
         }

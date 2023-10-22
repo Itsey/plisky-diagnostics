@@ -1,12 +1,10 @@
 ﻿namespace Plisky.Diagnostics {
-
     using System.Diagnostics;
 
     /// <summary>
     /// A router that has conditions on whether or not messages are routed
     /// </summary>
     public abstract class BilgeConditionalRoutedBase : BilgeRoutedBase {
-
         /// <summary>
         /// The current trace level
         /// </summary>

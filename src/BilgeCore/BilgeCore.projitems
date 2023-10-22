@@ -10,6 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeAssertException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeContextItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeCoreOnly.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\ErrorWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\InfoWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\TraceConfiguration.cs" />
@@ -28,6 +30,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\BasicBilgeRouter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\SimpleActionEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\BilgeConfigure.cs" />
+    <Compile Include="..\BilgeCore\Interfaces\ILoggerWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TraceCommands.cs" />
     <Compile Include="..\BilgeCore\ErrorDescription.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HandlerSupport\BaseHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HandlerSupport\HandlerAddOptions.cs" />
@@ -51,10 +55,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\Bilge.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bilge\BilgeWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\Emergency.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessageFormatters\LegacyFlimFlamFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessageParts.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MessageStructure.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TraceMessageFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InternalUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TraceContextInfo.cs" />
   </ItemGroup>

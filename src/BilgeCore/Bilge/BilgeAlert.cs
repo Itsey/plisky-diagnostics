@@ -1,15 +1,17 @@
-﻿namespace Plisky.Diagnostics {
-    using System;
-    using System.Collections.Generic;
-    using System.Reflection;
-    using System.Text;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
 
+namespace Plisky.Diagnostics {
     /// <summary>
     /// Manages Alert type records for Bilge, that do not go through the traditional trace level selection but are deisgned to push notifications to the monitoring
     /// infrastructure irrespective of trace level.
     /// </summary>
     public class BilgeAlert {
-        private string AlertContextId = "Alerting";
+        private readonly string AlertContextId = "Alerting";
         private DateTime onlineAt;
         private Dictionary<string, string> AlertingContext { get; set; }
 
@@ -23,17 +25,35 @@
         /// Initializes a new instance of the <see cref="BilgeAlert"/> class.
         /// </summary>
         internal BilgeAlert() {
-            AlertingContext = new Dictionary<string, string>();
-            AlertingContext.Add(Bilge.BILGE_INSTANCE_CONTEXT_STR, AlertContextId);
+            AlertingContext = new Dictionary<string, string> {
+                { Bilge.BILGE_INSTANCE_CONTEXT_STR, AlertContextId }
+            };
         }
 
         /// <summary>
         /// Alerting level call to indicate that an application is online and ready to begin processing.  Starts the uptime counter and sends basic telemetry to the
         /// trace stream.
         /// </summary>
-        /// <param name="appName">An identifier for the application</param>
+        /// <param name="appName">An identifier for the application</param>        
+        /// <param name="meth">The method name of the calling method.</param>
+        /// <param name="pth">The path to the file of source for the calling method.</param>
+        /// <param name="ln">The line number where the call was made.</param>
         /// <returns>A string that can be written out indicating the app is online ( e.g. can be passed to console.writeline )</returns>
-        public string Online(string appName) {
+        public string Online(string appName, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            return Online(appName, null, meth, pth, ln);
+        }
+
+        /// <summary>
+        /// Alerting level call to indicate that an application is online and ready to begin processing.  Starts the uptime counter and sends basic telemetry to the
+        /// trace stream.
+        /// </summary>
+        /// <param name="appName">An identifier for the application</param>        
+        /// <param name="properties">A dictionary of properties to be added to the alert</param>
+        /// <param name="meth">The method name of the calling method.</param>
+        /// <param name="pth">The path to the file of source for the calling method.</param>
+        /// <param name="ln">The line number where the call was made.</param>
+        /// <returns>A string that can be written out indicating the app is online ( e.g. can be passed to console.writeline )</returns>
+        public string Online(string appName, Dictionary<string, string> properties, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
             if (string.IsNullOrWhiteSpace(appName)) {
                 appName = "Unknown";
             }
@@ -43,61 +63,50 @@
             onlineAt = DateTime.Now;
             string toWrite = $"{appName} Online. v-{ver}. @{onlineAt}";
 
-            var alertValues = new Dictionary<string, string>();
-            alertValues.Add("alert-name", "online");
-            alertValues.Add("onlineAt", onlineAt.ToString());
-            alertValues.Add("machine-name", Router.MachineNameCache);
-            alertValues.Add("app-name", appName);
-            alertValues.Add("app-ver", ver);
+            var alertValues = new Dictionary<string, string> {
+                { "alert-name", "online" },
+                { "onlineAt", onlineAt.ToString() },
+                { "machine-name", Router.MachineNameCache },
+                { "app-name", appName },
+                { "app-ver", ver },
+                { "alert-id", Guid.NewGuid().ToString() }
+            };
 
-            AlertQueue(toWrite, alertValues);
+            if (properties != null) {
+                foreach (string k in properties.Keys) {
+                    alertValues.Add(k.ToString(), properties[k].ToString());
+                }
+            }
+
+            AlertQueue(toWrite, alertValues, meth, pth, ln);
             return toWrite;
+
         }
 
-        private void AlertQueue(string message, Dictionary<string, string> values) {
-            string meth = "-ba-alert-";
-            string pth = "alerting";
-            int ln = 0;
-
-            var mmd = new MessageMetadata(meth, pth, ln);
-            mmd.CommandType = TraceCommandTypes.Alert;
-            mmd.Body = message;
-            foreach (var l in values.Keys) {
+        private void AlertQueue(string message, Dictionary<string, string> values, string meth, string pth, int line) {
+#if NETCOREAPP
+            meth ??= "-ba-alert-";
+            pth ??= "alerting";
+#else
+            meth = meth ?? "-ba-alert-";
+            pth = pth ?? "alerting";
+#endif
+            var mmd = new MessageMetadata(meth, pth, line) {
+                CommandType = TraceCommandTypes.Alert,
+                Body = message
+            };
+            foreach (string l in values.Keys) {
                 mmd.MessageTags.Add(l, values[l]);
             }
-            
-
             Router.PrepareMetaData(mmd, AlertingContext);
             Router.QueueMessage(mmd);
         }
 
         private string GetVersionFromAssembly() {
             var asm = Assembly.GetEntryAssembly();
-            if (asm != null) {
-                return asm.GetName().Version.ToString();
-            }
-            return "unknown";
+            return asm != null ? asm.GetName().Version.ToString() : "unknown";
         }
 
-        private string JsonTheValues(Dictionary<string, string> values) {
-            if (values.Count > 0) {
-                var sb = new StringBuilder();
-                sb.Append("{ ");
-                sb.Append($" \"ALXMV\": \"ALXMV-1\"");
 
-                string postAppend = string.Empty;
-
-                foreach (var v in values.Keys) {
-                    sb.Append(postAppend);
-                    sb.Append($" \"{v}\": \"{values[v]}\"");
-                    postAppend = "," + Environment.NewLine;
-                }
-
-                sb.Append("}");
-                return sb.ToString();
-            } else {
-                return string.Empty;
-            }
-        }
     }
 }

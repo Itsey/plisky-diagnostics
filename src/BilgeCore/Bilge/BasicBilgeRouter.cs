@@ -9,9 +9,11 @@
     /// </summary>
     internal class BasicBilgeRouter : BilgeRouter {
         private volatile bool shutdownEnabled;
-
-        private volatile bool shutdownRequested = false;
-
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BasicBilgeRouter"/> class.
+        /// </summary>
+        /// <param name="processId">The process identifier.</param>
         internal BasicBilgeRouter(string processId) : base(processId) {
         }
 
@@ -25,7 +27,6 @@
         /// Reset everything.
         /// </summary>
         public override void ActualReInitialise() {
-            shutdownRequested = false;
             shutdownEnabled = false;
         }
 
@@ -33,9 +34,12 @@
         /// Shut everything down.
         /// </summary>
         public override void ActualShutdown() {
-            shutdownRequested = true;
         }
 
+        /// <summary>
+        /// Adds a message.
+        /// </summary>
+        /// <param name="msgs">The messages to queue.</param>
         protected override async void ActualAddMessage(MessageMetadata[] msgs) {
             if (shutdownEnabled || System.Environment.HasShutdownStarted) {
                 return;
@@ -64,7 +68,7 @@
         /// Forces a flush of all messages.
         /// </summary>
         protected override void ActualFlushMessages() {
-            Emergency.Diags.Log($"Flush, done ");
+
         }
 
         /// <summary>

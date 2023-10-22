@@ -1,4 +1,5 @@
 ﻿namespace Plisky.Diagnostics.Test {
+
     using System;
     using System.IO;
     using System.Text.Json;
@@ -7,12 +8,13 @@
 
     [Collection(nameof(ParalellEnabledTestCollection))]
     public class FlimFlamMsgFormat3Tests {
-
 #if NETCOREAPP
-        [Fact]
+
+        // Todo : Fix pathing.
+        [Fact(Skip ="Rediculous hard coded path!")]
         public void TestIncoming() {
-            var l = File.ReadAllLines(@"C:\Files\Code\git\PliskyDiagnostics\src\_Dependencies\TestData\deserialisedmessages.txt");
-            foreach(var x in l) {
+            string[] l = File.ReadAllLines(@"XXX FIX ME XXX \_Dependencies\TestData\deserialisedmessages.txt");
+            foreach (string x in l) {
                 var res = JsonSerializer.Deserialize<MessageMetaDataTransport>(x);
                 Assert.NotNull(res);
             }
@@ -37,7 +39,6 @@
             var res = JsonSerializer.Deserialize<MessageMetaDataTransport>(str);
             Assert.NotNull(res);
 
-            
             Assert.Equal(mmd.Body, res.m);
             Assert.Equal(mmd.FurtherDetails, res.s);
             Assert.Equal(mmd.ClassName, res.c);
@@ -51,5 +52,6 @@
             Assert.Contains(whenD, res.dt);
         }
     }
-#endif 
+
+#endif
 }

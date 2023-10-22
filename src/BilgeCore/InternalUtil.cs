@@ -1,10 +1,9 @@
 ﻿namespace Plisky.Plumbing {
+
     using System;
-    using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
     using System.Reflection;
-    using System.Security;
     using System.Text;
     using System.Xml.Linq;
 
@@ -14,20 +13,75 @@
     public static class InternalUtil {
 
         /// <summary>
+        ///  Enum to describe the errors which can prevent tracing from working correctly.
+        /// </summary>
+        public enum InternalErrorCodes {
+
+            /// <summary>
+            /// There are no listeners
+            /// </summary>
+            NoListenersWarning = 0x0001,
+
+            /// <summary>
+            /// Configuration invalid
+            /// </summary>
+            CorruptConfiguration = 0x0002,
+
+            /// <summary>
+            /// Details around listener count, not a real error
+            /// </summary>
+            ListenerCountInformation = 0x0003,
+
+            /// <summary>
+            /// Error during initialisation
+            /// </summary>
+            InitialisationError = 0x0004,
+
+            /// <summary>
+            /// Access denied
+            /// </summary>
+            AccessDeniedToSomething = 0x0005,
+
+            /// <summary>
+            /// Operating system compat error
+            /// </summary>
+            OperatingSystemIncompatibility = 0x0006,
+
+            /// <summary>
+            /// Corrpution in intialisation data
+            /// </summary>
+            InitialisationContentCorrupt = 0x0007,
+
+            /// <summary>
+            /// Diagnostic data, not a real error
+            /// </summary>
+            Diagnostics = 0x0008,
+
+            /// <summary>
+            /// Error with TCP listener
+            /// </summary>
+            TCPListenerError = 0x0009,
+
+            /// <summary>
+            /// Error with output debugstring listener
+            /// </summary>
+            ODSListenerError = 0x000A
+        }
+
+        /// <summary>
         /// current trace level
         /// </summary>
-        public static TraceLevel internalTraceLevel = TraceLevel.Off;     // Used Internally to write to event log.
+        public static TraceLevel InternalTraceLevel = TraceLevel.Off;     // Used Internally to write to event log.
 
         private const string EVENTSOURCEIDENTIFIER = "-= Bilge =-";
         private const string EVENTSOURCETARGET = "Application";
         private static bool sourceExists;
 
-
         /// <summary>
         /// Util to get class name
         /// </summary>
-        /// <param name="theMethod"></param>
-        /// <returns></returns>
+        /// <param name="theMethod">The reflected method base.</param>
+        /// <returns>The classname of the class holding the method</returns>
         public static string GetClassNameFromMethodbase(MethodBase theMethod) {
             // strangely the ReflectedType can return null for some Microsoft generated classes, this was first noticed
             // during a bug when tracing in some WCF classes, therefore this has been abstracted into a method that expects this.
@@ -47,8 +101,8 @@
         /// <summary>
         /// Util to convert stack to xml
         /// </summary>
-        /// <param name="topMost"></param>
-        /// <returns></returns>
+        /// <param name="topMost">Out - the topmost frame in the stack</param>
+        /// <returns>A Stack trace in xml format.</returns>
         public static string GetFullXmlStacktraceWithoutTraceWrappings(out string topMost) {
             return GetXMLStackTrace(out topMost);
         }
@@ -110,8 +164,6 @@
 
             return final.ToString();
         }
-
-
 
         private static string GetStackTrace(out string topMost, bool inXml = false) {
             topMost = null;
@@ -195,7 +247,6 @@
             return GetStackTrace(out string top, false);
         }
 
-      
         /// <summary>
         /// Called to report an error within Tex, this will attempt to notify
         /// the user of an error, by writing to the event log or screen
@@ -348,9 +399,9 @@
         /// <summary>
         /// log an error
         /// </summary>
-        /// <param name="tie"></param>
-        /// <param name="param"></param>
-        /// <param name="overrideLevel"></param>
+        /// <param name="tie">The internal error code</param>
+        /// <param name="param">A parameter</param>
+        /// <param name="overrideLevel">The level of trace overriden</param>
         public static void LogInternalError(InternalErrorCodes tie, string param, TraceLevel overrideLevel) {
             // Not Implemented.
 
@@ -365,67 +416,11 @@
 #endif
 
         /// <summary>
-        ///  Enum to describe the errors which can prevent tracing from working correctly.
-        /// </summary>
-        public enum InternalErrorCodes {
-
-            /// <summary>
-            /// There are no listeners
-            /// </summary>
-            NoListenersWarning = 0x0001,
-
-            /// <summary>
-            /// Configuration invalid
-            /// </summary>
-            CorruptConfiguration = 0x0002,
-
-            /// <summary>
-            /// Details around listener count, not a real error
-            /// </summary>
-            ListenerCountInformation = 0x0003,
-
-            /// <summary>
-            /// Error during initialisation
-            /// </summary>
-            InitialisationError = 0x0004,
-
-            /// <summary>
-            /// Access denied
-            /// </summary>
-            AccessDeniedToSomething = 0x0005,
-
-            /// <summary>
-            /// Operating system compat error
-            /// </summary>
-            OperatingSystemIncompatibility = 0x0006,
-
-            /// <summary>
-            /// Corrpution in intialisation data
-            /// </summary>
-            InitialisationContentCorrupt = 0x0007,
-
-            /// <summary>
-            /// Diagnostic data, not a real error
-            /// </summary>
-            Diagnostics = 0x0008,
-
-            /// <summary>
-            /// Error with TCP listener
-            /// </summary>
-            TCPListenerError = 0x0009,
-
-            /// <summary>
-            /// Error with output debugstring listener
-            /// </summary>
-            ODSListenerError = 0x000A
-        }
-
-        /// <summary>
         /// Tries to identify the stack frame of the caller of the Trace Method.
         /// </summary>
         /// <param name="matchingMethodName">The name of the method to find in the callstack</param>
         /// <returns>ClassName,MethodName,StackFrame of the target method</returns>
-        public static Tuple<string,string,StackFrame> GetCallingStackFrame(string matchingMethodName = null) {
+        public static Tuple<string, string, StackFrame> GetCallingStackFrame(string matchingMethodName = null) {
             if (matchingMethodName != null) {
                 matchingMethodName = matchingMethodName.ToLowerInvariant();
             }
@@ -445,7 +440,7 @@
 
                 className = GetClassNameFromMethodbase(theMethod);
 
-                if (matchingMethodName == null ) {
+                if (matchingMethodName == null) {
                     return new Tuple<string, string, StackFrame>(className, theMethod.Name, nextFrame);
                 } else if (theMethod.Name.ToLowerInvariant() == matchingMethodName) {
                     return new Tuple<string, string, StackFrame>(className, theMethod.Name, nextFrame);

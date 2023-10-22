@@ -1,12 +1,10 @@
 ﻿namespace Plisky.Diagnostics {
-
     using System.Diagnostics;
 
     /// <summary>
     /// Writes at verbose levels
     /// </summary>
     public class VerboseWriter : BilgeWriter {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="VerboseWriter"/> class.
         /// </summary>

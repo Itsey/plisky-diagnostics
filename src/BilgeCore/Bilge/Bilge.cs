@@ -2,13 +2,19 @@
 
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Diagnostics;
+    using System.Linq;
+    using System.Reflection;
     using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Plisky.Diagnostics.Listeners;
 
     /// <summary>
     /// Provides trace support for .net.
     /// </summary>
-    public class Bilge {
+    public partial class Bilge {
 
         /// <summary>
         /// Default context for Bilge.
@@ -23,7 +29,7 @@
         private const string WILDCARD_MATCH_INITSTRING = "*";
         private static Bilge defaultInstance = null;
         private static Func<string, SourceLevels, SourceLevels> levelResolver = DefaultLevelResolver;
-        private ConfigSettings activeConfig;
+        private readonly ConfigSettings activeConfig;
         private BilgeAction actualAction;
 
         /// <summary>
@@ -155,8 +161,6 @@
             }
         }
 
-
-
         /// <summary>
         /// Provies access to Bilge Utility functions and debugging and diagnostic helper methods.
         /// </summary>
@@ -222,6 +226,8 @@
             return true;
         }
 
+      
+
         /// <summary>
         /// Do Not Use
         /// </summary>
@@ -243,7 +249,7 @@
         /// Flush all trace stream handlers and then clear them down so no handlers remain
         /// </summary>
         public static void ClearMessageHandlers() {
-            BilgeRouter.Router.FlushMessages();
+            Task.Run(async () => { await BilgeRouter.Router.FlushMessages(); }).Wait();
             BilgeRouter.Router.ClearEverything();
         }
 
@@ -277,8 +283,8 @@
         /// <summary>
         /// Clear all trace stream caches.
         /// </summary>
-        public static void ForceFlush() {
-            BilgeRouter.Router.FlushMessages();
+        public static async Task ForceFlush() {
+            await BilgeRouter.Router.FlushMessages();
         }
 
         /// <summary>
@@ -323,8 +329,28 @@
         /// <param name="crInitialisationString">The initialisation string</param>
         /// <returns>The func used to resolve the configuration</returns>
         public static Func<string, SourceLevels, SourceLevels> SetConfigurationResolver(string crInitialisationString) {
-            var newCR = GetConfigurationResolverFromString(crInitialisationString);
+            var newCR = GetConfigurationResolverFromString(crInitialisationString, null);
             levelResolver = newCR;
+            return newCR;
+        }
+
+        /// <summary>
+        /// Uses an internal string formatted configuration resolver. See documentation for usage.  Additionally configures one or more handlers, returning the handler
+        /// configuration to the caller.  If autoResolve is set also uses reflection to try and initialise the handlers.
+        /// </summary>
+        /// <param name="crInitialisationString">The initialisation string</param>
+        /// <param name="handlerRequests">The parts of the initialisation string that relate to handlers</param>
+        /// <param name="autoResolve">Whether the method should try and resolve each of the handler requests</param>
+        /// <returns>The func used to resolve the configuration</returns>
+        public static Func<string, SourceLevels, SourceLevels> SetConfigurationResolver(string crInitialisationString, string[] handlerRequests, bool autoResolve = true) {
+            var hrs = new List<string>();
+            var newCR = GetConfigurationResolverFromString(crInitialisationString, hrs);
+            levelResolver = newCR;
+
+            if (autoResolve && hrs.Count > 0) {
+                var allKnownTypes = Assembly.GetExecutingAssembly().GetTypes().Where(p => p.IsSubclassOf(typeof(BaseHandler)));
+            }
+
             return newCR;
         }
 
@@ -365,6 +391,15 @@
         }
 
         /// <summary>
+        /// Alters the optional configuration for Bilge, to allow more detail to be added to the trace stream if that is useful, beware many of the
+        /// options to add further detail also reduce performance.
+        /// </summary>
+        /// <param name="newConfiguration">the new configuration settings to apply.</param>
+        public void ConfigureTrace(TraceConfiguration newConfiguration) {
+            activeConfig.TraceConfig = newConfiguration;
+        }
+
+        /// <summary>
         /// Turns off message batching therefore all messages are sent immediately/
         /// </summary>
         public void DisableMessageBatching() {
@@ -373,10 +408,11 @@
         }
 
         /// <summary>
-        /// Clear the trace stream cache down
+        /// Clear the trace stream cache down and ensure that all messages are written to the underlying listeners.
         /// </summary>
-        public void Flush() {
-            Bilge.ForceFlush();
+        public async Task Flush() {
+
+            await Bilge.ForceFlush();
         }
 
         /// <summary>
@@ -385,7 +421,7 @@
         /// written, therefore it should only be used when a process is exiting and you still want to keep all off
         /// the trace messages - for example during a console program.
         /// </summary>
-        /// <remarks>It is possible to reinitialise with reinit=true, but this is not recommended.</remarks>
+        /// <remarks>It is possible to reinitialise with reinit=true, but this is not recommended outside of unit test scenarios.</remarks>
         /// <param name="reinit">The new handler</param>
         public void FlushAndShutdown(bool reinit = false) {
             BilgeRouter.Router.Shutdown();
@@ -395,13 +431,30 @@
         }
 
         /// <summary>
-        /// Returns all the loaded contexts
+        /// Returns an enumeration of all of the currently loaded name value pairs added as contexts.
         /// </summary>
-        /// <returns>Enumerable name value pairs as a tuple</returns>
+        /// <returns>Enumerable name value pairs as a tuple with each of the current contexts.</returns>
         public IEnumerable<Tuple<string, string>> GetContexts() {
             foreach (string l in activeConfig.MetaContexts.Keys) {
                 yield return new Tuple<string, string>(l, activeConfig.MetaContexts[l]);
             }
+        }
+
+        /// <summary>
+        /// Adds name value pairing context to the current instance of Bilge.
+        /// </summary>
+        /// <param name="contextName">A Name for the contextual information.</param>
+        /// <param name="contextValue">A Value for the contextual information</param>
+        /// <exception cref="ArgumentNullException">Thrown if the name is null.</exception>
+        public void AddContext(string contextName, string contextValue) {
+            if (string.IsNullOrWhiteSpace(contextName)) { throw new ArgumentNullException(nameof(contextName)); }            
+
+            if (!activeConfig.MetaContexts.ContainsKey(contextName)) {
+                activeConfig.MetaContexts.Add(contextName, contextValue);
+            } else {
+                activeConfig.MetaContexts[contextName] = contextValue;
+            }
+
         }
 
         /// <summary>
@@ -475,7 +528,9 @@
             return beforeModification;
         }
 
-        private static Func<string, SourceLevels, SourceLevels> GetConfigurationResolverFromString(string initString2) {
+        private static Func<string, SourceLevels, SourceLevels> GetConfigurationResolverFromString(string initString2, List<string> handlerRequests) {
+            if (handlerRequests == null) { handlerRequests = new List<string>(); }
+
             var matches = new List<Func<string, SourceLevels>>();
             initString2 = initString2?.ToLower();
 
@@ -486,12 +541,22 @@
                 return result;
             }
 
-            if (initString2[1] != '-') {
-                throw new InvalidOperationException("The format string is in the wrong format");
+            switch (initString2[1]) {
+                case '-': break;
+                case '+': break;
+                default: throw new InvalidOperationException($"The format string is in the wrong format, got {initString2[1]} needed [+,-]");
             }
+
 
             string[] stringsToParse = initString2.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string initString in stringsToParse) {
+
+                if (initString2[0] == 'h' || initString2[0] == 'H') {
+                    // Handler Configuration request found, add it to the returned handler requests.
+                    handlerRequests.Add(initString);
+                    continue;
+                }
+
                 var sl = GetSourceLevelFromChar(initString[0]);
                 string initStringMatch = initString.Substring(2);
 
@@ -556,7 +621,7 @@
                 case 'o': return SourceLevels.Off;
                 case 'v': return SourceLevels.Verbose;
                 default:
-                    throw new NotImplementedException("Invalid Source Level");
+                    throw new NotImplementedException($"The source level set in the configuration string is not a valid soure level.  Recieved {c}, should be [e,w,o,v].");
             }
         }
 
@@ -575,15 +640,6 @@
 
         private void SetTraceLevel(TraceLevel value) {
             SetTraceLevel(Bilge.ConvertTraceLevel(value));
-        }
-
-        /// <summary>
-        /// Alters the optional configuration for Bilge, to allow more detail to be added to the trace stream if that is useful, beware many of the
-        /// options to add further detail also reduce performance.
-        /// </summary>
-        /// <param name="newConfiguration">the new configuration settings to apply.</param>
-        public void ConfigureTrace(TraceConfiguraton newConfiguration) {
-            activeConfig.TraceConfig = newConfiguration;
         }
     }
 }
