@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Plisky.Diagnostics;
@@ -21,11 +20,11 @@ namespace DevConsoleTest {
         private static void DoBasicTimingTests() {
             var b = new Bilge("TimingTests");
 
-            bool paralells = false;
+            bool paralells = true;
 
             b.Info.Log("Single Line Write");
             b.Info.TimeStart("updateDatabase", timerCategoryName: "Database");
-            b.Info.TimeStop("updateDatabase", timerCategoryName: "Database");
+
 
             if (paralells) {
                 var runners = new List<Task>();
@@ -39,19 +38,71 @@ namespace DevConsoleTest {
                 }
                 Task.WaitAll(runners.ToArray());
             }
+            b.Info.TimeStop("updateDatabase", timerCategoryName: "Database");
         }
 
-        private static void DoBulkMessageTests() {
+        private static void DoBulkMessageTests(int outer = 100, bool multiLine = true) {
             var b = new Bilge("BulkMessageTests");
-            
-            for (int i = 0; i < 1000000; i++) {
-                for (int j = 0; j < 100; j++) {
+            var r = new Random();
+
+
+            string loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. \r\n Sed do eiusmod tempor incididunt ut \r\n labore et dolore magna aliqua. \r\n Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+            string longLoremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." +
+                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum";
+
+            string longSnickett = "Miserable orphans, Baudelaire, Count Olaf, treachery, secret passageways, V.F.D., Incredibly Deadly Viper, sugar bowl, eye tattoo, unfortunate events, library, disguise, fire, spyglass, Esmé Squalor, Quagmire triplets, Volunteer Fire Department, deception, peril, mystery, Beatrice, tragic, villainous schemes, Sunny's teeth, Klaus's glasses, Violet's inventions, dreadful, melancholy, betrayal, bravery, cryptic, misfortune, and hope" +
+                                    "Miserable orphans, Baudelaire, Count Olaf, treachery, secret passageways, V.F.D., Incredibly Deadly Viper, sugar bowl, eye tattoo, unfortunate events, library, disguise, fire, spyglass, Esmé Squalor, Quagmire triplets, Volunteer Fire Department, deception, peril, mystery, Beatrice, tragic, villainous schemes, Sunny's teeth, Klaus's glasses, Violet's inventions, dreadful, melancholy, betrayal, bravery, cryptic, misfortune, and hope." +
+                                    "Miserable orphans, Baudelaire, Count Olaf, treachery, secret passageways, V.F.D., Incredibly Deadly Viper, sugar bowl, eye tattoo, unfortunate events, library, disguise, fire, spyglass, Esmé Squalor, Quagmire triplets, Volunteer Fire Department, deception, peril, mystery, Beatrice, tragic, villainous schemes, Sunny's teeth, Klaus's glasses, Violet's inventions, dreadful, melancholy, betrayal, bravery, cryptic, misfortune, and hope." +
+                                    "Miserable orphans, Baudelaire, Count Olaf, treachery, secret passageways, V.F.D., Incredibly Deadly Viper, sugar bowl, eye tattoo, unfortunate events, library, disguise, fire, spyglass, Esmé Squalor, Quagmire triplets, Volunteer Fire Department, deception, peril, mystery, Beatrice, tragic, villainous schemes, Sunny's teeth, Klaus's glasses, Violet's inventions, dreadful, melancholy, betrayal, bravery, cryptic, misfortune, and hope.";
+
+
+            for (int i = 0; i < outer; i++) {
+                //Thread.Sleep(100);
+                for (int j = 0; j < 10; j++) {
+                    b.Info.Flow();
+                    b.Info.Flow("xX");
+                    b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;", "Monkey  World");
+
                     b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
-                    b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
-                    b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
+                    b.Warning.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
+
+
+                    int selector = r.Next(100);
+                    if (selector < 10) {
+                        b.Verbose.Log("Verby Merby Verbyosey", "Monkey  World");
+                    }
+                    else if (selector < 20) {
+                        b.Info.Dump(new Exception("Arfle Barfle Gloop"), "Exception Context");
+                    }
+                    else if (selector < 30) {
+                        b.Error.Log("Errory Merby Errorosey", "Monkey  World");
+                    }
+                    else if (selector < 40) {
+                        b.Warning.Dump(new Exception("Arfle Barfle Gloop"), "Exception Context");
+                    }
+                    else if (selector < 50) {
+                        b.Info.Log(longLoremIpsum, longSnickett);
+
+                    }
+
+                    if (r.Next(100) < 25) {
+                        if (multiLine) {
+                            b.Info.Log(loremIpsum);
+                        }
+                        else {
+                            b.Info.Log("Hello World;Hello World;Hello World;Hello World;~~#~~Hello World;Hello World;Hello World;", "Monkey  World");
+                        }
+                    }
                 }
 
-                Thread.Sleep(100);
+
             }
         }
 
@@ -108,28 +159,52 @@ namespace DevConsoleTest {
         }
 
         private static async Task Main(string[] args) {
+            Bilge.SimplifyRouter();
+            Bilge.SetConfigurationResolver("v-**");
+            var b = new Bilge("", "", tl: System.Diagnostics.SourceLevels.Verbose);
+
+            var thnd = new TCPHandler("127.0.0.1", 9060);
+            //  b.AddHandler(thnd);
+
+            Bilge.Alert.Online("Bob");
+            b.Info.Log("Starting Test - Timings");
+            //DoBasicTimingTests();
+            b.AddHandler(new RollingFileSystemHandler(new RollingFSHandlerOptions() {
+                CanCreate = true,
+                Directory = "X:\\Code\\ipir\\inputFiles",
+                FileName = "Bulk",
+                FilenameIsMask = false,
+                MaxRollingFileSize = "10gb"
+            }));
+            DoBulkMessageTests(10000000, false);
+            await b.Flush();
+
+            Thread.Sleep(100);
+            return;
+
             Console.WriteLine("Hello World!");
             try {
                 Bilge.SetConfigurationResolver("v-**");
                 Bilge.SetErrorSuppression(false);
 
-                var b = new Bilge("","",tl: System.Diagnostics.SourceLevels.Verbose);
-                var th = new TempHandler();
 
                 Bilge.Alert.Online("Bob");
 
-                Bilge.AddHandler(new ConsoleHandler());
-                Bilge.AddHandler(th);
 
-                try {
-                    throw b.Error.ReportRecordException<FileNotFoundException>((short)SubSystems.Program,123, "Test", null);
 
-                } catch (Exception ax ) {
-                    Console.WriteLine(ax.Message);
-                }
+                //Bilge.AddHandler(new ConsoleHandler());
+                Bilge.AddHandler(thnd);
 
-                
-                /*  var thnd = new TCPHandler("127.0.0.1", 9060);
+                /*                try {
+                                    throw b.Error.ReportRecordException<FileNotFoundException>((short)SubSystems.Program, 123, "Test", null);
+
+                                }
+                                catch (Exception ax) {
+                                    Console.WriteLine(ax.Message);
+                                }*/
+
+
+                /*
                   thnd.SetFormatter(new FlimFlamV4Formatter());
                   var fhnd = new RollingFileSystemHandler(new RollingFSHandlerOptions() {
                       Directory = "d:\\temp\\",
@@ -147,51 +222,33 @@ namespace DevConsoleTest {
                     b.Info.Log($"NET CORE! {i}");
                 }
 #endif
-                
+
                 await b.Flush();
-
-                
-
-                bool includeInMemoryTests = false;
-                bool includeRollingFileSytstemHandlerTests = false;
-                bool includeCustomHandler = false;
-                bool bulkMessageTests = false;
-                bool sourceTests = false;
-                bool perfTests = false;
                 bool reportAndRecord = true;
-                bool standardLogs = true;
 
                 if (reportAndRecord) {
                     DoReportAndRecord();
                 }
 
-                th.AddSubsystemMapping((ss) => {
+                /*th.AddSubsystemMapping((ss) => {
                     switch (ss) {
-                        case (short)SubSystems.Unknown: return "Unknown";                            
-                        case (short)SubSystems.Program: return "Program";                            
+                        case (short)SubSystems.Unknown: return "Unknown";
+                        case (short)SubSystems.Program: return "Program";
                         case (short)SubSystems.TestArea: return "TestArea";
-                            
+
                         default:
                             return string.Empty;
                     }
 
                 });
-                th.WriteReport();
+                th.WriteReport();*/
 
+                bool perfTests = true;
                 if (perfTests) {
                     DoPerformanceTests();
                 }
-                if (includeInMemoryTests) {
-                    // SetUpInMemoryHandler();
-                }
 
-                if (includeCustomHandler) {
-                    Bilge.AddHandler(new CustomHandler());
-                }
-
-                if (includeRollingFileSytstemHandlerTests) {
-                    // storedRfsh = SetUpRollingFileSystemHandlerTests();
-                }
+                bool standardLogs = true;
                 if (standardLogs) {
                     for (int i = 0; i < 100; i++) {
                         b.Info.Log($"Hello World {i}");
@@ -216,19 +273,22 @@ namespace DevConsoleTest {
                     Thread.Sleep(100);
                 }
 
+                bool bulkMessageTests = true;
                 if (bulkMessageTests) {
                     DoBulkMessageTests();
                 }
 
+                bool sourceTests = true;
                 if (sourceTests) {
                     DoSourceTests();
                 }
 
                 Thread.Sleep(100);
-               // b.Flush();
+                // b.Flush();
 
                 Console.WriteLine(b.GetDiagnosticStatus());
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 Console.WriteLine(Bilge.Default.GetDiagnosticStatus());
                 Console.WriteLine("OUTER >> CATCH:" + ex.Message);
             }
