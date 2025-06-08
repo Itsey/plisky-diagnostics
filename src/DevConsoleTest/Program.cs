@@ -17,149 +17,9 @@ namespace DevConsoleTest {
         // private static MyRoller storedRfsh;
         private static int hitCount = 0;
 
-        private static void DoBasicTimingTests() {
-            var b = new Bilge("TimingTests");
-
-            bool paralells = true;
-
-            b.Info.Log("Single Line Write");
-            b.Info.TimeStart("updateDatabase", timerCategoryName: "Database");
-
-
-            if (paralells) {
-                var runners = new List<Task>();
-                for (int t = 0; t < 20; t++) {
-                    var tsk = Task.Run(() => {
-                        for (int i = 0; i < 10000; i++) {
-                            b.Info.Log($"Taskey {t} {i}", "arfle barfle gloop");
-                        }
-                    });
-                    runners.Add(tsk);
-                }
-                Task.WaitAll(runners.ToArray());
-            }
-            b.Info.TimeStop("updateDatabase", timerCategoryName: "Database");
-        }
-
-        private static void DoBulkMessageTests(int outer = 100, bool multiLine = true) {
-            var b = new Bilge("BulkMessageTests");
-            var r = new Random();
-
-
-            string loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. \r\n Sed do eiusmod tempor incididunt ut \r\n labore et dolore magna aliqua. \r\n Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-            string longLoremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." +
-                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
-                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
-                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
-                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
-                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
-                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
-                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
-                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum";
-
-            string longSnickett = "Miserable orphans, Baudelaire, Count Olaf, treachery, secret passageways, V.F.D., Incredibly Deadly Viper, sugar bowl, eye tattoo, unfortunate events, library, disguise, fire, spyglass, Esmé Squalor, Quagmire triplets, Volunteer Fire Department, deception, peril, mystery, Beatrice, tragic, villainous schemes, Sunny's teeth, Klaus's glasses, Violet's inventions, dreadful, melancholy, betrayal, bravery, cryptic, misfortune, and hope" +
-                                    "Miserable orphans, Baudelaire, Count Olaf, treachery, secret passageways, V.F.D., Incredibly Deadly Viper, sugar bowl, eye tattoo, unfortunate events, library, disguise, fire, spyglass, Esmé Squalor, Quagmire triplets, Volunteer Fire Department, deception, peril, mystery, Beatrice, tragic, villainous schemes, Sunny's teeth, Klaus's glasses, Violet's inventions, dreadful, melancholy, betrayal, bravery, cryptic, misfortune, and hope." +
-                                    "Miserable orphans, Baudelaire, Count Olaf, treachery, secret passageways, V.F.D., Incredibly Deadly Viper, sugar bowl, eye tattoo, unfortunate events, library, disguise, fire, spyglass, Esmé Squalor, Quagmire triplets, Volunteer Fire Department, deception, peril, mystery, Beatrice, tragic, villainous schemes, Sunny's teeth, Klaus's glasses, Violet's inventions, dreadful, melancholy, betrayal, bravery, cryptic, misfortune, and hope." +
-                                    "Miserable orphans, Baudelaire, Count Olaf, treachery, secret passageways, V.F.D., Incredibly Deadly Viper, sugar bowl, eye tattoo, unfortunate events, library, disguise, fire, spyglass, Esmé Squalor, Quagmire triplets, Volunteer Fire Department, deception, peril, mystery, Beatrice, tragic, villainous schemes, Sunny's teeth, Klaus's glasses, Violet's inventions, dreadful, melancholy, betrayal, bravery, cryptic, misfortune, and hope.";
-
-
-            for (int i = 0; i < outer; i++) {
-                //Thread.Sleep(100);
-                for (int j = 0; j < 10; j++) {
-                    b.Info.Flow();
-                    b.Info.Flow("xX");
-                    b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;", "Monkey  World");
-
-                    b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
-                    b.Warning.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
-
-
-                    int selector = r.Next(100);
-                    if (selector < 10) {
-                        b.Verbose.Log("Verby Merby Verbyosey", "Monkey  World");
-                    }
-                    else if (selector < 20) {
-                        b.Info.Dump(new Exception("Arfle Barfle Gloop"), "Exception Context");
-                    }
-                    else if (selector < 30) {
-                        b.Error.Log("Errory Merby Errorosey", "Monkey  World");
-                    }
-                    else if (selector < 40) {
-                        b.Warning.Dump(new Exception("Arfle Barfle Gloop"), "Exception Context");
-                    }
-                    else if (selector < 50) {
-                        b.Info.Log(longLoremIpsum, longSnickett);
-
-                    }
-
-                    if (r.Next(100) < 25) {
-                        if (multiLine) {
-                            b.Info.Log(loremIpsum);
-                        }
-                        else {
-                            b.Info.Log("Hello World;Hello World;Hello World;Hello World;~~#~~Hello World;Hello World;Hello World;", "Monkey  World");
-                        }
-                    }
-                }
-
-
-            }
-        }
-
-        private static string SomeSlowString() {
-            hitCount++;
-            // EXTRA DEBUG >> Console.WriteLine($"Super Slow Method Hit >> {hitCount}");
-            // Thread.Sleep(10);
-            return new Random().Next(0, 100).ToString();
-        }
-
-        private static void DoPerformanceTests() {
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("___________ PERF TESTS ______________ ");
-
-            var tests = new List<QuickPerfTest>();
-
-            var t1 = new QuickPerfTest("errorbilge-nocallback", SourceLevels.Error);
-            t1.Test = () => { t1.PerfTestInstance.Verbose.Log(SomeSlowString()); };
-            tests.Add(t1);
-
-            var t2 = new QuickPerfTest("verbosebilge-callback", SourceLevels.Verbose);
-            t2.Test = () => { t2.PerfTestInstance.Verbose.Log(() => { return SomeSlowString(); }); };
-            tests.Add(t2);
-
-            var t3 = new QuickPerfTest("errorbilge-nocallback", SourceLevels.Error);
-            t3.Test = () => { t3.PerfTestInstance.Verbose.Log(SomeSlowString()); };
-            tests.Add(t3);
-
-            var t4 = new QuickPerfTest("errorbilge-callback", SourceLevels.Error);
-            t4.Test = () => { t4.PerfTestInstance.Verbose.Log(() => { return SomeSlowString(); }); };
-            tests.Add(t4);
-
-            int loopControl = 100;
-            foreach (var v in tests) {
-                Console.WriteLine($"{v.TestName} starts");
-                v.Sw.Start();
-                for (int i = 0; i < loopControl; i++) {
-                    v.Test();
-                }
-                v.Sw.Stop();
-                Console.WriteLine($"END : {v.TestName} > {v.Sw.ElapsedMilliseconds.ToString()}ms @ {v.PerfTestInstance.ActiveTraceLevel}");
-            }
-
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("___________ END PERF TESTS ______________ ");
-            Console.WriteLine();
-            Console.WriteLine();
-        }
-
-        private static void DoSourceTests() {
-            var ass = new ActivitySource("Blob", "1");
-        }
 
         private static async Task Main(string[] args) {
-            Bilge.SimplifyRouter();
+            //Bilge.SimplifyRouter();
             Bilge.SetConfigurationResolver("v-**");
             var b = new Bilge("", "", tl: System.Diagnostics.SourceLevels.Verbose);
 
@@ -176,7 +36,8 @@ namespace DevConsoleTest {
                 FilenameIsMask = false,
                 MaxRollingFileSize = "10gb"
             }));
-            DoBulkMessageTests(10000000, false);
+            //DoBulkMessageTests(300000, false);
+            DoCalculatedMessageTests();
             await b.Flush();
 
             Thread.Sleep(100);
@@ -295,6 +156,161 @@ namespace DevConsoleTest {
 
             Console.WriteLine("all done");
         }
+
+        protected static string loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. \r\n Sed do eiusmod tempor incididunt ut \r\n labore et dolore magna aliqua. \r\n Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+        protected static string longLoremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." +
+                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
+                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum";
+
+        protected static string longSnickett = "Miserable orphans, Baudelaire, Count Olaf, treachery, secret passageways, V.F.D., Incredibly Deadly Viper, sugar bowl, eye tattoo, unfortunate events, library, disguise, fire, spyglass, Esmé Squalor, Quagmire triplets, Volunteer Fire Department, deception, peril, mystery, Beatrice, tragic, villainous schemes, Sunny's teeth, Klaus's glasses, Violet's inventions, dreadful, melancholy, betrayal, bravery, cryptic, misfortune, and hope" +
+                                "Miserable orphans, Baudelaire, Count Olaf, treachery, secret passageways, V.F.D., Incredibly Deadly Viper, sugar bowl, eye tattoo, unfortunate events, library, disguise, fire, spyglass, Esmé Squalor, Quagmire triplets, Volunteer Fire Department, deception, peril, mystery, Beatrice, tragic, villainous schemes, Sunny's teeth, Klaus's glasses, Violet's inventions, dreadful, melancholy, betrayal, bravery, cryptic, misfortune, and hope." +
+                                "Miserable orphans, Baudelaire, Count Olaf, treachery, secret passageways, V.F.D., Incredibly Deadly Viper, sugar bowl, eye tattoo, unfortunate events, library, disguise, fire, spyglass, Esmé Squalor, Quagmire triplets, Volunteer Fire Department, deception, peril, mystery, Beatrice, tragic, villainous schemes, Sunny's teeth, Klaus's glasses, Violet's inventions, dreadful, melancholy, betrayal, bravery, cryptic, misfortune, and hope." +
+                                "Miserable orphans, Baudelaire, Count Olaf, treachery, secret passageways, V.F.D., Incredibly Deadly Viper, sugar bowl, eye tattoo, unfortunate events, library, disguise, fire, spyglass, Esmé Squalor, Quagmire triplets, Volunteer Fire Department, deception, peril, mystery, Beatrice, tragic, villainous schemes, Sunny's teeth, Klaus's glasses, Violet's inventions, dreadful, melancholy, betrayal, bravery, cryptic, misfortune, and hope.";
+
+        private static void DoBasicTimingTests() {
+            var b = new Bilge("TimingTests");
+
+            bool paralells = true;
+
+            b.Info.Log("Single Line Write");
+            b.Info.TimeStart("updateDatabase", timerCategoryName: "Database");
+
+
+            if (paralells) {
+                var runners = new List<Task>();
+                for (int t = 0; t < 20; t++) {
+                    var tsk = Task.Run(() => {
+                        for (int i = 0; i < 10000; i++) {
+                            b.Info.Log($"Taskey {t} {i}", "arfle barfle gloop");
+                        }
+                    });
+                    runners.Add(tsk);
+                }
+                Task.WaitAll(runners.ToArray());
+            }
+            b.Info.TimeStop("updateDatabase", timerCategoryName: "Database");
+        }
+
+        private static void DoCalculatedMessageTests() {
+            var b = new Bilge("CalculatedMessageTests");
+
+            b.Info.Flow(">>1>>");
+            b.Info.Log(">>2>> STANDARD");
+            b.Info.Log(">>3>>" + loremIpsum);
+            b.Info.Log(">>4>> STANDARD");
+            b.Info.Log(">>5>>" + longLoremIpsum, longSnickett);
+            b.Info.Log(">>6>> STANDARD");
+            for (int i = 0; i < 10; i++) {
+                b.Info.Log($">>{6 + i}>>Monkey  World. {i}");
+            }
+            b.Info.Log(">>17>> END|");
+        }
+
+        private static void DoBulkMessageTests(int outer = 100, bool multiLine = true) {
+            var b = new Bilge("BulkMessageTests");
+            var r = new Random();
+
+            for (int i = 0; i < outer; i++) {
+
+                for (int j = 0; j < 10; j++) {
+                    b.Info.Flow();
+                    b.Info.Flow("xX");
+                    b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;", "Monkey  World");
+
+                    b.Info.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
+                    b.Warning.Log("Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;Hello World;");
+
+
+                    int selector = r.Next(100);
+                    if (selector < 10) {
+                        b.Verbose.Log("Verby Merby Verbyosey", "Monkey  World");
+                    }
+                    else if (selector < 20) {
+                        b.Info.Dump(new Exception("Arfle Barfle Gloop"), "Exception Context");
+                    }
+                    else if (selector < 30) {
+                        b.Error.Log("Errory Merby Errorosey", "Monkey  World");
+                    }
+                    else if (selector < 40) {
+                        b.Warning.Dump(new Exception("Arfle Barfle Gloop"), "Exception Context");
+                    }
+                    else if (selector < 50) {
+                        b.Info.Log(longLoremIpsum, longSnickett);
+
+                    }
+
+                    if (r.Next(100) < 25) {
+                        if (multiLine) {
+                            b.Info.Log(loremIpsum);
+                        }
+                        else {
+                            b.Info.Log("Hello World;Hello World;Hello World;Hello World;~~#~~Hello World;Hello World;Hello World;", "Monkey  World");
+                        }
+                    }
+                }
+
+
+            }
+        }
+
+        private static string SomeSlowString() {
+            hitCount++;
+            // EXTRA DEBUG >> Console.WriteLine($"Super Slow Method Hit >> {hitCount}");
+            // Thread.Sleep(10);
+            return new Random().Next(0, 100).ToString();
+        }
+
+        private static void DoPerformanceTests() {
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("___________ PERF TESTS ______________ ");
+
+            var tests = new List<QuickPerfTest>();
+
+            var t1 = new QuickPerfTest("errorbilge-nocallback", SourceLevels.Error);
+            t1.Test = () => { t1.PerfTestInstance.Verbose.Log(SomeSlowString()); };
+            tests.Add(t1);
+
+            var t2 = new QuickPerfTest("verbosebilge-callback", SourceLevels.Verbose);
+            t2.Test = () => { t2.PerfTestInstance.Verbose.Log(() => { return SomeSlowString(); }); };
+            tests.Add(t2);
+
+            var t3 = new QuickPerfTest("errorbilge-nocallback", SourceLevels.Error);
+            t3.Test = () => { t3.PerfTestInstance.Verbose.Log(SomeSlowString()); };
+            tests.Add(t3);
+
+            var t4 = new QuickPerfTest("errorbilge-callback", SourceLevels.Error);
+            t4.Test = () => { t4.PerfTestInstance.Verbose.Log(() => { return SomeSlowString(); }); };
+            tests.Add(t4);
+
+            int loopControl = 100;
+            foreach (var v in tests) {
+                Console.WriteLine($"{v.TestName} starts");
+                v.Sw.Start();
+                for (int i = 0; i < loopControl; i++) {
+                    v.Test();
+                }
+                v.Sw.Stop();
+                Console.WriteLine($"END : {v.TestName} > {v.Sw.ElapsedMilliseconds.ToString()}ms @ {v.PerfTestInstance.ActiveTraceLevel}");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("___________ END PERF TESTS ______________ ");
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+
+        private static void DoSourceTests() {
+            var ass = new ActivitySource("Blob", "1");
+        }
+
 
         private static void DoReportAndRecord() {
             var blr = new Bilge("ReportAndRecord");

@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_Dependencies", "_Dependencies\_Dependencies.csproj", "{6A505E98-EAE9-44A1-9B62-D30617367DC0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FC6EEBA6-ED56-4CD0-A000-8A3FEC30DDEC}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\plisky-listeners-ci.yml = ..\build\plisky-listeners-ci.yml
+		..\build\plisky-listeners-prerelease.yml = ..\build\plisky-listeners-prerelease.yml
+		..\build\plisky-listeners-release.yml = ..\build\plisky-listeners-release.yml
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandlersTestConsole", "HandlersTestConsole\HandlersTestConsole.csproj", "{5340505E-2F7A-44C1-8E74-10AB7A7B6F40}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plisky.Handlers.Test", "Plisky.Handlers.Test\Plisky.Handlers.Test.csproj", "{568C19A4-2D0F-47DC-8FF0-16384E1D7022}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plisky.Diagnostics.Handlers", "Plisky.Diagnostics.Handlers\Plisky.Diagnostics.Handlers.csproj", "{FF62C15A-F0EA-4D48-B969-08751216A645}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BilgeHandlersShared", "BilgeHandlersShared\BilgeHandlersShared.shproj", "{49527AC9-39A7-4F9C-82B0-1DB2FAF9B12E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A505E98-EAE9-44A1-9B62-D30617367DC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5340505E-2F7A-44C1-8E74-10AB7A7B6F40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5340505E-2F7A-44C1-8E74-10AB7A7B6F40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5340505E-2F7A-44C1-8E74-10AB7A7B6F40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5340505E-2F7A-44C1-8E74-10AB7A7B6F40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{568C19A4-2D0F-47DC-8FF0-16384E1D7022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{568C19A4-2D0F-47DC-8FF0-16384E1D7022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{568C19A4-2D0F-47DC-8FF0-16384E1D7022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{568C19A4-2D0F-47DC-8FF0-16384E1D7022}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF62C15A-F0EA-4D48-B969-08751216A645}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF62C15A-F0EA-4D48-B969-08751216A645}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF62C15A-F0EA-4D48-B969-08751216A645}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF62C15A-F0EA-4D48-B969-08751216A645}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4AAE9DC5-CC10-41DC-A807-E854926B55CF}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		BilgeHandlersShared\BilgeHandlersShared.projitems*{49527ac9-39a7-4f9c-82b0-1db2faf9b12e}*SharedItemsImports = 13
+		BilgeHandlersShared\BilgeHandlersShared.projitems*{ff62c15a-f0ea-4d48-b969-08751216a645}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal

@@ -1,5 +1,8 @@
-﻿**/src/**/*.nuspec|Nuspec
+**/src/**/*.nuspec|Nuspec
 **/src/**/*.nuspec|TextFile
 **/src/**/Plisky.Diagnostics.csproj|StdAssembly
 **/src/**/Plisky.Diagnostics.csproj|StdInformational
 **/src/**/Plisky.Diagnostics.csproj|StdFile
+**/src/**/Plisky.Diagnostics.Handlers.csproj|StdAssembly
+**/src/**/Plisky.Diagnostics.Handlers.csproj|StdInformational
+**/src/**/Plisky.Diagnostics.Handlers.csproj|StdFile

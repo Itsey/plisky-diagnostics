@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net6.0;net8.0;net9.0;net461;net452;net48;</TargetFrameworks>
+    <AssemblyName>Plisky.Diagnostics.Listeners</AssemblyName>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Version>0.0.0</Version>
+    <AssemblyVersion>0.0.0</AssemblyVersion>
+    <FileVersion>0.0.0.0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>false</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>    
+    <AssemblyTitle>Plisky.Diagnostics.Handlers</AssemblyTitle>
+    <Company>Plisky</Company>
+  </PropertyGroup>
+    
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Plisky.Diagnostics" Version="3.2.1" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.354">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+    
+  <ItemGroup>
+    <ProjectReference Include="..\Plisky.Diagnostics\Plisky.Diagnostics.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\BilgeHandlersShared\BilgeHandlersShared.projitems" Label="Shared" />
+</Project>

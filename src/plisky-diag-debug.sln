@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plisky.Diagnostics", "Plisky.Diagnostics\Plisky.Diagnostics.csproj", "{0E342556-2516-B8CB-6298-25CB444155D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plisky.Diagnostics.Test", "Plisky.Diagnostics.Test\Plisky.Diagnostics.Test.csproj", "{6C08F033-43F8-2C15-E528-F02220396F20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PliskyTester", "PliskyTester\PliskyTester.csproj", "{C60004E3-8A3E-5639-F24C-6030E97EF025}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plisky.Diagnostics.Handlers_Debug", "Plisky.Diagnostics.Handlers\Plisky.Diagnostics.Handlers_Debug.csproj", "{B3A616CF-6D2F-3D7B-97A8-C1BCA9F062D0}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BilgeHandlersShared", "BilgeHandlersShared\BilgeHandlersShared.shproj", "{49527AC9-39A7-4F9C-82B0-1DB2FAF9B12E}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BilgeCore", "BilgeCore\BilgeCore.shproj", "{18C26C0C-4C5C-47D1-9872-CAE3F5B2ECA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevConsoleTest", "DevConsoleTest\DevConsoleTest.csproj", "{BD6625CA-D831-9726-CEAA-1E436E9F2930}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0E342556-2516-B8CB-6298-25CB444155D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E342556-2516-B8CB-6298-25CB444155D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E342556-2516-B8CB-6298-25CB444155D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E342556-2516-B8CB-6298-25CB444155D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C08F033-43F8-2C15-E528-F02220396F20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C08F033-43F8-2C15-E528-F02220396F20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C08F033-43F8-2C15-E528-F02220396F20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C08F033-43F8-2C15-E528-F02220396F20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C60004E3-8A3E-5639-F24C-6030E97EF025}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C60004E3-8A3E-5639-F24C-6030E97EF025}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C60004E3-8A3E-5639-F24C-6030E97EF025}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C60004E3-8A3E-5639-F24C-6030E97EF025}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3A616CF-6D2F-3D7B-97A8-C1BCA9F062D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3A616CF-6D2F-3D7B-97A8-C1BCA9F062D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3A616CF-6D2F-3D7B-97A8-C1BCA9F062D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3A616CF-6D2F-3D7B-97A8-C1BCA9F062D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD6625CA-D831-9726-CEAA-1E436E9F2930}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD6625CA-D831-9726-CEAA-1E436E9F2930}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD6625CA-D831-9726-CEAA-1E436E9F2930}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD6625CA-D831-9726-CEAA-1E436E9F2930}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AA8A573D-63F9-4CE3-B66D-913EDFE29442}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		BilgeCore\BilgeCore.projitems*{0e342556-2516-b8cb-6298-25cb444155d3}*SharedItemsImports = 5
+		BilgeCore\BilgeCore.projitems*{18c26c0c-4c5c-47d1-9872-cae3f5b2eca0}*SharedItemsImports = 13
+		BilgeHandlersShared\BilgeHandlersShared.projitems*{49527ac9-39a7-4f9c-82b0-1db2faf9b12e}*SharedItemsImports = 13
+		BilgeHandlersShared\BilgeHandlersShared.projitems*{b3a616cf-6d2f-3d7b-97a8-c1bca9f062d0}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal
