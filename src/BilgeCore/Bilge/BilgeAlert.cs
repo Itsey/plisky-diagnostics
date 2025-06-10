@@ -11,7 +11,7 @@ namespace Plisky.Diagnostics {
     /// infrastructure irrespective of trace level.
     /// </summary>
     public class BilgeAlert {
-        private readonly string AlertContextId = "Alerting";
+        private readonly string alertContextId = "Alerting";
         private DateTime onlineAt;
         private Dictionary<string, string> AlertingContext { get; set; }
 
@@ -26,7 +26,7 @@ namespace Plisky.Diagnostics {
         /// </summary>
         internal BilgeAlert() {
             AlertingContext = new Dictionary<string, string> {
-                { Bilge.BILGE_INSTANCE_CONTEXT_STR, AlertContextId }
+                { Bilge.BILGE_INSTANCE_CONTEXT_STR, alertContextId }
             };
         }
 

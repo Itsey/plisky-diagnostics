@@ -33,13 +33,14 @@
     /// Provides Assertion support into Bilge.
     /// </summary>
     public class BilgeAssert : BilgeRoutedBase {
+        private Action<MessageMetadata> assertAction;
+        private AssertionStyle style = AssertionStyle.Default;
+
         /// <summary>
         /// Holds the associated error instance of bilge which is where the error numbers are captured.
         /// </summary>
         protected ErrorWriter errorInstance;
 
-        private Action<MessageMetadata> AssertAction;
-        private AssertionStyle style = AssertionStyle.Default;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BilgeAssert"/> class.
@@ -86,7 +87,7 @@
         /// <param name="pth">The path to the file of source for the calling method.</param>
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("DEBUG")]
-        public void False(bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {            
+        public void False(bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
             AssertionFailureIfFalse(!what, msg, meth, pth, ln);
         }
 
@@ -99,8 +100,8 @@
         /// <param name="pth">The path to the file of source for the calling method.</param>
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("DEBUG")]
-        public void NotNull(object what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {            
-            AssertionFailureIfFalse(what != null, msg, meth, pth, ln);            
+        public void NotNull(object what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
+            AssertionFailureIfFalse(what != null, msg, meth, pth, ln);
         }
 
         /// <summary>
@@ -127,7 +128,7 @@
         /// <param name="ln">The line number where the call was made.</param>
         [Conditional("DEBUG")]
         public void True(bool what, string msg = null, [CallerMemberName] string meth = null, [CallerFilePath] string pth = null, [CallerLineNumber] int ln = 0) {
-            AssertionFailureIfFalse(what,msg, meth, pth, ln);            
+            AssertionFailureIfFalse(what, msg, meth, pth, ln);
         }
 
         /// <summary>
@@ -138,7 +139,7 @@
         /// <param name="meth">The method where the asserion failure occured.</param>
         /// <param name="pth">The path to the file where the failure occured.</param>
         /// <param name="ln">The line number within the file where the failure occured.</param>
-        protected void AssertionFailureIfFalse(bool what, string msg = null,string meth = null,string pth = null,int ln = 0) {
+        protected void AssertionFailureIfFalse(bool what, string msg = null, string meth = null, string pth = null, int ln = 0) {
             if (!what) {
                 ActiveRouteMessage(TraceCommandTypes.AssertionFailed, msg, null, meth, pth, ln);
             }
@@ -151,7 +152,7 @@
         protected override void ActiveRouteMessage(MessageMetadata mmd) {
             base.ActiveRouteMessage(mmd);
             if (mmd.CommandType == TraceCommandTypes.AssertionFailed) {
-                AssertAction(mmd);
+                assertAction(mmd);
             }
         }
 
@@ -164,13 +165,13 @@
         private void SetAssertAction() {
             switch (style) {
                 case AssertionStyle.Nothing:
-                    AssertAction = (x) => {
+                    assertAction = (x) => {
                         return;
                     };
                     break;
 
                 case AssertionStyle.Default:
-                    AssertAction = (x) => {
+                    assertAction = (x) => {
                         if (Debugger.IsAttached) {
                             Debugger.Break();
                         } else {
@@ -185,7 +186,7 @@
                     break;
                 case AssertionStyle.Fail:
 
-                    AssertAction = (x) => {
+                    assertAction = (x) => {
                         if (Debugger.IsAttached) {
                             Debugger.Break();
                         } else {
@@ -196,7 +197,7 @@
                     break;
 
                 case AssertionStyle.Throw:
-                    AssertAction = (x) => {
+                    assertAction = (x) => {
                         var ex = new BilgeAssertException(x.Context, x.FurtherDetails, new StackTrace(0, true).ToString());
                         throw ex;
                     };

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net6.0;net7.0;net461;net452;net48;</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net6.0;net8.0;net9.0;net461;net452;net48;</TargetFrameworks>
     <AssemblyName>Plisky.Diagnostics.Listeners</AssemblyName>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Version>0.0.0</Version>
@@ -23,11 +23,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Plisky.Diagnostics" Version="3.2.1" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.354">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Plisky.Diagnostics" Version="3.2.5" />    
   </ItemGroup>
 
   <Import Project="..\BilgeHandlersShared\BilgeHandlersShared.projitems" Label="Shared" />

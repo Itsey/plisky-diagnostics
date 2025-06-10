@@ -36,6 +36,8 @@ namespace DevConsoleTest {
                 FilenameIsMask = false,
                 MaxRollingFileSize = "10gb"
             }));
+
+
             //DoBulkMessageTests(300000, false);
             DoCalculatedMessageTests();
             await b.Flush();
@@ -148,8 +150,7 @@ namespace DevConsoleTest {
                 // b.Flush();
 
                 Console.WriteLine(b.GetDiagnosticStatus());
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 Console.WriteLine(Bilge.Default.GetDiagnosticStatus());
                 Console.WriteLine("OUTER >> CATCH:" + ex.Message);
             }
@@ -230,17 +231,13 @@ namespace DevConsoleTest {
                     int selector = r.Next(100);
                     if (selector < 10) {
                         b.Verbose.Log("Verby Merby Verbyosey", "Monkey  World");
-                    }
-                    else if (selector < 20) {
+                    } else if (selector < 20) {
                         b.Info.Dump(new Exception("Arfle Barfle Gloop"), "Exception Context");
-                    }
-                    else if (selector < 30) {
+                    } else if (selector < 30) {
                         b.Error.Log("Errory Merby Errorosey", "Monkey  World");
-                    }
-                    else if (selector < 40) {
+                    } else if (selector < 40) {
                         b.Warning.Dump(new Exception("Arfle Barfle Gloop"), "Exception Context");
-                    }
-                    else if (selector < 50) {
+                    } else if (selector < 50) {
                         b.Info.Log(longLoremIpsum, longSnickett);
 
                     }
@@ -248,8 +245,7 @@ namespace DevConsoleTest {
                     if (r.Next(100) < 25) {
                         if (multiLine) {
                             b.Info.Log(loremIpsum);
-                        }
-                        else {
+                        } else {
                             b.Info.Log("Hello World;Hello World;Hello World;Hello World;~~#~~Hello World;Hello World;Hello World;", "Monkey  World");
                         }
                     }

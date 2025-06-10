@@ -11,6 +11,10 @@
     /// Internal utilities
     /// </summary>
     public static class InternalUtil {
+        private const string EVENTSOURCEIDENTIFIER = "-= Bilge =-";
+        private const string EVENTSOURCETARGET = "Application";
+        private static bool sourceExists;
+
 
         /// <summary>
         ///  Enum to describe the errors which can prevent tracing from working correctly.
@@ -71,11 +75,9 @@
         /// <summary>
         /// current trace level
         /// </summary>
-        public static TraceLevel InternalTraceLevel = TraceLevel.Off;     // Used Internally to write to event log.
+        public static TraceLevel InternalTraceLevel { get; set; } = TraceLevel.Off;     // Used Internally to write to event log.
 
-        private const string EVENTSOURCEIDENTIFIER = "-= Bilge =-";
-        private const string EVENTSOURCETARGET = "Application";
-        private static bool sourceExists;
+
 
         /// <summary>
         /// Util to get class name
@@ -96,7 +98,7 @@
         /// <summary>
         /// Cached assembly
         /// </summary>
-        public static Assembly TraceAssemblyCache = Assembly.GetExecutingAssembly();
+        public static Assembly TraceAssemblyCache { get; set; } = Assembly.GetExecutingAssembly();
 
         /// <summary>
         /// Util to convert stack to xml

@@ -6,6 +6,8 @@
     /// BaseMessageFormatter is a base class for formatting trace messages
     /// </summary>
     public abstract class BaseMessageFormatter : IMessageFormatter {
+        private static readonly string truncationCache = Constants.MESSAGETRUNCATE + "[" + Environment.MachineName + "][{0}" + Constants.TRUNCATE_DATAENDMARKER;
+
         /// <summary>
         /// Default value for uniqueness reference
         /// </summary>
@@ -16,7 +18,7 @@
         /// </summary>
         protected MessageFormatterOptions mfo;
 
-        private static readonly string TruncationCache = Constants.MESSAGETRUNCATE + "[" + Environment.MachineName + "][{0}" + Constants.TRUNCATE_DATAENDMARKER;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseMessageFormatter"/> class.
@@ -79,7 +81,7 @@
 #endif
 
             string truncJoinIdentifier = Thread.CurrentThread.GetHashCode().ToString();
-            string truncateStartIdentifier = string.Format(TruncationCache, truncJoinIdentifier);
+            string truncateStartIdentifier = string.Format(truncationCache, truncJoinIdentifier);
             result[0] = result[0] + Constants.MESSAGETRUNCATE + truncJoinIdentifier + Constants.MESSAGETRUNCATE;
             for (int i = 1; i < result.Length - 1; i++) {
                 result[i] = truncateStartIdentifier + result[i] + Constants.MESSAGETRUNCATE;

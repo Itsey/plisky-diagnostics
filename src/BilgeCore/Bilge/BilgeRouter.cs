@@ -17,12 +17,12 @@
         /// <summary>
         /// Provides access to all the call counts of action calls
         /// </summary>
-        public Dictionary<string, int> ActionCallCountRecord = new Dictionary<string, int>();
+        public Dictionary<string, int> ActionCallCountRecord { get; private set; } = new Dictionary<string, int>();
 
         /// <summary>
         /// all action handlers
         /// </summary>
-        protected List<Tuple<string, Action<IBilgeActionEvent>>> ActionHandlers = new List<Tuple<string, Action<IBilgeActionEvent>>>();
+        protected List<Tuple<string, Action<IBilgeActionEvent>>> ActionHandlers { get; private set; } = new List<Tuple<string, Action<IBilgeActionEvent>>>();
 
         /// <summary>
         /// Timer for delayed writes
@@ -47,7 +47,7 @@
         /// <summary>
         /// If true then this router is shutting down
         /// </summary>
-        protected bool ShutdownRequestActive = false;
+        protected bool ShutdownRequestActive { get; set; } = false;
 
         private const int MAX_LOOP_BEFORE_WRITE = 250;
         private static string processIdCache = null;
@@ -336,7 +336,7 @@
                 await Task.Run(() => {
                     WriteAllMessages();
                     ActualFlushMessages();
-                });                
+                });
             } catch (Exception ex) {
                 flushHiddenException = ex;
             }
@@ -427,7 +427,7 @@
                     }
                 }
             }
-            
+
         }
 
         /// <summary>
@@ -500,7 +500,7 @@
                     threadId = GetCurrentThreadId();
 #endif
 #if NETCOREAPP
-                }
+                    }
 #endif
 
                     return threadId.ToString();

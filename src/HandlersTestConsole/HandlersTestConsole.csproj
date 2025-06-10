@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Plisky.Diagnostics" Version="3.2.1" />
+    <PackageReference Include="Plisky.Diagnostics" Version="3.2.5" />
   </ItemGroup>
 
   <ItemGroup>

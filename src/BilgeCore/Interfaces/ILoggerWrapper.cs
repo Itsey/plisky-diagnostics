@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Plisky.Diagnostics;
 
@@ -108,6 +109,52 @@ public class ILoggerWrapper : ILogger {
             default:
                 break;
         }
+    }
+}
+
+/// <summary>
+/// Adds ILogger configuration for Bilge.
+/// </summary>
+public class BilgeLoggerProvider : ILoggerProvider {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BilgeLoggerProvider"/> class.
+    /// </summary>    
+    public BilgeLoggerProvider() {
+    }
+    /// <summary>
+    /// Creates a new logger instance.
+    /// </summary>
+    /// <param name="categoryName">The category name for the logger.</param>
+    /// <returns>A new ILogger instance.</returns>
+    public ILogger CreateLogger(string categoryName) {
+        return new ILoggerWrapper(new Bilge(categoryName));
+    }
+    /// <summary>
+    /// Disposes of the logger provider.
+    /// </summary>
+    public void Dispose() {
+        // No resources to dispose in this implementation
+    }
+}
+
+/// <summary>
+/// Provides ILoggingBuilder to enable adding Bilge to the logging pipeline in .NET Core applications.
+/// </summary>
+public static class LoggerBuilderExtension {
+
+    /// <summary>
+    /// Adds ilge as a logging provider to the ILoggingBuilder.
+    /// </summary>
+    /// <param name="builder">The Builder</param>
+    /// <returns>The builder with bilge configuration.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static ILoggingBuilder AddBilge(this ILoggingBuilder builder) {
+        if (builder == null) {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        builder.Services.AddSingleton<ILoggerProvider, BilgeLoggerProvider>();
+        return builder;
     }
 }
 #endif
