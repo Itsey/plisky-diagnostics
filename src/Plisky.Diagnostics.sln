@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.34009.444
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11012.119 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BilgeCore", "BilgeCore\BilgeCore.shproj", "{18C26C0C-4C5C-47D1-9872-CAE3F5B2ECA0}"
 EndProject
@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManualTestWrapper", "ManualTestWrapper\ManualTestWrapper.csproj", "{FFE3A409-99EC-4890-BC36-5720E14472DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlimFlamTestClient", "FlimFlamTestClient\FlimFlamTestClient.csproj", "{CF4B41B4-D5B6-43FF-8FB7-274F3661E1E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +56,10 @@ Global
 		{FFE3A409-99EC-4890-BC36-5720E14472DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFE3A409-99EC-4890-BC36-5720E14472DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFE3A409-99EC-4890-BC36-5720E14472DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF4B41B4-D5B6-43FF-8FB7-274F3661E1E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF4B41B4-D5B6-43FF-8FB7-274F3661E1E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF4B41B4-D5B6-43FF-8FB7-274F3661E1E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF4B41B4-D5B6-43FF-8FB7-274F3661E1E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

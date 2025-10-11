@@ -423,7 +423,9 @@
             if (passContext) {
                 foreach (string f in contextKeys.Keys) {
                     if (f != Bilge.BILGE_INSTANCE_CONTEXT_STR) {
-                        mmd.MessageTags.Add(f, contextKeys[f]);
+                        if (!mmd.MessageTags.ContainsKey(f)) {
+                            mmd.MessageTags.Add(f, contextKeys[f]);
+                        }
                     }
                 }
             }

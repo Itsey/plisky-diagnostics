@@ -571,5 +571,10 @@ namespace Plisky.Diagnostics {
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Justification = "Looks like a false positive, tpc_constructandinit - initialise method line 157")]
         internal const string TIMF_INITIALISECALLEDONCE = "**002**";  // Initialise called for the first time
+
+
+        public const string TAG_ONLINE_AT = "onlineAt";
+        public const string TAG_PROCESSNAME = "app-name";
+        public const string TAG_ALERT_INDICATOR = "alert-name";
     }
 }

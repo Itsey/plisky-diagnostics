@@ -185,7 +185,8 @@
             mmd.FurtherDetails = timeString;
 
             ActiveRouteMessage(mmd);
-            InternalTimeCheckpoint(mmd, Constants.AUTOTIMER_PREFIX + mmd.MethodName, Constants.INTERNAL_CLASS_REPLACE, false);
+            var tcmsg = mmd.Clone();
+            InternalTimeCheckpoint(tcmsg, Constants.AUTOTIMER_PREFIX + mmd.MethodName, Constants.INTERNAL_CLASS_REPLACE, false);
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35806.99
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11012.119 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plisky.Diagnostics", "Plisky.Diagnostics\Plisky.Diagnostics.csproj", "{0E342556-2516-B8CB-6298-25CB444155D3}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BilgeCore", "BilgeCore\BilgeCore.shproj", "{18C26C0C-4C5C-47D1-9872-CAE3F5B2ECA0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevConsoleTest", "DevConsoleTest\DevConsoleTest.csproj", "{BD6625CA-D831-9726-CEAA-1E436E9F2930}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlimFlamTestClient", "FlimFlamTestClient\FlimFlamTestClient.csproj", "{2218634E-B182-3463-FA71-88D67482D354}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{BD6625CA-D831-9726-CEAA-1E436E9F2930}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD6625CA-D831-9726-CEAA-1E436E9F2930}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD6625CA-D831-9726-CEAA-1E436E9F2930}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2218634E-B182-3463-FA71-88D67482D354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2218634E-B182-3463-FA71-88D67482D354}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2218634E-B182-3463-FA71-88D67482D354}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2218634E-B182-3463-FA71-88D67482D354}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

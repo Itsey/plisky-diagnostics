@@ -64,10 +64,10 @@ namespace Plisky.Diagnostics {
             string toWrite = $"{appName} Online. v-{ver}. @{onlineAt}";
 
             var alertValues = new Dictionary<string, string> {
-                { "alert-name", "online" },
-                { "onlineAt", onlineAt.ToString() },
+                { Constants.TAG_ALERT_INDICATOR, "online" },
+                { Constants.TAG_ONLINE_AT, onlineAt.ToString() },
                 { "machine-name", Router.MachineNameCache },
-                { "app-name", appName },
+                { Constants.TAG_PROCESSNAME, appName },
                 { "app-ver", ver },
                 { "alert-id", Guid.NewGuid().ToString() }
             };
@@ -84,13 +84,10 @@ namespace Plisky.Diagnostics {
         }
 
         private void AlertQueue(string message, Dictionary<string, string> values, string meth, string pth, int line) {
-#if NETCOREAPP
+
             meth ??= "-ba-alert-";
             pth ??= "alerting";
-#else
-            meth = meth ?? "-ba-alert-";
-            pth = pth ?? "alerting";
-#endif
+
             var mmd = new MessageMetadata(meth, pth, line) {
                 CommandType = TraceCommandTypes.Alert,
                 Body = message

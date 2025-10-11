@@ -118,7 +118,7 @@ namespace Plisky.Diagnostics.Listeners {
         }
 
         private static int concurrency = 0;
-        private static readonly SemaphoreSlim FileLock = new SemaphoreSlim(1, 1);
+        private static readonly SemaphoreSlim fileLock = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// async message hanlder
@@ -157,11 +157,12 @@ namespace Plisky.Diagnostics.Listeners {
 #if NETCOREAPP
 
                     try {
-                        await FileLock.WaitAsync();
+                         
+                        await fileLock.WaitAsync();
                         await File.AppendAllTextAsync(fname, sb.ToString());
                     }
                     finally {
-                        FileLock.Release();
+                        fileLock.Release();
                     }
                     // await File.AppendAllTextAsync(fname, sb.ToString());
 

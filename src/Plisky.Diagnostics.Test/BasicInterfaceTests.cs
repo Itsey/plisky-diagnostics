@@ -5,6 +5,7 @@
     using System.Dynamic;
     using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
     using Plisky.Diagnostics;
     using Plisky.Diagnostics.Copy;
     using Xunit;
@@ -108,16 +109,16 @@
         }
 
         // TODO : Investigate this failure
-        [Fact(Skip ="Fails since move to GH")]
+        [Fact()]
         [Trait(Traits.Age, Traits.Regression)]
         public void Assert_False_FailsIfTrue() {
             var mmh = new MockMessageHandler();
             var sut = TestHelper.GetBilgeAndClearDown();
             sut.Assert.ConfigureAsserts(AssertionStyle.Nothing);
             sut.AddHandler(mmh);
-            sut.Assert.True(false);
+            sut.Assert.False(true);
 
-            sut.Flush();
+            sut.Flush().Wait();
 
             Assert.True(mmh.AssertionMessageCount > 0);
         }
@@ -322,7 +323,7 @@
             mkHandler.AssertAllConditionsMetForAllMessages(true, true);
         }
 
-        [Fact(DisplayName = nameof(Trace_Exit_IncludesMethodName),Skip ="Disabled")]        
+        [Fact(DisplayName = nameof(Trace_Exit_IncludesMethodName))]        
         [Trait(Traits.Age, Traits.Regression)]
         public void Trace_Exit_IncludesMethodName() {
             var mkHandler = new MockRouter();
@@ -370,6 +371,26 @@
 
             Assert.Fail();
         }
+
+        [Fact(DisplayName = nameof(Trace_Flow_IncludesClassName))]
+        [Trait("V", "2")]
+        [Trait(Traits.Age, Traits.Regression)]
+        public void Trace_Enter_Exit_Exploratory() {
+            var mkHandler = new MockRouter();
+            mkHandler.SetClassnameMustBe(nameof(BasicInterfaceTests));
+            var sut = TestHelper.GetBilgeAndClearDown(mkHandler);
+            sut.ConfigureTrace(new TraceConfiguration() {
+                AddClassDetailToTrace = true
+            });
+            sut.ActiveTraceLevel = SourceLevels.Verbose;
+
+            sut.Info.E();
+            sut.Info.X();
+            
+
+            mkHandler.AssertAllConditionsMetForAllMessages(true);
+        }
+
 
         [Fact(DisplayName = nameof(Trace_Flow_IncludesClassName))]
         [Trait("V", "2")]
