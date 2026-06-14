@@ -9,6 +9,30 @@ using Plisky.Diagnostics.Listeners;
 
 namespace DevConsoleTest {
 
+
+
+    public class C4M : FlimFlamV4Formatter {
+        bool hasSet = false;
+        public C4M() : base() {
+
+        }
+
+        protected override string DefaultConvertWithReference(MessageMetadata msg, string uniquenessReference) {
+            if (!hasSet) {
+                if (Thread.CurrentThread.Name == "Bilge>>RouterQueueDispatcher") {
+                    hasSet = true;
+                    Thread.CurrentThread.IsBackground = false;
+                }
+            }
+            return base.DefaultConvertWithReference(msg, uniquenessReference);
+        }
+        protected override string ActualConvert(MessageMetadata msg) {
+
+            return base.ActualConvert(msg);
+        }
+    }
+
+
     /// <summary>
     /// Test Program for Bilge.
     /// </summary>
@@ -19,30 +43,70 @@ namespace DevConsoleTest {
 
 
         private static async Task Main(string[] args) {
-            //Bilge.SimplifyRouter();
-            Bilge.SetConfigurationResolver("v-**");
+
+            Bilge bx = new Bilge("test");
+            bx.ActiveTraceLevel = SourceLevels.Verbose;
+
+            var hnd = new TCPHandler(new TCPHandlerOptions("127.0.0.1", 9060, true));
+            hnd.SetFormatter(new C4M());
+            bx.AddHandler(hnd);
+
+            bx.Verbose.Log("Starting up Dev Console Test Application");
+            bx.Info.Log("Boo");
+            await bx.Flush();
+            bx.Info.Log("Boo 2");
+            bx.FlushAndShutdown();
+
+
+
+            //Bilge.SetConfigurationResolver("v-**");
+            Bilge.SetConfigurationResolver((a, b) => {
+                return SourceLevels.Verbose;
+            });
             var b = new Bilge("", "", tl: System.Diagnostics.SourceLevels.Verbose);
 
             var thnd = new TCPHandler("127.0.0.1", 9060);
-            //  b.AddHandler(thnd);
+            thnd.SetFormatter(new FlimFlamV4Formatter());
 
-            Bilge.Alert.Online("Bob");
-            b.Info.Log("Starting Test - Timings");
+
+            var thnd2 = new InMemoryHandler();
+            thnd2.SetFormatter(new FlimFlamV4Formatter());
+
+            Bilge.AddHandler(thnd);
+            Bilge.AddHandler(thnd2);
+
+            for (int i = 0; i < 10; i++) {
+                Thread.Sleep(100);
+                b.Info.Log("Starting Test - Timings");
+            }
+
+            if (thnd2.GetMessageCount() < 9) {
+                throw new Exception("Did not receive expected messages in in-memory handler");
+            }
+
+            for (int i = 0; i < 1000; i++) {
+                b.Direct.Write("[GRID]Map", $"xxxx|xx{i}|xxxx|");
+                b.Direct.Write($"[STAT]Testing", $"{i}");
+                Thread.Sleep(20);
+            }
+
             //DoBasicTimingTests();
-            b.AddHandler(new RollingFileSystemHandler(new RollingFSHandlerOptions() {
-                CanCreate = true,
-                Directory = "X:\\Code\\ipir\\inputFiles",
-                FileName = "Bulk",
-                FilenameIsMask = false,
-                MaxRollingFileSize = "10gb"
-            }));
+            /* b.AddHandler(new RollingFileSystemHandler(new RollingFSHandlerOptions() {
+                 CanCreate = true,
+                 Directory = "X:\\Code\\ipir\\inputFiles",
+                 FileName = "Bulk",
+                 FilenameIsMask = false,
+                 MaxRollingFileSize = "10gb"
+             }));*/
 
-
-            //DoBulkMessageTests(300000, false);
-            DoCalculatedMessageTests();
-            await b.Flush();
 
             Thread.Sleep(100);
+
+            //DoBulkMessageTests(300000, false);
+            //DoCalculatedMessageTests();
+            await b.Flush();
+            Thread.Sleep(100);
+
             return;
 
             Console.WriteLine("Hello World!");
