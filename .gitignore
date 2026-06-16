@@ -6,7 +6,7 @@
 #Additions
 NDependOut/
 *.donotcommit
-
+*.donotcommit/
 
 # User-specific files
 *.rsuser
@@ -14,6 +14,7 @@ NDependOut/
 *.user
 *.userosscache
 *.sln.docstates
+
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
